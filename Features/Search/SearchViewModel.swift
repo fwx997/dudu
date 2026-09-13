@@ -159,9 +159,12 @@ class SearchViewModel: ObservableObject {
                 try? await Task.sleep(nanoseconds: Self.sourceTimeoutSeconds * 1_000_000_000)
                 return nil
             }
-            let first = await inner.next() ?? []
+            var results: [SearchResult] = []
+            if let first = await inner.next() {
+                results = first ?? []
+            }
             inner.cancelAll()
-            return first
+            return results
         }
     }
 

@@ -28,12 +28,12 @@ class TextConverter {
 
     /// 转换为简体
     func toSimplified(_ text: String) -> String {
-        return text.applyingTransform(.traditionalToSimplifiedChinese, reverse: false) ?? text
+        return text.applyingTransform(StringTransform("Traditional-Simplified"), reverse: false) ?? text
     }
 
     /// 转换为繁体
     func toTraditional(_ text: String) -> String {
-        return text.applyingTransform(.traditionalToSimplifiedChinese, reverse: true) ?? text
+        return text.applyingTransform(StringTransform("Simplified-Traditional"), reverse: false) ?? text
     }
 
     /// 批量转换

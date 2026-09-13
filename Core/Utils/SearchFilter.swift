@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class SearchFilter {
     static let shared = SearchFilter()
@@ -105,22 +106,16 @@ class SearchFilter {
     func highlightKeyword(in text: String, keyword: String) -> AttributedString {
         var attributed = AttributedString(text)
 
-        let lowercased = text.lowercased()
-        let key = keyword.lowercased()
+        guard !keyword.isEmpty else { return attributed }
 
-        var searchRange = lowercased.startIndex..<lowercased.endIndex
-
-        while let range = lowercased.range(of: key, range: searchRange) {
-            let distance = lowercased.distance(from: lowercased.startIndex, to: range.lowerBound)
-            let length = key.count
-
-            if let start = AttributedString.Index(attributed.startIndex, offsetByCharacters: distance),
-               let end = AttributedString.Index(start, offsetByCharacters: length) {
+        var searchStart = text.startIndex
+        while let range = text.range(of: keyword, options: [.caseInsensitive], range: searchStart..<text.endIndex) {
+            if let start = AttributedString.Index(range.lowerBound, within: text),
+               let end = AttributedString.Index(range.upperBound, within: text) {
                 attributed[start..<end].foregroundColor = .red
                 attributed[start..<end].font = .boldSystemFont(ofSize: 16)
             }
-
-            searchRange = range.upperBound..<lowercased.endIndex
+            searchStart = range.upperBound
         }
 
         return attributed
