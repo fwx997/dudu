@@ -70,6 +70,17 @@ struct BookshelfView: View {
 
                     Divider()
 
+                    Menu {
+                        Picker("排序方式", selection: $viewModel.sortBy) {
+                            Text("最近阅读").tag(BookshelfViewModel.SortBy.lastRead)
+                            Text("书名").tag(BookshelfViewModel.SortBy.name)
+                            Text("作者").tag(BookshelfViewModel.SortBy.author)
+                            Text("更新时间").tag(BookshelfViewModel.SortBy.update)
+                        }
+                    } label: {
+                        Label("排序方式", systemImage: "arrow.up.arrow.down")
+                    }
+
                     Button {
                         viewModel.viewMode = viewModel.viewMode == .grid ? .list : .grid
                     } label: {
@@ -135,6 +146,12 @@ struct BookshelfView: View {
         }
         .task {
             await viewModel.loadBooks()
+            if AppSettings.shared.checkUpdateOnOpen {
+                await viewModel.checkUpdates()
+            }
+        }
+        .onChange(of: viewModel.sortBy) { _ in
+            Task { await viewModel.loadBooks() }
         }
         .refreshable {
             await viewModel.loadBooks()

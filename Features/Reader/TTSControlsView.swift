@@ -260,12 +260,22 @@ struct TTSControlsView: View {
     
     private func startReading() {
         guard let content = viewModel.chapterContent else { return }
-        
+
+        // 香色闺阁朗读模式：按章朗读直接整章合成，按页朗读分页跟读
+        if AppSettings.shared.readAloudMode == .byChapter {
+            ttsManager.speak(
+                content,
+                onParagraphComplete: nil,
+                onTextComplete: nil
+            )
+            return
+        }
+
         // 将内容分页
         let pages = content.components(separatedBy: "\n\n")
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
-        
+
         ttsManager.speakParagraphs(
             pages,
             onParagraphComplete: {

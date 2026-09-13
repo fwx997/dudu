@@ -95,6 +95,11 @@ struct ReaderView: View {
                                 Label("翻页区域", systemImage: "hand.tap")
                             }
                             Button {
+                                Task { await viewModel.cacheEntireBook() }
+                            } label: {
+                                Label("缓存全本", systemImage: "arrow.down.circle")
+                            }
+                            Button {
                                 if let url = URL(string: "https://www.baidu.com/s?word=\(book.name)") {
                                     openURL(url)
                                 }
@@ -255,6 +260,19 @@ struct ReaderView: View {
                         .background(Color.black.opacity(0.7))
                         .foregroundColor(.white)
                         .cornerRadius(10)
+                }
+
+                // 全本缓存进度
+                if let cacheText = viewModel.cacheProgressText {
+                    VStack {
+                        Text(cacheText)
+                            .font(.caption)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.black.opacity(0.7))
+                            .cornerRadius(8)
+                    }
+                    .padding()
                 }
                 
                 // 错误提示

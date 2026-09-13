@@ -58,6 +58,8 @@ struct SettingsView: View {
 
                     Toggle("自动夜间模式", isOn: $settings.autoNightMode)
 
+                    Toggle("打开书架时检查更新", isOn: $settings.checkUpdateOnOpen)
+
                     Toggle("启动后继续上次阅读", isOn: $settings.autoRead)
                 }
 

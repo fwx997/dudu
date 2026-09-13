@@ -19,6 +19,7 @@ class ReaderViewModel: ObservableObject {
     @Published var chapters: [BookChapter] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var cacheProgressText: String?
     @Published var currentBook: Book?
     @Published var durChapterPos: Int32 = 0
     @Published var theme: ReaderTheme = .light
@@ -315,6 +316,19 @@ class ReaderViewModel: ObservableObject {
         } catch {
             errorMessage = "刷新失败：\(error.localizedDescription)"
         }
+    }
+
+    /// 缓存全本（对齐香色闺阁的全本下载）
+    func cacheEntireBook() async {
+        guard let book = currentBook else { return }
+        cacheProgressText = "开始缓存 0/\(chapters.count)"
+        await cacheManager.cacheAllChapters(chapters: chapters, book: book) { done, total in
+            Task { @MainActor in
+                self.cacheProgressText = "缓存中 \(done)/\(total)"
+            }
+        }
+        cacheProgressText = "全本缓存完成"
+        try? CoreDataStack.shared.save()
     }
 
     // MARK: - 章节导航

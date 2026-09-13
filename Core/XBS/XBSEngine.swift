@@ -93,6 +93,80 @@ final class XBSEngine {
         return books
     }
 
+    // MARK: - 书单（社区书单）
+
+    struct XBSShudan: Identifiable {
+        let title: String
+        let cover: String?
+        let desc: String?
+        let detailUrl: String
+        let sourceAlias: String
+        let sourceName: String
+        var id: String { detailUrl }
+    }
+
+    /// 书单搜索（searchShudan）
+    func searchShudan(source: XBSSource, keyword: String, page: Int = 1) async throws -> [XBSShudan] {
+        guard let action = source.action("searchShudan"), action.string("requestInfo") != nil else {
+            throw XBSError.actionMissing("searchShudan")
+        }
+        let params: [String: Any] = ["keyWord": keyword, "pageIndex": page]
+        let response = try await fetch(action: action, source: source, params: params)
+        let items = try parseList(action: action, response: response, params: params)
+
+        var list: [XBSShudan] = []
+        for item in items {
+            let values = evaluateFields(action: action, item: item, response: response, params: params,
+                                        keys: ["title", "cover", "desc", "detailUrl", "url"])
+            let title = values["title"] ?? ""
+            let link = values["detailUrl"] ?? values["url"] ?? ""
+            guard !title.isEmpty, !link.isEmpty else { continue }
+            list.append(XBSShudan(
+                title: title.trimmingCharacters(in: .whitespacesAndNewlines),
+                cover: absoluteURL(values["cover"], base: response.url, host: source.host),
+                desc: values["desc"],
+                detailUrl: absoluteURL(link, base: response.url, host: source.host) ?? link,
+                sourceAlias: source.alias,
+                sourceName: source.sourceName
+            ))
+        }
+        return list
+    }
+
+    /// 书单详情：书单内的书籍列表（shudanDetail）
+    func shudanBooks(source: XBSSource, url: String) async throws -> [XBSBook] {
+        guard let action = source.action("shudanDetail") else {
+            throw XBSError.actionMissing("shudanDetail")
+        }
+        var params: [String: Any] = ["queryInfo": ["url": url, "detailUrl": url]]
+        params["result"] = url
+        let response = try await fetch(action: action, source: source, params: params)
+        let items = try parseList(action: action, response: response, params: params)
+
+        var books: [XBSBook] = []
+        for item in items {
+            let values = evaluateFields(action: action, item: item, response: response, params: params,
+                                        keys: ["bookName", "detailUrl", "url", "author", "cover", "desc", "cat", "lastChapterTitle"])
+            let name = values["bookName"] ?? values["url"] ?? ""
+            let link = values["detailUrl"] ?? values["url"] ?? ""
+            guard !name.isEmpty, !link.isEmpty else { continue }
+            books.append(XBSBook(
+                name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+                author: (values["author"] ?? "").trimmingCharacters(in: .whitespacesAndNewlines),
+                cover: absoluteURL(values["cover"], base: response.url, host: source.host),
+                desc: values["desc"],
+                cat: values["cat"],
+                status: nil,
+                lastChapterTitle: values["lastChapterTitle"],
+                updateTime: nil,
+                detailUrl: absoluteURL(link, base: response.url, host: source.host) ?? link,
+                sourceAlias: source.alias,
+                sourceName: source.sourceName
+            ))
+        }
+        return books
+    }
+
     // MARK: - 漫画/听书内容提取
 
     /// 章节图片列表（漫画源）：content 规则多节点按行拼接后逐行成图

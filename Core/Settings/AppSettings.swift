@@ -112,6 +112,11 @@ class AppSettings: ObservableObject {
         didSet { defaults.set(autoNightMode, forKey: "dudu.autoNightMode") }
     }
 
+    /// 打开书架时自动检查更新（对齐香色闺阁 bs_updateType）
+    @Published var checkUpdateOnOpen: Bool {
+        didSet { defaults.set(checkUpdateOnOpen, forKey: "dudu.checkUpdateOnOpen") }
+    }
+
     private init() {
         searchFilterType = SearchFilterType(rawValue: defaults.string(forKey: "dudu.searchFilterType") ?? "") ?? .noFilter
         searchSourceType = SourceType(rawValue: defaults.string(forKey: "dudu.searchSourceType") ?? "") ?? .text
@@ -120,5 +125,6 @@ class AppSettings: ObservableObject {
         keepScreenOn = defaults.bool(forKey: "dudu.keepScreenOn")
         autoRead = defaults.bool(forKey: "dudu.autoRead")
         autoNightMode = defaults.object(forKey: "dudu.autoNightMode") == nil ? true : defaults.bool(forKey: "dudu.autoNightMode")
+        checkUpdateOnOpen = defaults.bool(forKey: "dudu.checkUpdateOnOpen")
     }
 }
