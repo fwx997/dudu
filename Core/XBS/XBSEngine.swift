@@ -93,6 +93,19 @@ final class XBSEngine {
         return books
     }
 
+    // MARK: - 站点检测
+
+    /// 检测站点可用性：跑一次真实搜索，不抛错即视为可用
+    func checkSource(source: XBSSource, keyword: String = "我") async -> Bool {
+        guard source.action("searchBook") != nil else { return false }
+        do {
+            _ = try await search(source: source, keyword: keyword, page: 1)
+            return true
+        } catch {
+            return false
+        }
+    }
+
     // MARK: - 书单（社区书单）
 
     struct XBSShudan: Identifiable {

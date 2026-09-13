@@ -48,6 +48,16 @@ struct XBSSourceManageView: View {
                                         .padding(.vertical, 2)
                                         .background(source.typeName == "文本" ? Color.blue : Color.orange)
                                         .cornerRadius(4)
+
+                                    if let status = store.checkStatus[source.alias] {
+                                        Text(status == "ok" ? "可用" : "失败")
+                                            .font(.caption2)
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 2)
+                                            .background(status == "ok" ? Color.green : Color.red)
+                                            .cornerRadius(4)
+                                    }
                                 }
                                 Text(source.host)
                                     .font(.caption)
@@ -92,6 +102,11 @@ struct XBSSourceManageView: View {
 
                     if !store.sources.isEmpty {
                         Divider()
+                        Button {
+                            Task { await store.checkAll() }
+                        } label: {
+                            Label("检测全部站点", systemImage: "antenna.radiowaves.left.and.right")
+                        }
                         ShareLink(item: exportURL(), preview: SharePreview("站点备份.xbs")) {
                             Label("导出全部站点（.xbs）", systemImage: "square.and.arrow.up")
                         }
@@ -117,6 +132,8 @@ struct XBSSourceManageView: View {
         .overlay {
             if importing {
                 ProgressView("正在导入...")
+            } else if store.isChecking {
+                ProgressView("检测中 \(store.checkDone)/\(store.checkTotal)...")
             }
         }
         .alert("网络导入", isPresented: $showingNetworkImport) {

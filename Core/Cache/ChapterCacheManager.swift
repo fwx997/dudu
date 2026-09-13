@@ -96,7 +96,14 @@ final class ChapterCacheManager: ObservableObject {
         let total = endIndex - startIndex + 1
         totalCacheTarget = total
         cachedChapterCount = 0
-        
+
+        // 香色闺阁站点：4 路并发抓取，主线程统一落盘（对齐"下载多线程"）
+        if book.origin.hasPrefix("xbs://") {
+            await cacheXBSChapters(from: startIndex, to: endIndex, chapters: chapters, book: book, onProgress: onProgress)
+            isCaching = false
+            return
+        }
+
         for i in startIndex...endIndex {
             guard !Task.isCancelled else { break }
             
@@ -122,6 +129,67 @@ final class ChapterCacheManager: ObservableObject {
         isCaching = false
     }
     
+    /// XBS 站点章节并发缓存：网络层 4 路并发，CoreData/文件写入收敛到主线程
+    private func cacheXBSChapters(
+        from startIndex: Int,
+        to endIndex: Int,
+        chapters: [BookChapter],
+        book: Book,
+        onProgress: ((Int, Int) -> Void)?
+    ) async {
+        let alias = String(book.origin.dropFirst("xbs://".count))
+        guard let source = XBSSourceStore.shared.source(alias: alias) else { return }
+
+        let targets = (startIndex...endIndex)
+            .map { (chapter: chapters[$0], url: chapters[$0].chapterUrl) }
+            .filter { !$0.chapter.isCached }
+
+        let total = endIndex - startIndex + 1
+        var done = total - targets.count
+        if done > 0 { onProgress?(done, total) }
+
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let chapterDir = documents.appendingPathComponent("chapters", isDirectory: true)
+        try? FileManager.default.createDirectory(at: chapterDir, withIntermediateDirectories: true)
+
+        await withTaskGroup(of: (Int32, String?).self) { group in
+            var iterator = targets.makeIterator()
+            var running = 0
+            let maxConcurrent = 4
+
+            func addNext() {
+                guard running < maxConcurrent, let item = iterator.next() else { return }
+                running += 1
+                group.addTask {
+                    let content = try? await XBSEngine.shared.chapterContent(source: source, url: item.url)
+                    return (item.chapter.index, content)
+                }
+            }
+
+            for _ in 0..<maxConcurrent { addNext() }
+
+            let context = CoreDataStack.shared.viewContext
+            for await (chapterIndex, content) in group {
+                running -= 1
+                addNext()
+                done += 1
+                if let content, !content.isEmpty,
+                   let chapter = chapters.first(where: { $0.index == chapterIndex }) {
+                    let fileName = "\(chapter.bookId.uuidString)_\(chapter.index).txt"
+                    try? content.write(to: chapterDir.appendingPathComponent(fileName), atomically: true, encoding: .utf8)
+                    await MainActor.run {
+                        chapter.isCached = true
+                        chapter.cachePath = fileName
+                    }
+                }
+                onProgress?(done, total)
+            }
+            await MainActor.run {
+                try? context.save()
+            }
+        }
+    }
+
     /// 缓存全书
     func cacheAllChapters(
         chapters: [BookChapter],

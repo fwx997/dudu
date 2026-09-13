@@ -107,6 +107,17 @@ final class XBSSourceStore: ObservableObject {
 
     @Published private(set) var sources: [XBSSource] = []
 
+    /// 检测结果：alias → "ok" / "fail"
+    @Published private(set) var checkStatus: [String: String] = [:]
+    @Published private(set) var isChecking = false
+    @Published private(set) var checkDone = 0
+    @Published private(set) var checkTotal = 0
+
+    private var checkFileURL: URL {
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return docs.appendingPathComponent("xbs_check_status.json")
+    }
+
     private var fileURL: URL {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         return docs.appendingPathComponent("xbs_sources.json")
@@ -114,6 +125,47 @@ final class XBSSourceStore: ObservableObject {
 
     private init() {
         load()
+        if let data = try? Data(contentsOf: checkFileURL),
+           let dict = try? JSONSerialization.jsonObject(with: data) as? [String: String] {
+            checkStatus = dict
+        }
+    }
+
+    /// 并发检测全部站点（8 路）：跑一次真实搜索，成功=可用
+    func checkAll() async {
+        guard !isChecking else { return }
+        isChecking = true
+        checkDone = 0
+        checkTotal = sources.count
+        defer {
+            isChecking = false
+            if let data = try? JSONSerialization.data(withJSONObject: checkStatus, options: [.sortedKeys]) {
+                try? data.write(to: checkFileURL, options: .atomic)
+            }
+        }
+
+        await withTaskGroup(of: (String, Bool).self) { group in
+            var iterator = sources.makeIterator()
+            var running = 0
+            let maxConcurrent = 8
+
+            func addNext() {
+                guard running < maxConcurrent, let source = iterator.next() else { return }
+                running += 1
+                group.addTask {
+                    (source.alias, await XBSEngine.shared.checkSource(source: source))
+                }
+            }
+
+            for _ in 0..<min(maxConcurrent, sources.count) { addNext() }
+
+            for await (alias, ok) in group {
+                running -= 1
+                addNext()
+                checkDone += 1
+                checkStatus[alias] = ok ? "ok" : "fail"
+            }
+        }
     }
 
     func load() {

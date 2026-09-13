@@ -270,12 +270,15 @@ struct DiscoveryView: View {
 
         var all: [XBSEngine.XBSShudan] = []
         var firstError: String?
-        for source in bookWorldSources {
-            guard source.action("searchShudan") != nil else { continue }
-            do {
-                all.append(contentsOf: try await XBSEngine.shared.searchShudan(source: source, keyword: keyword))
-            } catch {
-                if firstError == nil { firstError = error.localizedDescription }
+        let sources = bookWorldSources.filter { $0.action("searchShudan") != nil }
+        await withTaskGroup(of: [XBSEngine.XBSShudan].self) { group in
+            for source in sources {
+                group.addTask {
+                    (try? await XBSEngine.shared.searchShudan(source: source, keyword: keyword)) ?? []
+                }
+            }
+            for await partial in group {
+                all.append(contentsOf: partial)
             }
         }
         shudanResults = all
@@ -384,7 +387,7 @@ struct XBSShudanDetailView: View {
                     .padding()
             } else {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                    ForEach(books, id: .detailUrl) { book in
+                    ForEach(books, id: \.detailUrl) { book in
 
                         NavigationLink {
                             XBSBookDetailView(initialBook: book)
@@ -414,7 +417,7 @@ struct XBSShudanDetailView: View {
 
     private func load() async {
         guard let source = XBSSourceStore.shared.source(alias: shudan.sourceAlias) else {
-            errorMessage = ' + chr(34) + '站点已失效' + chr(34) + '
+            errorMessage = "站点已失效"
             isLoading = false
             return
         }
