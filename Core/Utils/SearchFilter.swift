@@ -110,8 +110,8 @@ class SearchFilter {
 
         var searchStart = text.startIndex
         while let range = text.range(of: keyword, options: [.caseInsensitive], range: searchStart..<text.endIndex) {
-            if let start = AttributedString.Index(range.lowerBound, within: text),
-               let end = AttributedString.Index(range.upperBound, within: text) {
+            if let start = AttributedString.Index(range.lowerBound, within: attributed),
+               let end = AttributedString.Index(range.upperBound, within: attributed) {
                 attributed[start..<end].foregroundColor = .red
                 attributed[start..<end].font = .boldSystemFont(ofSize: 16)
             }
