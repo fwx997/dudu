@@ -237,7 +237,7 @@ extension XBSSourceManageView {
 
     private var checkPageLink: some View {
         NavigationLink {
-            XBSSourceCheckView()
+            XBSSourceCheckView(store: store)
         } label: {
             Label("检测站点", systemImage: "list.bullet.rectangle")
         }
