@@ -86,7 +86,7 @@ final class XPathDocument {
             return .string(n.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(n)) : "\(n)")
         default:
             if let cstr = result.pointee.stringval {
-                return .string(stringFromXmlChar(cstr))
+                return .string(Self.stringFromXmlChar(cstr))
             }
             return .string("")
         }
