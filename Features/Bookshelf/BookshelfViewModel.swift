@@ -114,7 +114,63 @@ final class BookshelfViewModel: ObservableObject {
     func refreshBooks() async {
         await loadBooks()
     }
-    
+
+    // MARK: - 更新检查
+
+    @Published var isCheckingUpdates = false
+    @Published var updateSummary: String?
+
+    /// 检查书架更新：香色闺阁站点书籍走 bookDetail 取最新章节，有新章则刷新书架显示
+    func checkUpdates() async {
+        let context = CoreDataStack.shared.viewContext
+        let all = (try? context.fetch(Book.fetchRequest())) ?? []
+        let xbsBooks = all.filter { $0.origin.hasPrefix("xbs://") }
+        guard !xbsBooks.isEmpty else {
+            updateSummary = nil
+            return
+        }
+
+        isCheckingUpdates = true
+        defer { isCheckingUpdates = false }
+
+        var updatedCount = 0
+        await withTaskGroup(of: (Book, String?).self) { group in
+            var iterator = xbsBooks.makeIterator()
+            var running = 0
+            let maxConcurrent = 6
+
+            func addNext() {
+                guard running < maxConcurrent, let book = iterator.next() else { return }
+                running += 1
+                group.addTask {
+                    let alias = String(book.origin.dropFirst("xbs://".count))
+                    guard let source = XBSSourceStore.shared.source(alias: alias),
+                          let detail = try? await XBSEngine.shared.bookDetail(source: source, url: book.bookUrl) else {
+                        return (book, nil)
+                    }
+                    return (book, detail.lastChapterTitle)
+                }
+            }
+
+            for _ in 0..<maxConcurrent { addNext() }
+
+            for await (book, latest) in group {
+                running -= 1
+                addNext()
+                if let latest, !latest.isEmpty, latest != book.latestChapterTitle {
+                    book.latestChapterTitle = latest
+                    updatedCount += 1
+                }
+            }
+        }
+
+        if updatedCount > 0 {
+            try? CoreDataStack.shared.save()
+            await loadBooks()
+        }
+        updateSummary = updatedCount > 0 ? "发现 \(updatedCount) 本有更新" : "暂无更新"
+    }
+
     func removeBook(_ book: Book) {
         CoreDataStack.shared.viewContext.delete(book)
         try? CoreDataStack.shared.save()

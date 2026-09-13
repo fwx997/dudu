@@ -41,10 +41,24 @@ struct MainTabView: View {
 struct SettingsView: View {
     @State private var showingAbout = false
     @State private var showingQRScanner = false
-    
+    @ObservedObject private var settings = AppSettings.shared
+
     var body: some View {
         NavigationView {
             List {
+                // 通用（对齐香色闺阁 plist_settingKeyInfo 常用项）
+                Section(header: Label("通用", systemImage: "gearshape")) {
+                    Picker("繁简转换", selection: $settings.textConversionMode) {
+                        ForEach(TextConversionMode.allCases, id: \.rawValue) { mode in
+                            Text(mode.displayName).tag(mode)
+                        }
+                    }
+
+                    Toggle("阅读时屏幕常亮", isOn: $settings.keepScreenOn)
+
+                    Toggle("启动后继续上次阅读", isOn: $settings.autoRead)
+                }
+
                 // 阅读设置
                 Section(header: Label("阅读", systemImage: "book")) {
                     NavigationLink("阅读设置") {

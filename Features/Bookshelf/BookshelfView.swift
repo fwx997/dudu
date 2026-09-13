@@ -137,7 +137,23 @@ struct BookshelfView: View {
             await viewModel.loadBooks()
         }
         .refreshable {
-            await viewModel.refreshBooks()
+            await viewModel.loadBooks()
+            await viewModel.checkUpdates()
+        }
+        .overlay(alignment: .top) {
+            if viewModel.isCheckingUpdates {
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                    Text("正在检查更新...")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Capsule().fill(Color(.systemBackground)).shadow(color: .black.opacity(0.1), radius: 4))
+                .padding(.top, 4)
+            }
         }
     }
     

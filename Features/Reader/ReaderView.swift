@@ -22,6 +22,11 @@ struct ReaderView: View {
     @State private var showingChangeSource = false
     @State private var showingBookmarks = false
     @State private var showUI = true
+    @State private var showingBookDetail = false
+    @State private var showingSearchContent = false
+    @State private var showingContentEdit = false
+    @State private var showingPageTutorial = false
+    @Environment(\.openURL) private var openURL
     
     let book: Book
     
@@ -62,7 +67,53 @@ struct ReaderView: View {
                         }
                         
                         Spacer()
-                        
+
+                        Menu {
+                            Button {
+                                showingBookDetail = true
+                            } label: {
+                                Label("书籍详情", systemImage: "info.circle")
+                            }
+                            Button {
+                                Task { await viewModel.reloadCurrentChapter() }
+                            } label: {
+                                Label("刷新内容", systemImage: "arrow.clockwise")
+                            }
+                            Button {
+                                showingSearchContent = true
+                            } label: {
+                                Label("搜索内容", systemImage: "magnifyingglass")
+                            }
+                            Button {
+                                showingContentEdit = true
+                            } label: {
+                                Label("过滤内容", systemImage: "line.3.horizontal.decrease.circle")
+                            }
+                            Button {
+                                showingPageTutorial = true
+                            } label: {
+                                Label("翻页区域", systemImage: "hand.tap")
+                            }
+                            Button {
+                                if let url = URL(string: "https://www.baidu.com/s?word=\(book.name)") {
+                                    openURL(url)
+                                }
+                            } label: {
+                                Label("百度搜索", systemImage: "safari")
+                            }
+                            Button {
+                                if let url = URL(string: "https://github.com/fwx997/dudu/issues") {
+                                    openURL(url)
+                                }
+                            } label: {
+                                Label("报告错误", systemImage: "exclamationmark.bubble")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                                .font(.title3)
+                                .frame(width: 44, height: 44)
+                        }
+
                         Button(action: { showingChapterList = true }) {
                             Image(systemName: "list.bullet")
                                 .font(.title3)
@@ -230,12 +281,14 @@ struct ReaderView: View {
                     viewModel.applyTheme(isNight ? .dark : .light)
                 }
                 readingEnhancementManager.startReadingSession()
+                UIApplication.shared.isIdleTimerDisabled = AppSettings.shared.keepScreenOn
             }
             .onDisappear {
                 viewModel.saveProgress()
                 ttsManager.stop()
                 autoPageTurnManager.stop()
                 readingEnhancementManager.endReadingSession()
+                UIApplication.shared.isIdleTimerDisabled = false
             }
             .onChange(of: viewModel.currentPageIndex) { _ in
                 autoPageTurnManager.reset()
@@ -264,6 +317,29 @@ struct ReaderView: View {
             }
             .sheet(isPresented: $showingBookmarks) {
                 BookmarkSheet(viewModel: viewModel, book: book)
+            }
+            .sheet(isPresented: $showingBookDetail) {
+                NavigationStack { BookDetailView(book: book) }
+            }
+            .sheet(isPresented: $showingSearchContent) {
+                SearchContentView(book: book, isPresented: $showingSearchContent) { chapterIndex, pageIndex in
+                    showingSearchContent = false
+                    Task {
+                        try? await viewModel.loadChapter(at: chapterIndex, restorePageIndex: pageIndex)
+                    }
+                }
+            }
+            .sheet(isPresented: $showingContentEdit) {
+                if let chapter = viewModel.currentChapter {
+                    ContentEditSheet(isPresented: $showingContentEdit, chapter: chapter, onSave: {
+                        Task { await viewModel.reloadCurrentChapter() }
+                    })
+                }
+            }
+            .alert("翻页区域", isPresented: $showingPageTutorial) {
+                Button("知道了", role: .cancel) {}
+            } message: {
+                Text("点击屏幕左侧：上一页\n点击屏幕中间：呼出/隐藏菜单\n点击屏幕右侧：下一页")
             }
         }
         .navigationBarHidden(true)

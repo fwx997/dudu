@@ -93,6 +93,89 @@ final class XBSEngine {
         return books
     }
 
+    // MARK: - 书世界（分类浏览）
+
+    struct XBSCategory: Identifiable, Equatable {
+        let name: String
+        let value: String
+        var id: String { name }
+    }
+
+    /// 解析站点分类：优先 moreKeys.requestFilters（"名称::值" 行式），其次命名子字典
+    func bookWorldCategories(source: XBSSource) -> [XBSCategory] {
+        guard let action = source.action("bookWorld") else { return [] }
+
+        // 形态一：requestFilters 行式 "玄幻::xuanhuan"
+        let filterText = action.dict("moreKeys")?.string("requestFilters")
+            ?? action.string("requestFilters") ?? ""
+        var categories: [XBSCategory] = []
+        for line in filterText.components(separatedBy: .newlines) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            guard !trimmed.isEmpty else { continue }
+            let parts = trimmed.components(separatedBy: "::")
+            if parts.count >= 2 {
+                categories.append(XBSCategory(name: parts[0].trimmingCharacters(in: .whitespaces),
+                                              value: parts[1].trimmingCharacters(in: .whitespaces)))
+            } else {
+                categories.append(XBSCategory(name: trimmed, value: trimmed))
+            }
+        }
+        if !categories.isEmpty { return categories }
+
+        // 形态二：命名子字典 { "玄幻": {requestInfo...}, "都市": {...} }
+        let reserved = ["actionID", "parserID", "requestInfo", "list", "moreKeys", "validConfig",
+                        "responseFormatType", "httpHeaders", "host"]
+        for (key, value) in action {
+            guard !reserved.contains(key), let sub = value as? [String: Any], sub["requestInfo"] != nil else { continue }
+            categories.append(XBSCategory(name: key, value: key))
+        }
+        return categories
+    }
+
+    /// 分类页书籍列表（分页）
+    func bookWorld(source: XBSSource, category: XBSCategory?, page: Int) async throws -> [XBSBook] {
+        guard var action = source.action("bookWorld") else {
+            throw XBSError.actionMissing("bookWorld")
+        }
+
+        // 命名子字典形态：取分类专属配置，与公共字段合并
+        if let category, let sub = action[category.value] as? [String: Any], sub["requestInfo"] != nil {
+            var merged = action
+            for (k, v) in sub { merged[k] = v }
+            merged["requestInfo"] = sub["requestInfo"]
+            action = merged
+        }
+
+        var params: [String: Any] = ["pageIndex": page]
+        if let category { params["filter"] = category.value }
+
+        let response = try await fetch(action: action, source: source, params: params)
+        let items = try parseList(action: action, response: response, params: params)
+
+        var books: [XBSBook] = []
+        for item in items {
+            let values = evaluateFields(action: action, item: item, response: response, params: params,
+                                        keys: ["bookName", "detailUrl", "url", "author", "cover", "desc", "cat", "status", "lastChapterTitle", "updateTime"])
+            let name = values["bookName"] ?? values["url"] ?? ""
+            let detail = values["detailUrl"] ?? values["url"] ?? ""
+            guard !name.isEmpty, !detail.isEmpty else { continue }
+            books.append(XBSBook(
+                name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+                author: (values["author"] ?? "").trimmingCharacters(in: .whitespacesAndNewlines),
+                cover: absoluteURL(values["cover"], base: response.url, host: source.host),
+                desc: values["desc"],
+                cat: values["cat"],
+                status: values["status"],
+                lastChapterTitle: values["lastChapterTitle"],
+                updateTime: values["updateTime"],
+                detailUrl: absoluteURL(detail, base: response.url, host: source.host) ?? detail,
+                sourceAlias: source.alias,
+                sourceName: source.sourceName
+            ))
+        }
+        return books
+    }
+
     // MARK: - 书籍详情
 
     func bookDetail(source: XBSSource, url: String) async throws -> XBSBook {

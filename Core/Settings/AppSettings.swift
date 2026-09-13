@@ -97,10 +97,22 @@ class AppSettings: ObservableObject {
         didSet { defaults.set(readAloudMode.rawValue, forKey: "dudu.readAloudMode") }
     }
 
+    /// 阅读时屏幕常亮（对齐香色闺阁 changLiang）
+    @Published var keepScreenOn: Bool {
+        didSet { defaults.set(keepScreenOn, forKey: "dudu.keepScreenOn") }
+    }
+
+    /// 启动后继续上次阅读（对齐香色闺阁 autoRead）
+    @Published var autoRead: Bool {
+        didSet { defaults.set(autoRead, forKey: "dudu.autoRead") }
+    }
+
     private init() {
         searchFilterType = SearchFilterType(rawValue: defaults.string(forKey: "dudu.searchFilterType") ?? "") ?? .noFilter
         searchSourceType = SourceType(rawValue: defaults.string(forKey: "dudu.searchSourceType") ?? "") ?? .text
         textConversionMode = TextConversionMode(rawValue: defaults.string(forKey: "dudu.textConversionMode") ?? "") ?? .noConversion
         readAloudMode = ReadAloudMode(rawValue: defaults.string(forKey: "dudu.readAloudMode") ?? "") ?? .byPage
+        keepScreenOn = defaults.bool(forKey: "dudu.keepScreenOn")
+        autoRead = defaults.bool(forKey: "dudu.autoRead")
     }
 }

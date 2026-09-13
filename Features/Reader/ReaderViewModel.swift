@@ -304,6 +304,19 @@ class ReaderViewModel: ObservableObject {
         }
     }
     
+    /// 刷新当前章节：清掉缓存标记后强制重新抓取
+    func reloadCurrentChapter() async {
+        guard let chapter = currentChapter else { return }
+        chapter.isCached = false
+        chapter.cachePath = nil
+        try? CoreDataStack.shared.save()
+        do {
+            try await loadChapter(at: currentChapterIndex)
+        } catch {
+            errorMessage = "刷新失败：\(error.localizedDescription)"
+        }
+    }
+
     // MARK: - 章节导航
     func prevChapter() async {
         guard currentChapterIndex > 0 else { return }
@@ -482,7 +495,6 @@ class ReaderViewModel: ObservableObject {
         if book.origin == "local" {
             return try await loadLocalChapterContent(chapter)
         }
-
         // 香色闺阁站点书籍：走 XBS 引擎
         if book.origin.hasPrefix("xbs://") {
             let alias = String(book.origin.dropFirst("xbs://".count))
@@ -838,11 +850,25 @@ struct ChapterListView: View {
     @ObservedObject var viewModel: ReaderViewModel
     let book: Book
     @Environment(\.dismiss) var dismiss
-    
+    @State private var searchText = ""
+    @State private var reversed = false
+
+    /// 搜索过滤 + 倒序后的展示列表（保留原始章节序号）
+    private var displayChapters: [(offset: Int, element: BookChapter)] {
+        var list = Array(viewModel.chapters.enumerated())
+        if !searchText.isEmpty {
+            list = list.filter { $0.element.title.localizedCaseInsensitiveContains(searchText) }
+        }
+        if reversed {
+            list.reverse()
+        }
+        return list
+    }
+
     var body: some View {
         NavigationView {
             List {
-                ForEach(Array(viewModel.chapters.enumerated()), id: \.element.chapterId) { index, chapter in
+                ForEach(displayChapters, id: \.element.chapterId) { index, chapter in
                     Button(action: {
                         viewModel.jumpToChapter(index)
                         dismiss()
@@ -850,17 +876,18 @@ struct ChapterListView: View {
                         HStack {
                             Text("\(index + 1)")
                                 .frame(width: 40)
-                            
+
                             Text(chapter.title)
                                 .lineLimit(2)
-                            
+                                .foregroundColor(index == viewModel.currentChapterIndex ? .accentColor : .primary)
+
                             Spacer()
-                            
+
                             if index == viewModel.currentChapterIndex {
                                 Image(systemName: "checkmark")
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.accentColor)
                             }
-                            
+
                             if chapter.isCached {
                                 Image(systemName: "arrow.down.circle.fill")
                                     .foregroundColor(.green)
@@ -870,8 +897,16 @@ struct ChapterListView: View {
                     }
                 }
             }
-            .navigationTitle("目录")
+            .searchable(text: $searchText, prompt: "搜索章节标题")
+            .navigationTitle("目录 \(viewModel.chapters.count)章")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        reversed.toggle()
+                    } label: {
+                        Label(reversed ? "正序" : "倒序", systemImage: "arrow.up.arrow.down")
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("完成") {
                         dismiss()
