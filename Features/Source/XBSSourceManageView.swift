@@ -13,7 +13,6 @@ struct XBSSourceManageView: View {
     @StateObject private var store = XBSSourceStore.shared
     @State private var showingNetworkImport = false
     @State private var importURLText = ""
-    @State private var showingFileImporter = false
     @State private var statusMessage: String?
     @State private var importing = false
 
@@ -94,8 +93,20 @@ struct XBSSourceManageView: View {
                     } label: {
                         Label("网络导入", systemImage: "network")
                     }
+
+                    // 香色闺阁主流程：复制书源链接/JSON 后一键粘贴导入
                     Button {
-                        showingFileImporter = true
+                        importFromClipboard()
+                    } label: {
+                        Label("剪贴板导入", systemImage: "doc.on.clipboard")
+                    }
+
+                    Button {
+                        // 用 UIKit 选择器（SwiftUI fileImporter 从 sheet 内弹出在部分系统上无响应）
+                        DocumentPickerHelper.shared.present(contentTypes: [.data]) { urls in
+                            guard let url = urls.first else { return }
+                            Task { await importFromFile(url: url) }
+                        }
                     } label: {
                         Label("本地文件导入", systemImage: "doc")
                     }
@@ -145,14 +156,6 @@ struct XBSSourceManageView: View {
         } message: {
             Text("支持 .xbs 加密书源与明文 JSON 书源")
         }
-        .fileImporter(isPresented: $showingFileImporter, allowedContentTypes: [UTType.data]) { result in
-            switch result {
-            case .success(let url):
-                Task { await importFromFile(url: url) }
-            case .failure:
-                break
-            }
-        }
         .alert("导入结果", isPresented: Binding(
             get: { statusMessage != nil },
             set: { if !$0 { statusMessage = nil } }
@@ -173,6 +176,38 @@ struct XBSSourceManageView: View {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("dudu_站点备份.xbs")
         try? data.write(to: url, options: .atomic)
         return url
+    }
+
+    private func importFromClipboard() {
+        let text = UIPasteboard.general.string?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        guard !text.isEmpty else {
+            statusMessage = "剪贴板是空的，请先复制书源链接或 JSON"
+            return
+        }
+        importing = true
+        Task {
+            defer { importing = false }
+            // 形态一：书源链接
+            if text.hasPrefix("http"), let url = URL(string: text) {
+                do {
+                    let (data, _) = try await URLSession.shared.data(from: url)
+                    let sources = try XBSSourceFile.parse(data: data)
+                    let added = store.importSources(sources)
+                    statusMessage = "导入成功：共 \(sources.count) 个站点，新增 \(added) 个"
+                } catch {
+                    statusMessage = "导入失败：\(error.localizedDescription)"
+                }
+                return
+            }
+            // 形态二：剪贴板里直接是 JSON / base64 xbs
+            do {
+                let sources = try XBSSourceFile.parse(data: Data(text.utf8))
+                let added = store.importSources(sources)
+                statusMessage = "导入成功：共 \(sources.count) 个站点，新增 \(added) 个"
+            } catch {
+                statusMessage = "剪贴板内容不是有效的书源（支持链接/.xbs/JSON）"
+            }
+        }
     }
 
     private func importFromNetwork() async {

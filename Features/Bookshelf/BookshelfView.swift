@@ -53,8 +53,14 @@ struct BookshelfView: View {
                     Divider()
 
                     Button {
-                        DocumentPickerHelper.shared.present(contentTypes: [.plainText, .epub]) { urls in
+                        // 放宽为任意文件，代码内按扩展名校验（避免选择器"格式不正确"拦截）
+                        DocumentPickerHelper.shared.present(contentTypes: [.data]) { urls in
                             guard let url = urls.first else { return }
+                            let ext = url.pathExtension.lowercased()
+                            guard ["txt", "epub"].contains(ext) else {
+                                localBookViewModel.errorMessage = "仅支持 txt / epub 文件，当前是 .\(ext)"
+                                return
+                            }
                             Task { @MainActor in
                                 do {
                                     try await localBookViewModel.importBook(url: url)
