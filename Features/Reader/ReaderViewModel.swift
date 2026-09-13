@@ -171,39 +171,68 @@ class ReaderViewModel: ObservableObject {
         var chapters = try context.fetch(request)
 
         if chapters.isEmpty, !book.isLocal {
-            guard let sourceId = UUID(uuidString: book.origin) else {
-                throw ReaderError.noSource
+            // 香色闺阁站点书籍：走 XBS 引擎
+            if book.origin.hasPrefix("xbs://") {
+                let alias = String(book.origin.dropFirst("xbs://".count))
+                guard let source = XBSSourceStore.shared.source(alias: alias) else {
+                    throw ReaderError.noSource
+                }
+                let tocURL = book.tocUrl.isEmpty ? book.bookUrl : book.tocUrl
+                let xbsChapters = try await XBSEngine.shared.chapterList(source: source, url: tocURL)
+                guard !xbsChapters.isEmpty else {
+                    throw ReaderError.noChapters
+                }
+
+                for (index, web) in xbsChapters.enumerated() {
+                    let chapter = BookChapter.create(
+                        in: context,
+                        bookId: book.bookId,
+                        url: web.url,
+                        index: Int32(index),
+                        title: web.title
+                    )
+                    chapter.book = book
+                    chapter.sourceId = book.origin
+                }
+
+                book.totalChapterNum = Int32(xbsChapters.count)
+                try CoreDataStack.shared.save()
+                chapters = try context.fetch(request)
+            } else {
+                guard let sourceId = UUID(uuidString: book.origin) else {
+                    throw ReaderError.noSource
+                }
+
+                let sourceRequest: NSFetchRequest<BookSource> = BookSource.fetchRequest()
+                sourceRequest.fetchLimit = 1
+                sourceRequest.predicate = NSPredicate(format: "sourceId == %@", sourceId as CVarArg)
+                guard let source = try context.fetch(sourceRequest).first else {
+                    throw ReaderError.noSource
+                }
+
+                let webChapters = try await WebBook.getChapterList(source: source, book: book)
+                guard !webChapters.isEmpty else {
+                    throw ReaderError.noChapters
+                }
+
+                for web in webChapters {
+                    let chapter = BookChapter.create(
+                        in: context,
+                        bookId: book.bookId,
+                        url: web.url,
+                        index: Int32(web.index),
+                        title: web.title
+                    )
+                    chapter.book = book
+                    chapter.sourceId = source.sourceId.uuidString
+                    chapter.isVIP = web.isVip
+                }
+
+                book.totalChapterNum = Int32(webChapters.count)
+                try CoreDataStack.shared.save()
+
+                chapters = try context.fetch(request)
             }
-
-            let sourceRequest: NSFetchRequest<BookSource> = BookSource.fetchRequest()
-            sourceRequest.fetchLimit = 1
-            sourceRequest.predicate = NSPredicate(format: "sourceId == %@", sourceId as CVarArg)
-            guard let source = try context.fetch(sourceRequest).first else {
-                throw ReaderError.noSource
-            }
-
-            let webChapters = try await WebBook.getChapterList(source: source, book: book)
-            guard !webChapters.isEmpty else {
-                throw ReaderError.noChapters
-            }
-
-            for web in webChapters {
-                let chapter = BookChapter.create(
-                    in: context,
-                    bookId: book.bookId,
-                    url: web.url,
-                    index: Int32(web.index),
-                    title: web.title
-                )
-                chapter.book = book
-                chapter.sourceId = source.sourceId.uuidString
-                chapter.isVIP = web.isVip
-            }
-
-            book.totalChapterNum = Int32(webChapters.count)
-            try CoreDataStack.shared.save()
-
-            chapters = try context.fetch(request)
         }
 
         self.chapters = chapters
@@ -436,12 +465,21 @@ class ReaderViewModel: ObservableObject {
         guard let book = currentBook else {
             throw ReaderError.noBook
         }
-        
+
         // 本地书籍直接返回 TXT 切片内容
         if book.origin == "local" {
             return try await loadLocalChapterContent(chapter)
         }
-        
+
+        // 香色闺阁站点书籍：走 XBS 引擎
+        if book.origin.hasPrefix("xbs://") {
+            let alias = String(book.origin.dropFirst("xbs://".count))
+            guard let source = XBSSourceStore.shared.source(alias: alias) else {
+                throw ReaderError.noSource
+            }
+            return try await XBSEngine.shared.chapterContent(source: source, url: chapter.url)
+        }
+
         // 网络书籍：通过 WebBook 从书源获取
         guard let sourceId = UUID(uuidString: book.origin) else {
             throw ReaderError.noSource

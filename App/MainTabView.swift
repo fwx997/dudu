@@ -85,6 +85,10 @@ struct SettingsView: View {
                 
                 // 书源管理
                 Section(header: Label("书源", systemImage: "square.grid.2x2")) {
+                    NavigationLink("站点管理（香色闺阁源）") {
+                        XBSSourceManageView()
+                    }
+
                     NavigationLink("书源管理") {
                         SourceManageView()
                     }

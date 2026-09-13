@@ -66,6 +66,7 @@ class SearchViewModel: ObservableObject {
         let sourceName: String
         let sourceId: UUID
         let bookUrl: String
+        var xbsAlias: String?
 
         var displayName: String {
             // 应用繁简转换
@@ -79,6 +80,12 @@ class SearchViewModel: ObservableObject {
         var displayIntro: String? {
             guard let intro = intro else { return nil }
             return TextConverter.shared.convert(intro)
+        }
+
+        /// 书架 origin 标识：香色闺阁站点用 xbs://别名
+        var shelfOrigin: String {
+            if let xbsAlias { return "xbs://" + xbsAlias }
+            return sourceId.uuidString
         }
     }
     
@@ -106,24 +113,39 @@ class SearchViewModel: ObservableObject {
         errorMessage = nil
         searchedSourceCount = 0
 
+        // 统一任务池：Legado 书源 + 香色闺阁站点一起并发
+        enum SearchJob {
+            case legado(BookSource)
+            case xbs(XBSSource)
+        }
+
         let typeFiltered = SearchFilter.shared.filterBySourceType(sources, sourceType: settings.searchSourceType)
-        let enabledSources = typeFiltered.filter { $0.enabled && $0.searchUrl != nil }
-        totalSourceCount = enabledSources.count
+        let legadoSources = typeFiltered.filter { $0.enabled && $0.searchUrl != nil }
+        let xbsSources = XBSSourceStore.shared.enabledSources
+        let jobs: [SearchJob] = legadoSources.map { .legado($0) } + xbsSources.map { .xbs($0) }
+        totalSourceCount = jobs.count
 
         var nextIndex = 0
         var seenBookKeys = Set<String>()
 
         await withTaskGroup(of: [SearchResult].self) { group in
             func addNextSource() {
-                guard nextIndex < enabledSources.count else { return }
-                let source = enabledSources[nextIndex]
+                guard nextIndex < jobs.count else { return }
+                let job = jobs[nextIndex]
                 nextIndex += 1
-                group.addTask {
-                    await self.searchWithTimeout(keyword: keyword, source: source)
+                switch job {
+                case .legado(let source):
+                    group.addTask {
+                        await self.searchWithTimeout(keyword: keyword, source: source)
+                    }
+                case .xbs(let source):
+                    group.addTask {
+                        await self.searchXBSWithTimeout(source: source, keyword: keyword)
+                    }
                 }
             }
 
-            for _ in 0..<min(Self.maxConcurrentSources, enabledSources.count) {
+            for _ in 0..<min(Self.maxConcurrentSources, jobs.count) {
                 addNextSource()
             }
 
@@ -154,6 +176,37 @@ class SearchViewModel: ObservableObject {
         await withTaskGroup(of: [SearchResult]?.self) { inner in
             inner.addTask {
                 (try? await self.searchInSource(keyword: keyword, source: source)) ?? []
+            }
+            inner.addTask {
+                try? await Task.sleep(nanoseconds: Self.sourceTimeoutSeconds * 1_000_000_000)
+                return nil
+            }
+            var results: [SearchResult] = []
+            if let first = await inner.next() {
+                results = first ?? []
+            }
+            inner.cancelAll()
+            return results
+        }
+    }
+
+    /// 香色闺阁站点搜索（同样的超时赛跑）
+    private nonisolated func searchXBSWithTimeout(source: XBSSource, keyword: String) async -> [SearchResult] {
+        await withTaskGroup(of: [SearchResult]?.self) { inner in
+            inner.addTask {
+                let books = (try? await XBSEngine.shared.search(source: source, keyword: keyword)) ?? []
+                return books.map { book in
+                    SearchResult(
+                        name: book.name,
+                        author: book.author,
+                        coverUrl: book.cover,
+                        intro: book.desc,
+                        sourceName: book.sourceName,
+                        sourceId: UUID(),
+                        bookUrl: book.detailUrl,
+                        xbsAlias: book.sourceAlias
+                    )
+                }
             }
             inner.addTask {
                 try? await Task.sleep(nanoseconds: Self.sourceTimeoutSeconds * 1_000_000_000)
@@ -213,8 +266,9 @@ class SearchViewModel: ObservableObject {
     // MARK: - 添加到书架
     func addToBookshelf(result: SearchResult) async throws -> Book {
         let context = CoreDataStack.shared.viewContext
+        let origin = result.shelfOrigin
 
-        if let existing = findBook(bookUrl: result.bookUrl, origin: result.sourceId.uuidString, in: context) {
+        if let existing = findBook(bookUrl: result.bookUrl, origin: origin, in: context) {
             existing.name = result.name
             existing.author = result.author
             existing.coverUrl = result.coverUrl
@@ -232,14 +286,16 @@ class SearchViewModel: ObservableObject {
         book.intro = result.intro
         book.bookUrl = result.bookUrl
         book.tocUrl = ""
-        book.origin = result.sourceId.uuidString
+        book.origin = origin
         book.originName = result.sourceName
 
-        let sourceRequest: NSFetchRequest<BookSource> = BookSource.fetchRequest()
-        sourceRequest.fetchLimit = 1
-        sourceRequest.predicate = NSPredicate(format: "sourceId == %@", result.sourceId as CVarArg)
-        if let source = try? context.fetch(sourceRequest).first {
-            book.source = source
+        if result.xbsAlias == nil {
+            let sourceRequest: NSFetchRequest<BookSource> = BookSource.fetchRequest()
+            sourceRequest.fetchLimit = 1
+            sourceRequest.predicate = NSPredicate(format: "sourceId == %@", result.sourceId as CVarArg)
+            if let source = try? context.fetch(sourceRequest).first {
+                book.source = source
+            }
         }
 
         try CoreDataStack.shared.save()

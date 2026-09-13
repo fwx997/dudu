@@ -120,6 +120,11 @@
 		'1A0000000000008C' = {isa = PBXBuildFile; fileRef = 1A1000000000008C; };
 		'1A0000000000008D' = {isa = PBXBuildFile; fileRef = 1A1000000000008D; };
 		3D1A40C2A4189C837D98B616 /* TextConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BE4951AA6726A4DB32A615 /* TextConverter.swift */; };
+		DDC0AAB20000000000000010 /* XXTEA.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AAB10000000000000010 /* XXTEA.swift */; };
+		DDC0AAB20000000000000011 /* XBSSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AAB10000000000000011 /* XBSSource.swift */; };
+		DDC0AAB20000000000000012 /* XPathEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AAB10000000000000012 /* XPathEngine.swift */; };
+		DDC0AAB20000000000000013 /* XBSEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AAB10000000000000013 /* XBSEngine.swift */; };
+		DDC0AAB20000000000000014 /* XBSSourceManageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AAB10000000000000014 /* XBSSourceManageView.swift */; };
 		685244679399813BB5F4FCEF /* SearchFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0C4165B98E48B164F2D5A2 /* SearchFilter.swift */; };
 		7E0044D9907502DC25731A2A /* SearchHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBB4804934C20219DA82E34 /* SearchHistoryManager.swift */; };
 		9715449CA7354028C35FE6A4 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB28466C90CB7AE293DE4B17 /* AppSettings.swift */; };
@@ -242,6 +247,11 @@
 		DA0C4165B98E48B164F2D5A2 /* SearchFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchFilter.swift; path = Core/Utils/SearchFilter.swift; sourceTree = SOURCE_ROOT; };
 		FB28466C90CB7AE293DE4B17 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppSettings.swift; path = Core/Settings/AppSettings.swift; sourceTree = SOURCE_ROOT; };
 		FDBB4804934C20219DA82E34 /* SearchHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchHistoryManager.swift; path = Features/Search/SearchHistoryManager.swift; sourceTree = SOURCE_ROOT; };
+		DDC0AAB10000000000000010 /* XXTEA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = XXTEA.swift; path = Core/XBS/XXTEA.swift; sourceTree = SOURCE_ROOT; };
+		DDC0AAB10000000000000011 /* XBSSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = XBSSource.swift; path = Core/XBS/XBSSource.swift; sourceTree = SOURCE_ROOT; };
+		DDC0AAB10000000000000012 /* XPathEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = XPathEngine.swift; path = Core/XBS/XPathEngine.swift; sourceTree = SOURCE_ROOT; };
+		DDC0AAB10000000000000013 /* XBSEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = XBSEngine.swift; path = Core/XBS/XBSEngine.swift; sourceTree = SOURCE_ROOT; };
+		DDC0AAB10000000000000014 /* XBSSourceManageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = XBSSourceManageView.swift; path = Features/Source/XBSSourceManageView.swift; sourceTree = SOURCE_ROOT; };
 		DDC0AABB00000000000000F1 /* SearchComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchComponents.swift; path = Features/Search/SearchComponents.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -271,6 +281,11 @@
 				DA0C4165B98E48B164F2D5A2 /* SearchFilter.swift */,
 				C2BE4951AA6726A4DB32A615 /* TextConverter.swift */,
 				FDBB4804934C20219DA82E34 /* SearchHistoryManager.swift */,
+				DDC0AAB10000000000000010 /* XXTEA.swift */,
+				DDC0AAB10000000000000011 /* XBSSource.swift */,
+				DDC0AAB10000000000000012 /* XPathEngine.swift */,
+				DDC0AAB10000000000000013 /* XBSEngine.swift */,
+				DDC0AAB10000000000000014 /* XBSSourceManageView.swift */,
 				DDC0AABB00000000000000F1 /* SearchComponents.swift */,
 				30794CDB856C1E8E0DD64FDB /* SearchHotWordsManager.swift */,
 			);
@@ -762,6 +777,11 @@
 				685244679399813BB5F4FCEF /* SearchFilter.swift in Sources */,
 				3D1A40C2A4189C837D98B616 /* TextConverter.swift in Sources */,
 				7E0044D9907502DC25731A2A /* SearchHistoryManager.swift in Sources */,
+				DDC0AAB20000000000000010 /* XXTEA.swift in Sources */,
+				DDC0AAB20000000000000011 /* XBSSource.swift in Sources */,
+				DDC0AAB20000000000000012 /* XPathEngine.swift in Sources */,
+				DDC0AAB20000000000000013 /* XBSEngine.swift in Sources */,
+				DDC0AAB20000000000000014 /* XBSSourceManageView.swift in Sources */,
 				DDC0AABB00000000000000F2 /* SearchComponents.swift in Sources */,
 				B2FE4CE99075FB46AFF46E97 /* SearchHotWordsManager.swift in Sources */,
 			);
@@ -915,6 +935,8 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.legado.app;
+				OTHER_LDFLAGS = "-lxml2";
+				HEADER_SEARCH_PATHS = ("$(SDKROOT)/usr/include/libxml2", inherited);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -948,6 +970,8 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.legado.app;
+				OTHER_LDFLAGS = "-lxml2";
+				HEADER_SEARCH_PATHS = ("$(SDKROOT)/usr/include/libxml2", inherited);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
