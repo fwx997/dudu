@@ -34,6 +34,15 @@ struct DiscoveryView: View {
         }
         .navigationTitle("发现")
         .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink {
+                    RSSSubscriptionView()
+                } label: {
+                    Label("RSS订阅", systemImage: "dot.radiowaves.left.and.right")
+                }
+            }
+        }
         .task {
             await viewModel.loadDiscoveryContent()
         }

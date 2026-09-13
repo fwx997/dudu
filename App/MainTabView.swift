@@ -16,32 +16,24 @@ struct MainTabView: View {
             // 书架（含本地书籍入口）
             NavigationStack { BookshelfView() }
                 .tabItem {
-                    Image(systemName: "books.vertical.fill")
+                    Label("书架", systemImage: "books.vertical.fill")
                 }
                 .tag(0)
-            
+
             // 发现
             NavigationStack { DiscoveryView() }
                 .tabItem {
-                    Image(systemName: "safari")
+                    Label("发现", systemImage: "safari")
                 }
                 .tag(1)
-            
-            // RSS订阅
-            NavigationStack { RSSSubscriptionView() }
-                .tabItem {
-                    Image(systemName: "dot.radiowaves.left.and.right")
-                }
-                .tag(2)
-            
+
             // 我的
             SettingsView()
                 .tabItem {
-                    Image(systemName: "person.crop.circle")
+                    Label("我的", systemImage: "person.crop.circle")
                 }
-                .tag(3)
+                .tag(2)
         }
-        .accentColor(.blue)
     }
 }
 
