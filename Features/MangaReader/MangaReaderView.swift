@@ -115,8 +115,26 @@ class MangaReaderViewModel: ObservableObject {
     }
     
     func loadChapter(_ chapter: BookChapter) async {
-        guard let book = currentBook, let source = book.source else { return }
-        
+        guard let book = currentBook else { return }
+
+        // 香色闺阁漫画站点：走 XBS 引擎取图
+        if book.origin.hasPrefix("xbs://") {
+            let alias = String(book.origin.dropFirst("xbs://".count))
+            guard let source = XBSSourceStore.shared.source(alias: alias) else { return }
+            do {
+                let imageURLs = try await XBSEngine.shared.chapterImages(source: source, url: chapter.chapterUrl)
+                if !imageURLs.isEmpty {
+                    images = imageURLs
+                    hasMoreImages = false
+                }
+            } catch {
+                errorMessage = "加载失败: \(error.localizedDescription)"
+            }
+            return
+        }
+
+        guard let source = book.source else { return }
+
         do {
             let content = try await WebBook.getContent(source: source, book: book, chapter: chapter)
             let imageURLs = content.imageURLs

@@ -120,6 +120,7 @@
 		'1A0000000000008C' = {isa = PBXBuildFile; fileRef = 1A1000000000008C; };
 		'1A0000000000008D' = {isa = PBXBuildFile; fileRef = 1A1000000000008D; };
 		3D1A40C2A4189C837D98B616 /* TextConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BE4951AA6726A4DB32A615 /* TextConverter.swift */; };
+		DDC0AABB00000000000000F8 /* BookReaderRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AABB00000000000000F7 /* BookReaderRouter.swift */; };
 		DDC0AAB30000000000000F6 /* ContentEditSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AABB00000000000000F6 /* ContentEditSheet.swift */; };
 		DDC0AAB30000000000000F5 /* SearchContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AABB00000000000000F5 /* SearchContentView.swift */; };
 		DDC0AABB00000000000000F4 /* XBSBookDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AABB00000000000000F3 /* XBSBookDetailView.swift */; };
@@ -250,6 +251,7 @@
 		DA0C4165B98E48B164F2D5A2 /* SearchFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchFilter.swift; path = Core/Utils/SearchFilter.swift; sourceTree = SOURCE_ROOT; };
 		FB28466C90CB7AE293DE4B17 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppSettings.swift; path = Core/Settings/AppSettings.swift; sourceTree = SOURCE_ROOT; };
 		FDBB4804934C20219DA82E34 /* SearchHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchHistoryManager.swift; path = Features/Search/SearchHistoryManager.swift; sourceTree = SOURCE_ROOT; };
+		DDC0AABB00000000000000F7 /* BookReaderRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BookReaderRouter.swift; path = Features/Reader/BookReaderRouter.swift; sourceTree = SOURCE_ROOT; };
 		DDC0AABB00000000000000F6 /* ContentEditSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentEditSheet.swift; path = Features/Reader/ContentEditSheet.swift; sourceTree = SOURCE_ROOT; };
 		DDC0AABB00000000000000F5 /* SearchContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchContentView.swift; path = Features/Reader/SearchContentView.swift; sourceTree = SOURCE_ROOT; };
 		DDC0AABB00000000000000F3 /* XBSBookDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = XBSBookDetailView.swift; path = Features/BookDetail/XBSBookDetailView.swift; sourceTree = SOURCE_ROOT; };
@@ -287,6 +289,7 @@
 				DA0C4165B98E48B164F2D5A2 /* SearchFilter.swift */,
 				C2BE4951AA6726A4DB32A615 /* TextConverter.swift */,
 				FDBB4804934C20219DA82E34 /* SearchHistoryManager.swift */,
+				DDC0AABB00000000000000F7 /* BookReaderRouter.swift */,
 				DDC0AABB00000000000000F6 /* ContentEditSheet.swift */,
 				DDC0AABB00000000000000F5 /* SearchContentView.swift */,
 				DDC0AABB00000000000000F3 /* XBSBookDetailView.swift */,
@@ -786,6 +789,7 @@
 				685244679399813BB5F4FCEF /* SearchFilter.swift in Sources */,
 				3D1A40C2A4189C837D98B616 /* TextConverter.swift in Sources */,
 				7E0044D9907502DC25731A2A /* SearchHistoryManager.swift in Sources */,
+				DDC0AABB00000000000000F8 /* BookReaderRouter.swift in Sources */,
 				DDC0AAB30000000000000F6 /* ContentEditSheet.swift in Sources */,
 				DDC0AAB30000000000000F5 /* SearchContentView.swift in Sources */,
 				DDC0AABB00000000000000F4 /* XBSBookDetailView.swift in Sources */,

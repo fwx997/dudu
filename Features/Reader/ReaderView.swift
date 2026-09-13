@@ -278,6 +278,7 @@ struct ReaderView: View {
                     }
                 }
                 readingEnhancementManager.onNightModeChanged = { isNight in
+                    guard AppSettings.shared.autoNightMode else { return }
                     viewModel.applyTheme(isNight ? .dark : .light)
                 }
                 readingEnhancementManager.startReadingSession()

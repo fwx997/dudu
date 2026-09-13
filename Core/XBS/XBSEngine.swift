@@ -93,6 +93,86 @@ final class XBSEngine {
         return books
     }
 
+    // MARK: - 漫画/听书内容提取
+
+    /// 章节图片列表（漫画源）：content 规则多节点按行拼接后逐行成图
+    func chapterImages(source: XBSSource, url: String) async throws -> [String] {
+        guard let action = source.action("chapterContent") else {
+            throw XBSError.actionMissing("chapterContent")
+        }
+        let moreKeys = action.dict("moreKeys") ?? [:]
+        let maxPage = moreKeys.int("maxPage") ?? 10
+
+        var urls: [String] = []
+        var nextURL: String? = url
+        var page = 0
+        var lastParams: [String: Any] = ["queryInfo": ["url": url, "detailUrl": url]]
+
+        while let current = nextURL, page < min(maxPage, Self.hardMaxPage) {
+            page += 1
+            var params = lastParams
+            params["result"] = current
+            params["pageIndex"] = page
+
+            let response = try await fetch(action: action, source: source, params: params)
+            let raw = evaluateFields(action: action, item: parseItem(action: action, response: response),
+                                     response: response, params: params,
+                                     keys: ["content"], joinMultiline: true)["content"] ?? ""
+            for line in raw.components(separatedBy: .newlines) {
+                let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !trimmed.isEmpty, trimmed.contains("http") || trimmed.hasPrefix("//") else { continue }
+                if let imageUrl = absoluteURL(trimmed, base: response.url, host: source.host) {
+                    urls.append(imageUrl)
+                }
+            }
+
+            let nextValues = evaluateFields(action: action, item: parseItem(action: action, response: response), response: response,
+                                            params: params, keys: ["nextPageUrl"])
+            let next = (nextValues["nextPageUrl"] ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            if next.isEmpty {
+                nextURL = nil
+            } else {
+                nextURL = absoluteURL(next, base: response.url, host: source.host)
+                lastParams["lastResponse"] = ["nextPageUrl": nextURL ?? ""]
+                lastParams["responseUrl"] = response.url
+            }
+        }
+
+        guard !urls.isEmpty else { throw XBSError.parseFailed("未提取到图片") }
+        return urls
+    }
+
+    /// 章节音频地址（听书源）：content 规则取到的首个 http 链接
+    func chapterAudioURL(source: XBSSource, url: String) async throws -> URL {
+        guard let action = source.action("chapterContent") else {
+            throw XBSError.actionMissing("chapterContent")
+        }
+        let params: [String: Any] = ["result": url, "pageIndex": 1,
+                                     "queryInfo": ["url": url, "detailUrl": url]]
+        let response = try await fetch(action: action, source: source, params: params)
+        let raw = evaluateFields(action: action, item: parseItem(action: action, response: response),
+                                 response: response, params: params,
+                                 keys: ["content", "url"])["content"] ?? ""
+
+        // 从文本中抠出第一个音频/媒体链接
+        guard let regex = try? NSRegularExpression(pattern: "https?://[^\\s\"'<>]+\\.(?:mp3|m4a|aac|wav|ogg|flac|m3u8|mp4)[^\\s\"'<>]*",
+                                                   options: [.caseInsensitive]) else {
+            throw XBSError.parseFailed("音频链接解析失败")
+        }
+        let ns = raw as NSString
+        if let match = regex.firstMatch(in: raw, range: NSRange(location: 0, length: ns.length)),
+           let candidate = ns.substring(with: match.range) as String?,
+           let audioURL = URL(string: candidate) {
+            return audioURL
+        }
+        // 兜底：整段即链接
+        if let audioURL = absoluteURL(raw.trimmingCharacters(in: .whitespacesAndNewlines), base: response.url, host: source.host),
+           let url = URL(string: audioURL) {
+            return url
+        }
+        throw XBSError.parseFailed("未找到音频链接")
+    }
+
     // MARK: - 书世界（分类浏览）
 
     struct XBSCategory: Identifiable, Equatable {

@@ -107,6 +107,11 @@ class AppSettings: ObservableObject {
         didSet { defaults.set(autoRead, forKey: "dudu.autoRead") }
     }
 
+    /// 按时段自动切换夜间模式
+    @Published var autoNightMode: Bool {
+        didSet { defaults.set(autoNightMode, forKey: "dudu.autoNightMode") }
+    }
+
     private init() {
         searchFilterType = SearchFilterType(rawValue: defaults.string(forKey: "dudu.searchFilterType") ?? "") ?? .noFilter
         searchSourceType = SourceType(rawValue: defaults.string(forKey: "dudu.searchSourceType") ?? "") ?? .text
@@ -114,5 +119,6 @@ class AppSettings: ObservableObject {
         readAloudMode = ReadAloudMode(rawValue: defaults.string(forKey: "dudu.readAloudMode") ?? "") ?? .byPage
         keepScreenOn = defaults.bool(forKey: "dudu.keepScreenOn")
         autoRead = defaults.bool(forKey: "dudu.autoRead")
+        autoNightMode = defaults.object(forKey: "dudu.autoNightMode") == nil ? true : defaults.bool(forKey: "dudu.autoNightMode")
     }
 }

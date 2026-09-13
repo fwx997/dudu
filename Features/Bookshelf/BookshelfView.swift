@@ -175,7 +175,7 @@ struct BookshelfView: View {
                 GridItem(.flexible())
             ], spacing: 16) {
                 ForEach(viewModel.books, id: \.bookId) { book in
-                    NavigationLink(destination: ReaderView(book: book)) {
+                    NavigationLink(destination: BookReaderRouter(book: book)) {
                         BookGridItemView(book: book)
                     }
                     .buttonStyle(.plain)
@@ -206,7 +206,7 @@ struct BookshelfView: View {
     private var bookListView: some View {
         List {
             ForEach(viewModel.books, id: \.bookId) { book in
-                NavigationLink(destination: ReaderView(book: book)) {
+                NavigationLink(destination: BookReaderRouter(book: book)) {
                     BookListItemView(book: book)
                 }
             }

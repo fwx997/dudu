@@ -131,7 +131,7 @@ struct XBSBookDetailView: View {
         }
         .navigationDestination(isPresented: $showingReader) {
             if let shelfBook {
-                ReaderView(book: shelfBook)
+                BookReaderRouter(book: shelfBook)
             }
         }
         .alert("提示", isPresented: Binding(

@@ -56,6 +56,8 @@ struct SettingsView: View {
 
                     Toggle("阅读时屏幕常亮", isOn: $settings.keepScreenOn)
 
+                    Toggle("自动夜间模式", isOn: $settings.autoNightMode)
+
                     Toggle("启动后继续上次阅读", isOn: $settings.autoRead)
                 }
 
