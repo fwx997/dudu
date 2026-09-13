@@ -49,7 +49,7 @@ class AudioPlayManager: ObservableObject {
     private func setupAudioSession() {
         do {
             let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .spokenAudio, options: [.allowsAirPlay, .allowBluetooth])
+            try session.setCategory(.playback, mode: .spokenAudio, options: [.allowBluetooth])
             try session.setActive(true)
         } catch {
             print("音频会话配置失败: \(error)")
@@ -186,7 +186,7 @@ class AudioPlayManager: ObservableObject {
         
         // 解析音频 URL
         // extract audio url from text
-        if let regex = try? NSRegularExpression(pattern: "https?://[^\s\"\'<>]*\.(?:mp3|m4a|aac|wav|ogg|flac|m3u8|mp4)[^\s\"\'<>]*", options: [.caseInsensitive]) {
+        if let regex = try? NSRegularExpression(pattern: "https?://[^\\s\"\'<>]*\\.(?:mp3|m4a|aac|wav|ogg|flac|m3u8|mp4)[^\\s\"\'<>]*", options: [.caseInsensitive]) {
             let ns = content as NSString
             if let m = regex.firstMatch(in: content, range: NSRange(location: 0, length: ns.length)),
                let candidate = ns.substring(with: m.range) as String?,
@@ -356,6 +356,3 @@ enum AudioError: LocalizedError {
     }
 }
 
-// MARK: - 数组安全访问
-
-}

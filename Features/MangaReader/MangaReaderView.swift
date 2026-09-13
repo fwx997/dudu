@@ -226,8 +226,4 @@ struct ZoomableImageView: View {
     }
 }
 
-private extension Array {
-    subscript(safe index: Int) -> Element? {
-        indices.contains(index) ? self[index] : nil
-    }
-}
+// subscript(safe:) 已移至 BookReaderRouter.swift 全局实现

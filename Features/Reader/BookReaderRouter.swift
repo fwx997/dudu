@@ -56,3 +56,11 @@ extension Color {
                   blue: Double(rgb & 0xFF) / 255.0)
     }
 }
+
+// MARK: - 数组安全下标（全局唯一实现）
+
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        indices.contains(index) ? self[index] : nil
+    }
+}
