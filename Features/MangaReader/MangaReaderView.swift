@@ -43,7 +43,7 @@ struct MangaReaderView: View {
             } else {
                 // 图片列表（纵向长条模式）
                 ScrollView {
-                    LazyVStack(spacing: Int(imgSpacing)) {
+                    LazyVStack(spacing: CGFloat(imgSpacing)) {
                         ForEach(Array(viewModel.images.enumerated()), id: \.offset) { index, imageURL in
                             ZoomableImageView(url: imageURL) {
                                 withAnimation { showUI.toggle() }
