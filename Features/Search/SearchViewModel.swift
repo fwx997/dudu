@@ -12,23 +12,46 @@ import CoreData
 class SearchViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var searchResults: [SearchResult] = []
+    @Published var filteredResults: [SearchResult] = []
     @Published var isSearching = false
     @Published var errorMessage: String?
     @Published var selectedSources: [BookSource] = []
-    
+    @Published var searchHistory: [String] = []
+    @Published var hotWords: [String] = []
+
     private var ruleEngine: RuleEngine = RuleEngine()
+    private let settings = AppSettings.shared
+    private let historyManager = SearchHistoryManager.shared
+    private let hotWordsManager = SearchHotWordsManager.shared
 
     init() {
         loadDefaultSources()
+        loadSearchHistory()
+        loadHotWords()
     }
 
     private func loadDefaultSources() {
         do {
             let sources = try CoreDataStack.shared.viewContext.fetch(BookSource.fetchRequest())
-            selectedSources = sources.filter { $0.enabled && $0.searchUrl != nil }
+            // 根据设置过滤书源类型
+            let typeFiltered = SearchFilter.shared.filterBySourceType(sources, sourceType: settings.searchSourceType)
+            selectedSources = typeFiltered.filter { $0.enabled && $0.searchUrl != nil }
         } catch {
             selectedSources = []
         }
+    }
+
+    private func loadSearchHistory() {
+        searchHistory = historyManager.history
+    }
+
+    private func loadHotWords() {
+        hotWords = hotWordsManager.hotWords
+    }
+
+    /// 刷新书源（当用户更改书源类型设置时调用）
+    func refreshSources() {
+        loadDefaultSources()
     }
     
     // MARK: - 搜索结果
@@ -41,13 +64,19 @@ class SearchViewModel: ObservableObject {
         let sourceName: String
         let sourceId: UUID
         let bookUrl: String
-        
+
         var displayName: String {
-            name.trimmingCharacters(in: .whitespaces)
+            // 应用繁简转换
+            TextConverter.shared.convert(name.trimmingCharacters(in: .whitespaces))
         }
-        
+
         var displayAuthor: String {
-            author.trimmingCharacters(in: .whitespaces)
+            TextConverter.shared.convert(author.trimmingCharacters(in: .whitespaces))
+        }
+
+        var displayIntro: String? {
+            guard let intro = intro else { return nil }
+            return TextConverter.shared.convert(intro)
         }
     }
     
@@ -55,15 +84,24 @@ class SearchViewModel: ObservableObject {
     func search(keyword: String, sources: [BookSource]) async {
         guard !keyword.isEmpty else {
             searchResults = []
+            filteredResults = []
             isSearching = false
             return
         }
-        
+
+        // 添加到搜索历史
+        historyManager.add(keyword)
+        loadSearchHistory()
+
         isSearching = true
         searchResults.removeAll()
+        filteredResults.removeAll()
         errorMessage = nil
 
-        let enabledSources = sources.filter { $0.enabled && $0.searchUrl != nil }
+        // 过滤书源类型
+        let typeFiltered = SearchFilter.shared.filterBySourceType(sources, sourceType: settings.searchSourceType)
+        let enabledSources = typeFiltered.filter { $0.enabled && $0.searchUrl != nil }
+
         var merged: [SearchResult] = []
 
         await withTaskGroup(of: [SearchResult].self) { group in
@@ -83,7 +121,34 @@ class SearchViewModel: ObservableObject {
         }
 
         searchResults = merged
+
+        // 应用搜索过滤
+        applyFilter(keyword: keyword)
+
         isSearching = false
+    }
+
+    /// 应用搜索过滤
+    private func applyFilter(keyword: String) {
+        let filtered = SearchFilter.shared.filter(
+            searchResults,
+            keyword: keyword,
+            filterType: settings.searchFilterType,
+            getName: { $0.displayName }
+        )
+
+        // 智能排序
+        filteredResults = SearchFilter.shared.sortResults(
+            filtered,
+            keyword: keyword,
+            getName: { $0.displayName }
+        )
+    }
+
+    /// 重新应用过滤（当用户更改过滤设置时调用）
+    func reapplyFilter() {
+        guard !searchText.isEmpty else { return }
+        applyFilter(keyword: searchText)
     }
     
     // MARK: - 在单个书源中搜索
@@ -145,6 +210,36 @@ class SearchViewModel: ObservableObject {
         request.fetchLimit = 1
         request.predicate = NSPredicate(format: "bookUrl == %@ AND origin == %@", bookUrl, origin)
         return try? context.fetch(request).first
+    }
+
+    // MARK: - 搜索历史管理
+
+    /// 删除搜索历史项
+    func removeHistory(_ keyword: String) {
+        historyManager.remove(keyword)
+        loadSearchHistory()
+    }
+
+    /// 清空搜索历史
+    func clearHistory() {
+        historyManager.clearAll()
+        loadSearchHistory()
+    }
+
+    /// 使用历史关键词搜索
+    func searchWithHistory(_ keyword: String) {
+        searchText = keyword
+        Task {
+            await search(keyword: keyword, sources: selectedSources)
+        }
+    }
+
+    /// 使用热词搜索
+    func searchWithHotWord(_ word: String) {
+        searchText = word
+        Task {
+            await search(keyword: word, sources: selectedSources)
+        }
     }
 }
 
