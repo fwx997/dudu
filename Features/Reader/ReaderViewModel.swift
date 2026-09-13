@@ -477,7 +477,7 @@ class ReaderViewModel: ObservableObject {
             guard let source = XBSSourceStore.shared.source(alias: alias) else {
                 throw ReaderError.noSource
             }
-            return try await XBSEngine.shared.chapterContent(source: source, url: chapter.url)
+            return try await XBSEngine.shared.chapterContent(source: source, url: chapter.chapterUrl)
         }
 
         // 网络书籍：通过 WebBook 从书源获取

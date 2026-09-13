@@ -41,7 +41,7 @@ final class XPathDocument {
 
     init(html: String, baseURL: String?) {
         let bytes = Array(html.utf8)
-        let options = Int32(HTML_PARSE_RECOVER | HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING)
+        let options = Int32(HTML_PARSE_RECOVER.rawValue | HTML_PARSE_NOERROR.rawValue | HTML_PARSE_NOWARNING.rawValue)
         doc = bytes.withUnsafeBufferPointer { buf in
             guard let base = buf.baseAddress else { return nil }
             return base.withMemoryRebound(to: CChar.self, capacity: buf.count) { cbase in
@@ -86,7 +86,7 @@ final class XPathDocument {
             return .string(n.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(n)) : "\(n)")
         default:
             if let cstr = result.pointee.stringval {
-                return .string(String(validatingUTF8: cstr) ?? "")
+                return .string(stringFromXmlChar(cstr))
             }
             return .string("")
         }
@@ -111,9 +111,12 @@ final class XPathDocument {
     /// 节点属性值
     static func attribute(_ name: String, of node: UnsafeMutablePointer<xmlNode>) -> String? {
         name.withCString { cName -> String? in
-            guard let cstr = xmlGetProp(node, UnsafePointer(cName)) else { return nil }
-            defer { xmlFree(cstr) }
-            return stringFromXmlChar(cstr)
+            let prop: String? = cName.withMemoryRebound(to: xmlChar.self, capacity: name.utf8.count + 1) { xmlName in
+                guard let cstr = xmlGetProp(node, xmlName) else { return nil }
+                defer { xmlFree(cstr) }
+                return stringFromXmlChar(cstr)
+            }
+            return prop
         }
     }
 

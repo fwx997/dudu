@@ -11,6 +11,7 @@
 
 import Foundation
 import JavaScriptCore
+import libxml2
 
 struct XBSBook {
     var name = ""
@@ -228,7 +229,7 @@ final class XBSEngine {
 
     private func fetch(action: [String: Any], source: XBSSource, params: [String: Any]) async throws -> Response {
         let requestInfo = action.string("requestInfo") ?? "%@result"
-        let built = try buildRequest(requestInfo: requestInfo, source: source, params: params)
+        let built = try buildRequest(action: action, requestInfo: requestInfo, source: source, params: params)
         guard let requestURL = URL(string: built.url) ?? URL(string: source.host), !built.url.isEmpty else {
             throw XBSError.badRequest
         }
@@ -292,7 +293,7 @@ final class XBSEngine {
     }
 
     /// requestInfo → 具体请求（模板 or @js:）
-    func buildRequest(requestInfo: String, source: XBSSource, params: [String: Any]) throws -> BuiltRequest {
+    func buildRequest(action: [String: Any], requestInfo: String, source: XBSSource, params: [String: Any]) throws -> BuiltRequest {
         var headers = source.httpHeaders
 
         if requestInfo.hasPrefix("@js:") {
@@ -343,7 +344,7 @@ final class XBSEngine {
         return nil
     }
 
-    private func parseList(action: [String: Any], response: Response, params: [String: Any]) async throws -> [Any] {
+    private func parseList(action: [String: Any], response: Response, params: [String: Any]) throws -> [Any] {
         guard let listRule = action.string("list"), !listRule.isEmpty else {
             // 无 list：单对象模式（如 JSON 接口直接返回详情/正文）
             if let json = response.json { return [json] }

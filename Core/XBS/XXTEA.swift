@@ -53,8 +53,9 @@ enum XXTEA {
     private static func decrypt(_ v: inout [UInt32], _ keyWords: [UInt32]) {
         let n = v.count
         guard n >= 2 else { return }
-        var rounds = 6 + 52 / n
-        var sum = rounds &* delta
+        let roundsCount = 6 + 52 / n
+        var rounds = roundsCount
+        var sum = UInt32(roundsCount) &* delta
         var y = v[0]
         while rounds > 0 {
             let e = (sum >> 2) & 3
