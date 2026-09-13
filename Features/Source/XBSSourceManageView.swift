@@ -74,10 +74,11 @@ struct XBSSourceManageView: View {
                             ))
                             .labelsHidden()
                         }
-                    }
-                    .onTapGesture {
-                        editingSource = source
-                        showingEditor = true
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            editingSource = source
+                            showingEditor = true
+                        }
                     }
                     .onDelete { indexSet in
                         for index in indexSet {
