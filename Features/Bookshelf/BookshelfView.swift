@@ -203,6 +203,7 @@ struct BookshelfView: View {
         }
     }
 
+    @ViewBuilder
     private var bookshelfContent: some View {
         switch viewModel.viewMode {
         case .grid:
@@ -457,5 +458,145 @@ struct DrawerOverlay<Content: View>: View {
             }
         }
         .animation(.easeInOut(duration: 0.22), value: isPresented)
+    }
+}
+
+// MARK: - 网格项（被详情/发现页引用的共享组件）
+
+struct BookGridItemView: View {
+    let book: Book
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            BookCoverView(url: book.coverUrl)
+                .frame(maxWidth: .infinity)
+                .aspectRatio(3/4, contentMode: .fill)
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(8)
+                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+
+            Text(book.name)
+                .font(.caption)
+                .fontWeight(.medium)
+                .lineLimit(1)
+                .foregroundColor(.primary)
+
+            Text(book.author)
+                .font(.caption2)
+                .lineLimit(1)
+                .foregroundColor(.secondary)
+
+            ProgressView(value: book.readProgress)
+                .progressViewStyle(.linear)
+                .tint(.blue)
+        }
+    }
+}
+
+// MARK: - 列表项
+
+struct BookListItemView: View {
+    let book: Book
+
+    var body: some View {
+        HStack(spacing: 12) {
+            BookCoverView(url: book.coverUrl)
+                .frame(width: 60, height: 80)
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(4)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(book.name)
+                    .font(.body)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+
+                Text(book.author)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+
+                if let chapter = book.latestChapterTitle {
+                    Text(chapter)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                HStack {
+                    ProgressView(value: book.readProgress)
+                        .progressViewStyle(.linear)
+                        .frame(width: 100)
+
+                    Text("\(Int(book.readProgress * 100))%")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Spacer()
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+// MARK: - 封面视图
+
+struct BookCoverView: View {
+    let url: String?
+    @State private var imageData: Data?
+
+    var body: some View {
+        Group {
+            if let data = imageData, let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else {
+                Image(systemName: "books.vertical")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(.gray.opacity(0.5))
+            }
+        }
+        .task {
+            if let urlString = url, !urlString.isEmpty {
+                await loadImage(urlString: urlString)
+            }
+        }
+    }
+
+    private func loadImage(urlString: String) async {
+        let cached = await ImageCacheManager.shared.loadImage(from: urlString)
+        if let cached = cached {
+            imageData = cached.pngData()
+        }
+    }
+}
+
+// MARK: - 空状态
+
+struct EmptyStateView: View {
+    let title: String
+    let subtitle: String
+    let imageName: String
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: imageName)
+                .font(.system(size: 60))
+                .foregroundColor(.gray.opacity(0.5))
+
+            Text(title)
+                .font(.title2)
+                .fontWeight(.medium)
+
+            Text(subtitle)
+                .font(.body)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
