@@ -7,559 +7,564 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A00000000000001 /* LegadoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000001 /* LegadoApp.swift */; };
-		1A00000000000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A10000000000003 /* Assets.xcassets */; };
-		1A00000000000004 /* Legado.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000004 /* Legado.xcdatamodeld */; };
-		
-		// Core
-		1A00000000000010 /* Book+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000010 /* Book+CoreDataClass.swift */; };
-		1A00000000000011 /* BookSource+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000011 /* BookSource+CoreDataClass.swift */; };
-		1A00000000000012 /* BookChapter+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000012 /* BookChapter+CoreDataClass.swift */; };
-		1A00000000000013 /* Bookmark+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000013 /* Bookmark+CoreDataClass.swift */; };
-		1A00000000000014 /* ReadConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000014 /* ReadConfig.swift */; };
-		1A00000000000015 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000015 /* CoreDataStack.swift */; };
-		1A00000000000016 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000016 /* HTTPClient.swift */; };
-		1A00000000000017 /* RuleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000017 /* RuleEngine.swift */; };
-		1A00000000000018 /* ReplaceEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000018 /* ReplaceEngine.swift */; };
-		1A00000000000019 /* RuleSplitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000019 /* RuleSplitter.swift */; };
-		
-		// Features
-		1A00000000000020 /* BookshelfView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000020 /* BookshelfView.swift */; };
-		1A00000000000021 /* BookshelfViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000021 /* BookshelfViewModel.swift */; };
-		1A00000000000022 /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000022 /* ReaderView.swift */; };
-		1A00000000000023 /* ReaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000023 /* ReaderViewModel.swift */; };
-		1A00000000000024 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000024 /* SearchView.swift */; };
-		1A00000000000025 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000025 /* SearchViewModel.swift */; };
-		1A00000000000026 /* SourceManageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000026 /* SourceManageView.swift */; };
-		1A00000000000027 /* SourceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000027 /* SourceViewModel.swift */; };
-		1A00000000000028 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000028 /* SettingsView.swift */; };
-		1A00000000000029 /* BookDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000029 /* BookDetailView.swift */; };
-		1A00000000000030 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000030 /* MainTabView.swift */; };
-		1A00000000000031 /* CloudKitSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000031 /* CloudKitSyncManager.swift */; };
-		1A00000000000032 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000032 /* AppConstants.swift */; };
-		1A00000000000033 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000033 /* ImageCacheManager.swift */; };
-		1A00000000000034 /* EPUBParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000034 /* EPUBParser.swift */; };
-		1A00000000000035 /* SearchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000035 /* SearchResultView.swift */; };
-		1A00000000000036 /* AddBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000036 /* AddBookView.swift */; };
-		1A00000000000037 /* LocalBookViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000037 /* LocalBookViewModel.swift */; };
-		1A00000000000038 /* BackupRestoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000038 /* BackupRestoreView.swift */; };
-		1A00000000000039 /* ReaderSettingsFullView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000039 /* ReaderSettingsFullView.swift */; };
-		1A0000000000003A /* ReplaceRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000003A /* ReplaceRuleView.swift */; };
-		1A0000000000003B /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 1AC0000000000001 /* SwiftSoup */; };
-		1A0000000000003C /* Kanna in Frameworks */ = {isa = PBXBuildFile; productRef = 1AC0000000000002 /* Kanna */; };
-		1A0000000000003D /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 1AC0000000000003 /* ZIPFoundation */; };
-		1A00000000000040 /* AnalyzeUrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000040 /* AnalyzeUrl.swift */; };
-		1A00000000000041 /* WebBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000041 /* WebBook.swift */; };
-		1A00000000000042 /* RSSSubscriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000042 /* RSSSubscriptionView.swift */; };
-		1A00000000000043 /* QRCodeScanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000043 /* QRCodeScanView.swift */; };
-		1A00000000000044 /* DictRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000044 /* DictRuleView.swift */; };
-		1A00000000000045 /* ReplaceRule+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000045 /* ReplaceRule+CoreDataClass.swift */; };
-		1A00000000000046 /* ReplaceRuleDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000046 /* ReplaceRuleDebugView.swift */; };
-		1A00000000000047 /* TemplateEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000047 /* TemplateEngine.swift */; };
-		1A00000000000048 /* JSBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000048 /* JSBridge.swift */; };
-		1A00000000000049 /* SourceEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000049 /* SourceEditView.swift */; };
-		1A0000000000004A /* SourceEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000004A /* SourceEditViewModel.swift */; };
-		1A0000000000004B /* RuleFieldEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000004B /* RuleFieldEditor.swift */; };
-		1A0000000000004C /* BasicInfoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000004C /* BasicInfoSection.swift */; };
-		1A0000000000004D /* SearchRuleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000004D /* SearchRuleSection.swift */; };
-		1A0000000000004E /* ExploreRuleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000004E /* ExploreRuleSection.swift */; };
-		1A0000000000004F /* BookInfoRuleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000004F /* BookInfoRuleSection.swift */; };
-		1A00000000000050 /* TocRuleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000050 /* TocRuleSection.swift */; };
-		1A00000000000051 /* ContentRuleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000051 /* ContentRuleSection.swift */; };
-		1A00000000000052 /* WebDAVCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000052 /* WebDAVCredentials.swift */; };
-		1A00000000000053 /* WebDAVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000053 /* WebDAVFile.swift */; };
-		1A00000000000054 /* BackupInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000054 /* BackupInfo.swift */; };
-		1A00000000000055 /* WebDAVClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000055 /* WebDAVClient.swift */; };
-		1A00000000000056 /* WebDAVSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000056 /* WebDAVSyncManager.swift */; };
-		1A00000000000057 /* WebDAVConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000057 /* WebDAVConfigView.swift */; };
-		1A00000000000058 /* PagedReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000058 /* PagedReaderView.swift */; };
-		1A00000000000059 /* PageSplitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000059 /* PageSplitter.swift */; };
-		1A0000000000005A /* CoverPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000005A /* CoverPageView.swift */; };
-		1A0000000000005B /* SlidePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000005B /* SlidePageView.swift */; };
-		1A0000000000005C /* DiscoveryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000005C /* DiscoveryView.swift */; };
-		1A0000000000005D /* ReadingStatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000005D /* ReadingStatisticsView.swift */; };
-		1A0000000000005E /* ReadingStatisticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000005E /* ReadingStatisticsManager.swift */; };
-		1A0000000000005F /* SourceDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000005F /* SourceDebugView.swift */; };
-		1A00000000000060 /* SourceDebugViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000060 /* SourceDebugViewModel.swift */; };
-		1A00000000000061 /* RuleDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000061 /* RuleDebugger.swift */; };
-		1A00000000000062 /* TTSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000062 /* TTSManager.swift */; };
-		1A00000000000063 /* TTSControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000063 /* TTSControlsView.swift */; };
-		1A00000000000064 /* CurlPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000064 /* CurlPageView.swift */; };
-		1A00000000000065 /* AutoPageTurnManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000065 /* AutoPageTurnManager.swift */; };
-		1A00000000000066 /* AutoPageTurnControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000066 /* AutoPageTurnControlsView.swift */; };
-		1A00000000000067 /* ReadingEnhancementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000067 /* ReadingEnhancementManager.swift */; };
-		1A00000000000068 /* FullTextFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000068 /* FullTextFetcher.swift */; };
-		1A00000000000069 /* SourceSubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000069 /* SourceSubscriptionManager.swift */; };
-		1A0000000000006A /* DataMigrationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000006A /* DataMigrationManager.swift */; };
-		1A0000000000006B /* SearchOptimizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000006B /* SearchOptimizer.swift */; };
-		1A0000000000006C /* ReplaceEngineEnhanced.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000006C /* ReplaceEngineEnhanced.swift */; };
-		1A00000000000070 /* BookGroup+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000070 /* BookGroup+CoreDataClass.swift */; };
-		1A00000000000071 /* SearchBook+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000071 /* SearchBook+CoreDataClass.swift */; };
-		1A00000000000072 /* SearchKeyword+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000072 /* SearchKeyword+CoreDataClass.swift */; };
-		1A00000000000073 /* RssSource+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000073 /* RssSource+CoreDataClass.swift */; };
-		1A00000000000074 /* RssArticle+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000074 /* RssArticle+CoreDataClass.swift */; };
-		1A00000000000075 /* RssReadRecord+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000075 /* RssReadRecord+CoreDataClass.swift */; };
-		1A00000000000076 /* RssStar+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000076 /* RssStar+CoreDataClass.swift */; };
-		1A00000000000077 /* CacheEntry+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000077 /* CacheEntry+CoreDataClass.swift */; };
-		1A00000000000078 /* Cookie+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000078 /* Cookie+CoreDataClass.swift */; };
-		1A00000000000079 /* ReadRecord+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000079 /* ReadRecord+CoreDataClass.swift */; };
-		1A0000000000007A /* BookProgress+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000007A /* BookProgress+CoreDataClass.swift */; };
-		1A0000000000007B /* HttpTTS+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000007B /* HttpTTS+CoreDataClass.swift */; };
-		1A0000000000007C /* DictRule+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000007C /* DictRule+CoreDataClass.swift */; };
-		1A0000000000007D /* RuleSub+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000007D /* RuleSub+CoreDataClass.swift */; };
-		1A0000000000007E /* TxtTocRule+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000007E /* TxtTocRule+CoreDataClass.swift */; };
-		1A0000000000007F /* BookDeduplicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000007F /* BookDeduplicator.swift */; };
-		1A00000000000080 /* TableOfContentsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000080 /* TableOfContentsParser.swift */; };
-		1A00000000000081 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000081 /* ContentView.swift */; };
-		1A00000000000082 /* Chapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000082 /* Chapter.swift */; };
-		1A00000000000083 /* ChangeSourceSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000083 /* ChangeSourceSheet.swift */; };
-		1A00000000000084 /* BookmarkSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000084 /* BookmarkSheet.swift */; };
-		1A00000000000085 /* ChapterCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000085 /* ChapterCacheManager.swift */; };
-		1A00000000000086 /* UTType+EPUB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000086 /* UTType+EPUB.swift */; };
-1A00000000000087 /* DocumentPickerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000087 /* DocumentPickerHelper.swift */; };
-		1A00000000000088 /* URLSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000088 /* URLSchemeHandler.swift */; };
-		1A00000000000089 /* URLConfirmHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A10000000000089 /* URLConfirmHelper.swift */; };
-		1A0000000000008A /* VerificationWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000008A /* VerificationWebView.swift */; };
-		1A0000000000008B /* RemoteBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000008B /* RemoteBookView.swift */; };
-		1A0000000000008C /* BackgroundCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000008C /* BackgroundCacheService.swift */; };
-		1A0000000000008D /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1000000000008D /* IntegrationTests.swift */; };
+		'1A00000000000001' = {isa = PBXBuildFile; fileRef = 1A10000000000001; };
+		'1A00000000000003' = {isa = PBXBuildFile; fileRef = 1A10000000000003; };
+		'1A00000000000004' = {isa = PBXBuildFile; fileRef = 1A10000000000004; };
+		'1A00000000000010' = {isa = PBXBuildFile; fileRef = 1A10000000000010; };
+		'1A00000000000011' = {isa = PBXBuildFile; fileRef = 1A10000000000011; };
+		'1A00000000000012' = {isa = PBXBuildFile; fileRef = 1A10000000000012; };
+		'1A00000000000013' = {isa = PBXBuildFile; fileRef = 1A10000000000013; };
+		'1A00000000000014' = {isa = PBXBuildFile; fileRef = 1A10000000000014; };
+		'1A00000000000015' = {isa = PBXBuildFile; fileRef = 1A10000000000015; };
+		'1A00000000000016' = {isa = PBXBuildFile; fileRef = 1A10000000000016; };
+		'1A00000000000017' = {isa = PBXBuildFile; fileRef = 1A10000000000017; };
+		'1A00000000000018' = {isa = PBXBuildFile; fileRef = 1A10000000000018; };
+		'1A00000000000019' = {isa = PBXBuildFile; fileRef = 1A10000000000019; };
+		'1A00000000000020' = {isa = PBXBuildFile; fileRef = 1A10000000000020; };
+		'1A00000000000021' = {isa = PBXBuildFile; fileRef = 1A10000000000021; };
+		'1A00000000000022' = {isa = PBXBuildFile; fileRef = 1A10000000000022; };
+		'1A00000000000023' = {isa = PBXBuildFile; fileRef = 1A10000000000023; };
+		'1A00000000000024' = {isa = PBXBuildFile; fileRef = 1A10000000000024; };
+		'1A00000000000025' = {isa = PBXBuildFile; fileRef = 1A10000000000025; };
+		'1A00000000000026' = {isa = PBXBuildFile; fileRef = 1A10000000000026; };
+		'1A00000000000027' = {isa = PBXBuildFile; fileRef = 1A10000000000027; };
+		'1A00000000000028' = {isa = PBXBuildFile; fileRef = 1A10000000000028; };
+		'1A00000000000029' = {isa = PBXBuildFile; fileRef = 1A10000000000029; };
+		'1A00000000000030' = {isa = PBXBuildFile; fileRef = 1A10000000000030; };
+		'1A00000000000031' = {isa = PBXBuildFile; fileRef = 1A10000000000031; };
+		'1A00000000000032' = {isa = PBXBuildFile; fileRef = 1A10000000000032; };
+		'1A00000000000033' = {isa = PBXBuildFile; fileRef = 1A10000000000033; };
+		'1A00000000000034' = {isa = PBXBuildFile; fileRef = 1A10000000000034; };
+		'1A00000000000035' = {isa = PBXBuildFile; fileRef = 1A10000000000035; };
+		'1A00000000000036' = {isa = PBXBuildFile; fileRef = 1A10000000000036; };
+		'1A00000000000037' = {isa = PBXBuildFile; fileRef = 1A10000000000037; };
+		'1A00000000000038' = {isa = PBXBuildFile; fileRef = 1A10000000000038; };
+		'1A00000000000039' = {isa = PBXBuildFile; fileRef = 1A10000000000039; };
+		'1A0000000000003A' = {isa = PBXBuildFile; fileRef = 1A1000000000003A; };
+		'1A0000000000003B' = {isa = PBXBuildFile; productRef = 1AC0000000000001; };
+		'1A0000000000003C' = {isa = PBXBuildFile; productRef = 1AC0000000000002; };
+		'1A0000000000003D' = {isa = PBXBuildFile; productRef = 1AC0000000000003; };
+		'1A00000000000040' = {isa = PBXBuildFile; fileRef = 1A10000000000040; };
+		'1A00000000000041' = {isa = PBXBuildFile; fileRef = 1A10000000000041; };
+		'1A00000000000042' = {isa = PBXBuildFile; fileRef = 1A10000000000042; };
+		'1A00000000000043' = {isa = PBXBuildFile; fileRef = 1A10000000000043; };
+		'1A00000000000044' = {isa = PBXBuildFile; fileRef = 1A10000000000044; };
+		'1A00000000000045' = {isa = PBXBuildFile; fileRef = 1A10000000000045; };
+		'1A00000000000046' = {isa = PBXBuildFile; fileRef = 1A10000000000046; };
+		'1A00000000000047' = {isa = PBXBuildFile; fileRef = 1A10000000000047; };
+		'1A00000000000048' = {isa = PBXBuildFile; fileRef = 1A10000000000048; };
+		'1A00000000000049' = {isa = PBXBuildFile; fileRef = 1A10000000000049; };
+		'1A0000000000004A' = {isa = PBXBuildFile; fileRef = 1A1000000000004A; };
+		'1A0000000000004B' = {isa = PBXBuildFile; fileRef = 1A1000000000004B; };
+		'1A0000000000004C' = {isa = PBXBuildFile; fileRef = 1A1000000000004C; };
+		'1A0000000000004D' = {isa = PBXBuildFile; fileRef = 1A1000000000004D; };
+		'1A0000000000004E' = {isa = PBXBuildFile; fileRef = 1A1000000000004E; };
+		'1A0000000000004F' = {isa = PBXBuildFile; fileRef = 1A1000000000004F; };
+		'1A00000000000050' = {isa = PBXBuildFile; fileRef = 1A10000000000050; };
+		'1A00000000000051' = {isa = PBXBuildFile; fileRef = 1A10000000000051; };
+		'1A00000000000052' = {isa = PBXBuildFile; fileRef = 1A10000000000052; };
+		'1A00000000000053' = {isa = PBXBuildFile; fileRef = 1A10000000000053; };
+		'1A00000000000054' = {isa = PBXBuildFile; fileRef = 1A10000000000054; };
+		'1A00000000000055' = {isa = PBXBuildFile; fileRef = 1A10000000000055; };
+		'1A00000000000056' = {isa = PBXBuildFile; fileRef = 1A10000000000056; };
+		'1A00000000000057' = {isa = PBXBuildFile; fileRef = 1A10000000000057; };
+		'1A00000000000058' = {isa = PBXBuildFile; fileRef = 1A10000000000058; };
+		'1A00000000000059' = {isa = PBXBuildFile; fileRef = 1A10000000000059; };
+		'1A0000000000005A' = {isa = PBXBuildFile; fileRef = 1A1000000000005A; };
+		'1A0000000000005B' = {isa = PBXBuildFile; fileRef = 1A1000000000005B; };
+		'1A0000000000005C' = {isa = PBXBuildFile; fileRef = 1A1000000000005C; };
+		'1A0000000000005D' = {isa = PBXBuildFile; fileRef = 1A1000000000005D; };
+		'1A0000000000005E' = {isa = PBXBuildFile; fileRef = 1A1000000000005E; };
+		'1A0000000000005F' = {isa = PBXBuildFile; fileRef = 1A1000000000005F; };
+		'1A00000000000060' = {isa = PBXBuildFile; fileRef = 1A10000000000060; };
+		'1A00000000000061' = {isa = PBXBuildFile; fileRef = 1A10000000000061; };
+		'1A00000000000062' = {isa = PBXBuildFile; fileRef = 1A10000000000062; };
+		'1A00000000000063' = {isa = PBXBuildFile; fileRef = 1A10000000000063; };
+		'1A00000000000064' = {isa = PBXBuildFile; fileRef = 1A10000000000064; };
+		'1A00000000000065' = {isa = PBXBuildFile; fileRef = 1A10000000000065; };
+		'1A00000000000066' = {isa = PBXBuildFile; fileRef = 1A10000000000066; };
+		'1A00000000000067' = {isa = PBXBuildFile; fileRef = 1A10000000000067; };
+		'1A00000000000068' = {isa = PBXBuildFile; fileRef = 1A10000000000068; };
+		'1A00000000000069' = {isa = PBXBuildFile; fileRef = 1A10000000000069; };
+		'1A0000000000006A' = {isa = PBXBuildFile; fileRef = 1A1000000000006A; };
+		'1A0000000000006B' = {isa = PBXBuildFile; fileRef = 1A1000000000006B; };
+		'1A0000000000006C' = {isa = PBXBuildFile; fileRef = 1A1000000000006C; };
+		'1A00000000000070' = {isa = PBXBuildFile; fileRef = 1A10000000000070; };
+		'1A00000000000071' = {isa = PBXBuildFile; fileRef = 1A10000000000071; };
+		'1A00000000000072' = {isa = PBXBuildFile; fileRef = 1A10000000000072; };
+		'1A00000000000073' = {isa = PBXBuildFile; fileRef = 1A10000000000073; };
+		'1A00000000000074' = {isa = PBXBuildFile; fileRef = 1A10000000000074; };
+		'1A00000000000075' = {isa = PBXBuildFile; fileRef = 1A10000000000075; };
+		'1A00000000000076' = {isa = PBXBuildFile; fileRef = 1A10000000000076; };
+		'1A00000000000077' = {isa = PBXBuildFile; fileRef = 1A10000000000077; };
+		'1A00000000000078' = {isa = PBXBuildFile; fileRef = 1A10000000000078; };
+		'1A00000000000079' = {isa = PBXBuildFile; fileRef = 1A10000000000079; };
+		'1A0000000000007A' = {isa = PBXBuildFile; fileRef = 1A1000000000007A; };
+		'1A0000000000007B' = {isa = PBXBuildFile; fileRef = 1A1000000000007B; };
+		'1A0000000000007C' = {isa = PBXBuildFile; fileRef = 1A1000000000007C; };
+		'1A0000000000007D' = {isa = PBXBuildFile; fileRef = 1A1000000000007D; };
+		'1A0000000000007E' = {isa = PBXBuildFile; fileRef = 1A1000000000007E; };
+		'1A0000000000007F' = {isa = PBXBuildFile; fileRef = 1A1000000000007F; };
+		'1A00000000000080' = {isa = PBXBuildFile; fileRef = 1A10000000000080; };
+		'1A00000000000081' = {isa = PBXBuildFile; fileRef = 1A10000000000081; };
+		'1A00000000000082' = {isa = PBXBuildFile; fileRef = 1A10000000000082; };
+		'1A00000000000083' = {isa = PBXBuildFile; fileRef = 1A10000000000083; };
+		'1A00000000000084' = {isa = PBXBuildFile; fileRef = 1A10000000000084; };
+		'1A00000000000085' = {isa = PBXBuildFile; fileRef = 1A10000000000085; };
+		'1A00000000000086' = {isa = PBXBuildFile; fileRef = 1A10000000000086; };
+		'1A00000000000087' = {isa = PBXBuildFile; fileRef = 1A10000000000087; };
+		'1A00000000000088' = {isa = PBXBuildFile; fileRef = 1A10000000000088; };
+		'1A00000000000089' = {isa = PBXBuildFile; fileRef = 1A10000000000089; };
+		'1A0000000000008A' = {isa = PBXBuildFile; fileRef = 1A1000000000008A; };
+		'1A0000000000008B' = {isa = PBXBuildFile; fileRef = 1A1000000000008B; };
+		'1A0000000000008C' = {isa = PBXBuildFile; fileRef = 1A1000000000008C; };
+		'1A0000000000008D' = {isa = PBXBuildFile; fileRef = 1A1000000000008D; };
+		3D1A40C2A4189C837D98B616 /* TextConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BE4951AA6726A4DB32A615 /* TextConverter.swift */; };
+		685244679399813BB5F4FCEF /* SearchFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0C4165B98E48B164F2D5A2 /* SearchFilter.swift */; };
+		7E0044D9907502DC25731A2A /* SearchHistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBB4804934C20219DA82E34 /* SearchHistoryManager.swift */; };
+		9715449CA7354028C35FE6A4 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB28466C90CB7AE293DE4B17 /* AppSettings.swift */; };
+		B2FE4CE99075FB46AFF46E97 /* SearchHotWordsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30794CDB856C1E8E0DD64FDB /* SearchHotWordsManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1A10000000000001 /* LegadoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegadoApp.swift; sourceTree = "<group>"; };
-
-		1A10000000000003 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1A10000000000004 /* Legado.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Legado.xcdatamodeld; sourceTree = "<group>"; };
-		1A10000000000005 /* Legado.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Legado.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		
-		// Core
-		1A10000000000010 /* Book+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Book+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000011 /* BookSource+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookSource+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000012 /* BookChapter+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookChapter+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000013 /* Bookmark+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bookmark+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000014 /* ReadConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadConfig.swift; sourceTree = "<group>"; };
-		1A10000000000015 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
-		1A10000000000016 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
-		1A10000000000017 /* RuleEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleEngine.swift; sourceTree = "<group>"; };
-		1A10000000000018 /* ReplaceEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceEngine.swift; sourceTree = "<group>"; };
-		1A10000000000019 /* RuleSplitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleSplitter.swift; sourceTree = "<group>"; };
-		
-		// Features
-		1A10000000000020 /* BookshelfView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookshelfView.swift; sourceTree = "<group>"; };
-		1A10000000000021 /* BookshelfViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookshelfViewModel.swift; sourceTree = "<group>"; };
-		1A10000000000022 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
-		1A10000000000023 /* ReaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderViewModel.swift; sourceTree = "<group>"; };
-		1A10000000000024 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
-		1A10000000000025 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
-		1A10000000000026 /* SourceManageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManageView.swift; sourceTree = "<group>"; };
-		1A10000000000027 /* SourceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceViewModel.swift; sourceTree = "<group>"; };
-		1A10000000000028 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		1A10000000000029 /* BookDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookDetailView.swift; sourceTree = "<group>"; };
-		1A10000000000030 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
-		1A10000000000031 /* CloudKitSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitSyncManager.swift; sourceTree = "<group>"; };
-		1A10000000000032 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
-		1A10000000000033 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
-		1A10000000000034 /* EPUBParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPUBParser.swift; sourceTree = "<group>"; };
-		1A10000000000035 /* SearchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultView.swift; sourceTree = "<group>"; };
-		1A10000000000036 /* AddBookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBookView.swift; sourceTree = "<group>"; };
-		1A10000000000037 /* LocalBookViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalBookViewModel.swift; sourceTree = "<group>"; };
-		1A10000000000038 /* BackupRestoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupRestoreView.swift; sourceTree = "<group>"; };
-		1A10000000000039 /* ReaderSettingsFullView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderSettingsFullView.swift; sourceTree = "<group>"; };
-		1A1000000000003A /* ReplaceRuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceRuleView.swift; sourceTree = "<group>"; };
-		1A10000000000040 /* AnalyzeUrl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeUrl.swift; sourceTree = "<group>"; };
-		1A10000000000041 /* WebBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebBook.swift; sourceTree = "<group>"; };
-		1A10000000000042 /* RSSSubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSSSubscriptionView.swift; sourceTree = "<group>"; };
-		1A10000000000043 /* QRCodeScanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScanView.swift; sourceTree = "<group>"; };
-		1A10000000000044 /* DictRuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictRuleView.swift; sourceTree = "<group>"; };
-		1A10000000000045 /* ReplaceRule+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReplaceRule+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000046 /* ReplaceRuleDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceRuleDebugView.swift; sourceTree = "<group>"; };
-		1A10000000000047 /* TemplateEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateEngine.swift; sourceTree = "<group>"; };
-		1A10000000000048 /* JSBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSBridge.swift; sourceTree = "<group>"; };
-		1A10000000000049 /* SourceEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditView.swift; sourceTree = "<group>"; };
-		1A1000000000004A /* SourceEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditViewModel.swift; sourceTree = "<group>"; };
-		1A1000000000004B /* RuleFieldEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleFieldEditor.swift; sourceTree = "<group>"; };
-		1A1000000000004C /* BasicInfoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicInfoSection.swift; sourceTree = "<group>"; };
-		1A1000000000004D /* SearchRuleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRuleSection.swift; sourceTree = "<group>"; };
-		1A1000000000004E /* ExploreRuleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreRuleSection.swift; sourceTree = "<group>"; };
-		1A1000000000004F /* BookInfoRuleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookInfoRuleSection.swift; sourceTree = "<group>"; };
-		1A10000000000050 /* TocRuleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TocRuleSection.swift; sourceTree = "<group>"; };
-		1A10000000000051 /* ContentRuleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentRuleSection.swift; sourceTree = "<group>"; };
-		1A10000000000052 /* WebDAVCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebDAVCredentials.swift; sourceTree = "<group>"; };
-		1A10000000000053 /* WebDAVFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebDAVFile.swift; sourceTree = "<group>"; };
-		1A10000000000054 /* BackupInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupInfo.swift; sourceTree = "<group>"; };
-		1A10000000000055 /* WebDAVClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebDAVClient.swift; sourceTree = "<group>"; };
-		1A10000000000056 /* WebDAVSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebDAVSyncManager.swift; sourceTree = "<group>"; };
-		1A10000000000057 /* WebDAVConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebDAVConfigView.swift; sourceTree = "<group>"; };
-		1A10000000000058 /* PagedReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Reader/PagedReaderView.swift"; sourceTree = "<group>"; };
-		1A10000000000059 /* PageSplitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Reader/PageSplitter.swift"; sourceTree = "<group>"; };
-		1A1000000000005A /* CoverPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Reader/PageViews/CoverPageView.swift"; sourceTree = "<group>"; };
-		1A1000000000005B /* SlidePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Reader/PageViews/SlidePageView.swift"; sourceTree = "<group>"; };
-		1A1000000000005C /* DiscoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Discovery/DiscoveryView.swift"; sourceTree = "<group>"; };
-		1A1000000000005D /* ReadingStatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Statistics/ReadingStatisticsView.swift"; sourceTree = "<group>"; };
-		1A1000000000005E /* ReadingStatisticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Statistics/ReadingStatisticsManager.swift"; sourceTree = "<group>"; };
-		1A1000000000005F /* SourceDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceDebugView.swift; sourceTree = "<group>"; };
-		1A10000000000060 /* SourceDebugViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceDebugViewModel.swift; sourceTree = "<group>"; };
-		1A10000000000061 /* RuleDebugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleDebugger.swift; sourceTree = "<group>"; };
-		1A10000000000062 /* TTSManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/TTS/TTSManager.swift"; sourceTree = "<group>"; };
-		1A10000000000063 /* TTSControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Reader/TTSControlsView.swift"; sourceTree = "<group>"; };
-		1A10000000000064 /* CurlPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Reader/PageViews/CurlPageView.swift"; sourceTree = "<group>"; };
-		1A10000000000065 /* AutoPageTurnManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Reader/AutoPageTurnManager.swift"; sourceTree = "<group>"; };
-		1A10000000000066 /* AutoPageTurnControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Reader/AutoPageTurnControlsView.swift"; sourceTree = "<group>"; };
-		1A10000000000067 /* ReadingEnhancementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Reader/ReadingEnhancementManager.swift"; sourceTree = "<group>"; };
-		1A10000000000068 /* FullTextFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/Network/FullTextFetcher.swift"; sourceTree = "<group>"; };
-		1A10000000000069 /* SourceSubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/Source/SourceSubscriptionManager.swift"; sourceTree = "<group>"; };
-		1A1000000000006A /* DataMigrationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/Migration/DataMigrationManager.swift"; sourceTree = "<group>"; };
-		1A1000000000006B /* SearchOptimizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/Search/SearchOptimizer.swift"; sourceTree = "<group>"; };
-		1A1000000000006C /* ReplaceEngineEnhanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/RuleEngine/ReplaceEngineEnhanced.swift"; sourceTree = "<group>"; };
-		1A10000000000070 /* BookGroup+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookGroup+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000071 /* SearchBook+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchBook+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000072 /* SearchKeyword+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchKeyword+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000073 /* RssSource+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RssSource+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000074 /* RssArticle+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RssArticle+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000075 /* RssReadRecord+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RssReadRecord+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000076 /* RssStar+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RssStar+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000077 /* CacheEntry+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CacheEntry+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000078 /* Cookie+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Cookie+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A10000000000079 /* ReadRecord+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReadRecord+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A1000000000007A /* BookProgress+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookProgress+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A1000000000007B /* HttpTTS+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HttpTTS+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A1000000000007C /* DictRule+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictRule+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A1000000000007D /* RuleSub+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RuleSub+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A1000000000007E /* TxtTocRule+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TxtTocRule+CoreDataClass.swift"; sourceTree = "<group>"; };
-		1A1000000000007F /* BookDeduplicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookDeduplicator.swift"; sourceTree = "<group>"; };
-		1A10000000000080 /* TableOfContentsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TableOfContentsParser.swift"; sourceTree = "<group>"; };
-		1A10000000000081 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView.swift"; sourceTree = "<group>"; };
-		1A10000000000082 /* Chapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Chapter.swift"; sourceTree = "<group>"; };
-		1A10000000000083 /* ChangeSourceSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeSourceSheet.swift; sourceTree = "<group>"; };
-		1A10000000000084 /* BookmarkSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkSheet.swift; sourceTree = "<group>"; };
-		1A10000000000085 /* ChapterCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterCacheManager.swift; sourceTree = "<group>"; };
-		1A10000000000086 /* UTType+EPUB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UTType+EPUB.swift"; sourceTree = "<group>"; };
-1A10000000000087 /* DocumentPickerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPickerHelper.swift; sourceTree = "<group>"; };
-		1A10000000000088 /* URLSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSchemeHandler.swift; sourceTree = "<group>"; };
-		1A10000000000089 /* URLConfirmHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLConfirmHelper.swift; sourceTree = "<group>"; };
-		1A1000000000008A /* VerificationWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationWebView.swift; sourceTree = "<group>"; };
-		1A1000000000008B /* RemoteBookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteBookView.swift; sourceTree = "<group>"; };
-		1A1000000000008C /* BackgroundCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundCacheService.swift; sourceTree = "<group>"; };
-		1A1000000000008D /* IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
+		'1A10000000000001' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegadoApp.swift; sourceTree = "<group>"; };
+		'1A10000000000003' = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		'1A10000000000004' = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Legado.xcdatamodeld; sourceTree = "<group>"; };
+		'1A10000000000005' = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Legado.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		'1A10000000000010' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Book+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000011' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookSource+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000012' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookChapter+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000013' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bookmark+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000014' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadConfig.swift; sourceTree = "<group>"; };
+		'1A10000000000015' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		'1A10000000000016' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		'1A10000000000017' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleEngine.swift; sourceTree = "<group>"; };
+		'1A10000000000018' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceEngine.swift; sourceTree = "<group>"; };
+		'1A10000000000019' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleSplitter.swift; sourceTree = "<group>"; };
+		'1A10000000000020' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookshelfView.swift; sourceTree = "<group>"; };
+		'1A10000000000021' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookshelfViewModel.swift; sourceTree = "<group>"; };
+		'1A10000000000022' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
+		'1A10000000000023' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderViewModel.swift; sourceTree = "<group>"; };
+		'1A10000000000024' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		'1A10000000000025' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		'1A10000000000026' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManageView.swift; sourceTree = "<group>"; };
+		'1A10000000000027' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceViewModel.swift; sourceTree = "<group>"; };
+		'1A10000000000028' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		'1A10000000000029' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookDetailView.swift; sourceTree = "<group>"; };
+		'1A10000000000030' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		'1A10000000000031' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitSyncManager.swift; sourceTree = "<group>"; };
+		'1A10000000000032' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		'1A10000000000033' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
+		'1A10000000000034' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPUBParser.swift; sourceTree = "<group>"; };
+		'1A10000000000035' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultView.swift; sourceTree = "<group>"; };
+		'1A10000000000036' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBookView.swift; sourceTree = "<group>"; };
+		'1A10000000000037' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalBookViewModel.swift; sourceTree = "<group>"; };
+		'1A10000000000038' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupRestoreView.swift; sourceTree = "<group>"; };
+		'1A10000000000039' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderSettingsFullView.swift; sourceTree = "<group>"; };
+		'1A1000000000003A' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceRuleView.swift; sourceTree = "<group>"; };
+		'1A10000000000040' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeUrl.swift; sourceTree = "<group>"; };
+		'1A10000000000041' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebBook.swift; sourceTree = "<group>"; };
+		'1A10000000000042' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSSSubscriptionView.swift; sourceTree = "<group>"; };
+		'1A10000000000043' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScanView.swift; sourceTree = "<group>"; };
+		'1A10000000000044' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictRuleView.swift; sourceTree = "<group>"; };
+		'1A10000000000045' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReplaceRule+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000046' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceRuleDebugView.swift; sourceTree = "<group>"; };
+		'1A10000000000047' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateEngine.swift; sourceTree = "<group>"; };
+		'1A10000000000048' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSBridge.swift; sourceTree = "<group>"; };
+		'1A10000000000049' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditView.swift; sourceTree = "<group>"; };
+		'1A1000000000004A' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditViewModel.swift; sourceTree = "<group>"; };
+		'1A1000000000004B' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleFieldEditor.swift; sourceTree = "<group>"; };
+		'1A1000000000004C' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicInfoSection.swift; sourceTree = "<group>"; };
+		'1A1000000000004D' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRuleSection.swift; sourceTree = "<group>"; };
+		'1A1000000000004E' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreRuleSection.swift; sourceTree = "<group>"; };
+		'1A1000000000004F' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookInfoRuleSection.swift; sourceTree = "<group>"; };
+		'1A10000000000050' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TocRuleSection.swift; sourceTree = "<group>"; };
+		'1A10000000000051' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentRuleSection.swift; sourceTree = "<group>"; };
+		'1A10000000000052' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebDAVCredentials.swift; sourceTree = "<group>"; };
+		'1A10000000000053' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebDAVFile.swift; sourceTree = "<group>"; };
+		'1A10000000000054' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupInfo.swift; sourceTree = "<group>"; };
+		'1A10000000000055' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebDAVClient.swift; sourceTree = "<group>"; };
+		'1A10000000000056' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebDAVSyncManager.swift; sourceTree = "<group>"; };
+		'1A10000000000057' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebDAVConfigView.swift; sourceTree = "<group>"; };
+		'1A10000000000058' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/PagedReaderView.swift; sourceTree = "<group>"; };
+		'1A10000000000059' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/PageSplitter.swift; sourceTree = "<group>"; };
+		'1A1000000000005A' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/PageViews/CoverPageView.swift; sourceTree = "<group>"; };
+		'1A1000000000005B' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/PageViews/SlidePageView.swift; sourceTree = "<group>"; };
+		'1A1000000000005C' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discovery/DiscoveryView.swift; sourceTree = "<group>"; };
+		'1A1000000000005D' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics/ReadingStatisticsView.swift; sourceTree = "<group>"; };
+		'1A1000000000005E' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics/ReadingStatisticsManager.swift; sourceTree = "<group>"; };
+		'1A1000000000005F' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceDebugView.swift; sourceTree = "<group>"; };
+		'1A10000000000060' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceDebugViewModel.swift; sourceTree = "<group>"; };
+		'1A10000000000061' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleDebugger.swift; sourceTree = "<group>"; };
+		'1A10000000000062' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/TTS/TTSManager.swift; sourceTree = "<group>"; };
+		'1A10000000000063' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/TTSControlsView.swift; sourceTree = "<group>"; };
+		'1A10000000000064' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/PageViews/CurlPageView.swift; sourceTree = "<group>"; };
+		'1A10000000000065' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/AutoPageTurnManager.swift; sourceTree = "<group>"; };
+		'1A10000000000066' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/AutoPageTurnControlsView.swift; sourceTree = "<group>"; };
+		'1A10000000000067' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/ReadingEnhancementManager.swift; sourceTree = "<group>"; };
+		'1A10000000000068' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Network/FullTextFetcher.swift; sourceTree = "<group>"; };
+		'1A10000000000069' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Source/SourceSubscriptionManager.swift; sourceTree = "<group>"; };
+		'1A1000000000006A' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Migration/DataMigrationManager.swift; sourceTree = "<group>"; };
+		'1A1000000000006B' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Search/SearchOptimizer.swift; sourceTree = "<group>"; };
+		'1A1000000000006C' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/RuleEngine/ReplaceEngineEnhanced.swift; sourceTree = "<group>"; };
+		'1A10000000000070' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookGroup+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000071' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchBook+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000072' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchKeyword+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000073' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RssSource+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000074' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RssArticle+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000075' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RssReadRecord+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000076' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RssStar+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000077' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CacheEntry+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000078' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Cookie+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A10000000000079' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReadRecord+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A1000000000007A' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookProgress+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A1000000000007B' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HttpTTS+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A1000000000007C' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictRule+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A1000000000007D' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RuleSub+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A1000000000007E' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TxtTocRule+CoreDataClass.swift"; sourceTree = "<group>"; };
+		'1A1000000000007F' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookDeduplicator.swift; sourceTree = "<group>"; };
+		'1A10000000000080' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableOfContentsParser.swift; sourceTree = "<group>"; };
+		'1A10000000000081' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		'1A10000000000082' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chapter.swift; sourceTree = "<group>"; };
+		'1A10000000000083' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeSourceSheet.swift; sourceTree = "<group>"; };
+		'1A10000000000084' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkSheet.swift; sourceTree = "<group>"; };
+		'1A10000000000085' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterCacheManager.swift; sourceTree = "<group>"; };
+		'1A10000000000086' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UTType+EPUB.swift"; sourceTree = "<group>"; };
+		'1A10000000000087' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPickerHelper.swift; sourceTree = "<group>"; };
+		'1A10000000000088' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSchemeHandler.swift; sourceTree = "<group>"; };
+		'1A10000000000089' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLConfirmHelper.swift; sourceTree = "<group>"; };
+		'1A1000000000008A' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationWebView.swift; sourceTree = "<group>"; };
+		'1A1000000000008B' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteBookView.swift; sourceTree = "<group>"; };
+		'1A1000000000008C' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundCacheService.swift; sourceTree = "<group>"; };
+		'1A1000000000008D' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
+		30794CDB856C1E8E0DD64FDB /* SearchHotWordsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchHotWordsManager.swift; path = Features/Search/SearchHotWordsManager.swift; sourceTree = SOURCE_ROOT; };
+		C2BE4951AA6726A4DB32A615 /* TextConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TextConverter.swift; path = Core/Utils/TextConverter.swift; sourceTree = SOURCE_ROOT; };
+		DA0C4165B98E48B164F2D5A2 /* SearchFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchFilter.swift; path = Core/Utils/SearchFilter.swift; sourceTree = SOURCE_ROOT; };
+		FB28466C90CB7AE293DE4B17 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppSettings.swift; path = Core/Settings/AppSettings.swift; sourceTree = SOURCE_ROOT; };
+		FDBB4804934C20219DA82E34 /* SearchHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchHistoryManager.swift; path = Features/Search/SearchHistoryManager.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1A20000000000001 /* Frameworks */ = {
+		'1A20000000000001' = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A0000000000003B /* SwiftSoup in Frameworks */,
-				1A0000000000003C /* Kanna in Frameworks */,
-				1A0000000000003D /* ZIPFoundation in Frameworks */,
+				1A0000000000003B,
+				1A0000000000003C,
+				1A0000000000003D,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1A30000000000001 = {
+		'1A30000000000001' = {
 			isa = PBXGroup;
 			children = (
-				1A30000000000009 /* App */,
-				1A30000000000010 /* Core */,
-				1A30000000000020 /* Features */,
-				1A30000000000030 /* Resources */,
-				1A30000000000040 /* Products */,
+				1A30000000000009,
+				1A30000000000010,
+				1A30000000000020,
+				1A30000000000030,
+				1A30000000000040,
+				FB28466C90CB7AE293DE4B17 /* AppSettings.swift */,
+				DA0C4165B98E48B164F2D5A2 /* SearchFilter.swift */,
+				C2BE4951AA6726A4DB32A615 /* TextConverter.swift */,
+				FDBB4804934C20219DA82E34 /* SearchHistoryManager.swift */,
+				30794CDB856C1E8E0DD64FDB /* SearchHotWordsManager.swift */,
 			);
 			sourceTree = "<group>";
 		};
-		1A30000000000009 /* App */ = {
+		'1A30000000000009' = {
 			isa = PBXGroup;
 			children = (
-				1A10000000000001 /* LegadoApp.swift */,
-				1A10000000000030 /* MainTabView.swift */,
-
+				1A10000000000001,
+				1A10000000000030,
 			);
 			path = App;
 			sourceTree = "<group>";
 		};
-1A30000000000010 /* Core */ = {
+		'1A30000000000010' = {
 			isa = PBXGroup;
 			children = (
-				1A30000000000011 /* Persistence */,
-				1A30000000000014 /* Cache */,
-				1A30000000000015 /* Config */,
-				1A30000000000012 /* Network */,
-				1A30000000000016 /* Parser */,
-				1A30000000000013 /* RuleEngine */,
-				1A30000000000060 /* Sync */,
-				1A30000000000017 /* Model */,
-				1A30000000000062 /* Import */,
-				1A1000000000005E /* ReadingStatisticsManager.swift */,
+				1A30000000000011,
+				1A30000000000014,
+				1A30000000000015,
+				1A30000000000012,
+				1A30000000000016,
+				1A30000000000013,
+				1A30000000000060,
+				1A30000000000017,
+				1A30000000000062,
+				1A1000000000005E,
 			);
 			path = Core;
 			sourceTree = "<group>";
 		};
-		1A30000000000011 /* Persistence */ = {
+		'1A30000000000011' = {
 			isa = PBXGroup;
 			children = (
-				1A10000000000004 /* Legado.xcdatamodeld */,
-				1A10000000000010 /* Book+CoreDataClass.swift */,
-				1A10000000000011 /* BookSource+CoreDataClass.swift */,
-				1A10000000000012 /* BookChapter+CoreDataClass.swift */,
-				1A10000000000013 /* Bookmark+CoreDataClass.swift */,
-				1A10000000000014 /* ReadConfig.swift */,
-				1A10000000000015 /* CoreDataStack.swift */,
-				1A10000000000031 /* CloudKitSyncManager.swift */,
-				1A10000000000045 /* ReplaceRule+CoreDataClass.swift */,
-				1A10000000000070 /* BookGroup+CoreDataClass.swift */,
-				1A10000000000071 /* SearchBook+CoreDataClass.swift */,
-				1A10000000000072 /* SearchKeyword+CoreDataClass.swift */,
-				1A10000000000073 /* RssSource+CoreDataClass.swift */,
-				1A10000000000074 /* RssArticle+CoreDataClass.swift */,
-				1A10000000000075 /* RssReadRecord+CoreDataClass.swift */,
-				1A10000000000076 /* RssStar+CoreDataClass.swift */,
-				1A10000000000077 /* CacheEntry+CoreDataClass.swift */,
-				1A10000000000078 /* Cookie+CoreDataClass.swift */,
-				1A10000000000079 /* ReadRecord+CoreDataClass.swift */,
-				1A1000000000007A /* BookProgress+CoreDataClass.swift */,
-				1A1000000000007B /* HttpTTS+CoreDataClass.swift */,
-				1A1000000000007C /* DictRule+CoreDataClass.swift */,
-				1A1000000000007D /* RuleSub+CoreDataClass.swift */,
-				1A1000000000007E /* TxtTocRule+CoreDataClass.swift */,
-				1A1000000000007F /* BookDeduplicator.swift */,
+				1A10000000000004,
+				1A10000000000010,
+				1A10000000000011,
+				1A10000000000012,
+				1A10000000000013,
+				1A10000000000014,
+				1A10000000000015,
+				1A10000000000031,
+				1A10000000000045,
+				1A10000000000070,
+				1A10000000000071,
+				1A10000000000072,
+				1A10000000000073,
+				1A10000000000074,
+				1A10000000000075,
+				1A10000000000076,
+				1A10000000000077,
+				1A10000000000078,
+				1A10000000000079,
+				1A1000000000007A,
+				1A1000000000007B,
+				1A1000000000007C,
+				1A1000000000007D,
+				1A1000000000007E,
+				1A1000000000007F,
 			);
 			path = Persistence;
 			sourceTree = "<group>";
 		};
-1A30000000000014 /* Cache */ = {
+		'1A30000000000012' = {
 			isa = PBXGroup;
 			children = (
-				1A10000000000033 /* ImageCacheManager.swift */,
-				1A10000000000085 /* ChapterCacheManager.swift */,
-				1A1000000000008C /* BackgroundCacheService.swift */,
-			);
-			path = Cache;
-			sourceTree = "<group>";
-		};
-1A30000000000015 /* Config */ = {
-			isa = PBXGroup;
-			children = (
-				1A10000000000032 /* AppConstants.swift */,
-				1A10000000000086 /* UTType+EPUB.swift */,
-				1A10000000000087 /* DocumentPickerHelper.swift */,
-				1A10000000000089 /* URLConfirmHelper.swift */,
-			);
-			path = Config;
-			sourceTree = "<group>";
-		};
-		1A30000000000012 /* Network */ = {
-			isa = PBXGroup;
-			children = (
-				1A10000000000016 /* HTTPClient.swift */,
-				1A10000000000040 /* AnalyzeUrl.swift */,
+				1A10000000000016,
+				1A10000000000040,
 			);
 			path = Network;
 			sourceTree = "<group>";
 		};
-		1A30000000000060 /* Sync */ = {
+		'1A30000000000013' = {
 			isa = PBXGroup;
 			children = (
-				1A10000000000055 /* WebDAVClient.swift */,
-				1A10000000000056 /* WebDAVSyncManager.swift */,
-				1A10000000000057 /* WebDAVConfigView.swift */,
-				1A30000000000061 /* Models */,
-			);
-			path = Sync;
-			sourceTree = "<group>";
-		};
-1A30000000000061 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				1A10000000000052 /* WebDAVCredentials.swift */,
-				1A10000000000053 /* WebDAVFile.swift */,
-				1A10000000000054 /* BackupInfo.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		1A30000000000062 /* Import */ = {
-			isa = PBXGroup;
-			children = (
-				1A10000000000088 /* URLSchemeHandler.swift */,
-			);
-			path = Import;
-			sourceTree = "<group>";
-		};
-		1A30000000000017 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				1A10000000000041 /* WebBook.swift */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		1A30000000000016 /* Parser */ = {
-			isa = PBXGroup;
-			children = (
-				1A10000000000034 /* EPUBParser.swift */,
-				1A10000000000080 /* TableOfContentsParser.swift */,
-			);
-			path = Parser;
-			sourceTree = "<group>";
-		};
-		1A30000000000013 /* RuleEngine */ = {
-			isa = PBXGroup;
-			children = (
-				1A10000000000017 /* RuleEngine.swift */,
-				1A10000000000018 /* ReplaceEngine.swift */,
-				1A10000000000019 /* RuleSplitter.swift */,
-				1A10000000000047 /* TemplateEngine.swift */,
-				1A10000000000048 /* JSBridge.swift */,
-				1A10000000000061 /* RuleDebugger.swift */,
+				1A10000000000017,
+				1A10000000000018,
+				1A10000000000019,
+				1A10000000000047,
+				1A10000000000048,
+				1A10000000000061,
 			);
 			path = RuleEngine;
 			sourceTree = "<group>";
 		};
-1A30000000000020 /* Features */ = {
+		'1A30000000000014' = {
 			isa = PBXGroup;
 			children = (
-				1A30000000000021 /* Bookshelf */,
-				1A30000000000022 /* Reader */,
-				1A30000000000023 /* Search */,
-				1A30000000000024 /* Source */,
-				1A30000000000025 /* Config */,
-				1A30000000000027 /* Local */,
-				1A30000000000026 /* BookDetail */,
-				1A30000000000028 /* RSS */,
-				1A30000000000063 /* Remote */,
-				1A1000000000005C /* DiscoveryView.swift */,
-				1A1000000000005D /* ReadingStatisticsView.swift */,
+				1A10000000000033,
+				1A10000000000085,
+				1A1000000000008C,
 			);
-			path = Features;
+			path = Cache;
 			sourceTree = "<group>";
 		};
-		1A30000000000021 /* Bookshelf */ = {
+		'1A30000000000015' = {
 			isa = PBXGroup;
 			children = (
-				1A10000000000036 /* AddBookView.swift */,
-				1A10000000000020 /* BookshelfView.swift */,
-				1A10000000000021 /* BookshelfViewModel.swift */,
-			);
-			path = Bookshelf;
-			sourceTree = "<group>";
-		};
-		1A30000000000022 /* Reader */ = {
-			isa = PBXGroup;
-			children = (
-				1A10000000000039 /* ReaderSettingsFullView.swift */,
-				1A10000000000022 /* ReaderView.swift */,
-				1A10000000000023 /* ReaderViewModel.swift */,
-				1A10000000000083 /* ChangeSourceSheet.swift */,
-				1A10000000000084 /* BookmarkSheet.swift */,
-			);
-			path = Reader;
-			sourceTree = "<group>";
-		};
-		1A30000000000023 /* Search */ = {
-			isa = PBXGroup;
-			children = (
-				1A10000000000035 /* SearchResultView.swift */,
-				1A10000000000024 /* SearchView.swift */,
-				1A10000000000025 /* SearchViewModel.swift */,
-			);
-			path = Search;
-			sourceTree = "<group>";
-		};
-1A30000000000024 /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				1A10000000000026 /* SourceManageView.swift */,
-				1A10000000000027 /* SourceViewModel.swift */,
-				1A10000000000049 /* SourceEditView.swift */,
-				1A1000000000004A /* SourceEditViewModel.swift */,
-				1A1000000000005F /* SourceDebugView.swift */,
-				1A10000000000060 /* SourceDebugViewModel.swift */,
-				1A30000000000029 /* Components */,
-				1A10000000000043 /* QRCodeScanView.swift */,
-				1A1000000000008A /* VerificationWebView.swift */,
-			);
-			path = Source;
-			sourceTree = "<group>";
-		};
-		1A30000000000029 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				1A1000000000004B /* RuleFieldEditor.swift */,
-				1A1000000000004C /* BasicInfoSection.swift */,
-				1A1000000000004D /* SearchRuleSection.swift */,
-				1A1000000000004E /* ExploreRuleSection.swift */,
-				1A1000000000004F /* BookInfoRuleSection.swift */,
-				1A10000000000050 /* TocRuleSection.swift */,
-				1A10000000000051 /* ContentRuleSection.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		1A30000000000025 /* Config */ = {
-			isa = PBXGroup;
-			children = (
-				1A10000000000038 /* BackupRestoreView.swift */,
-				1A1000000000003A /* ReplaceRuleView.swift */,
-				1A10000000000028 /* SettingsView.swift */,
-				1A10000000000044 /* DictRuleView.swift */,
-				1A10000000000046 /* ReplaceRuleDebugView.swift */,
+				1A10000000000032,
+				1A10000000000086,
+				1A10000000000087,
+				1A10000000000089,
 			);
 			path = Config;
 			sourceTree = "<group>";
 		};
-		1A30000000000028 /* RSS */ = {
+		'1A30000000000016' = {
 			isa = PBXGroup;
 			children = (
-				1A10000000000042 /* RSSSubscriptionView.swift */,
+				1A10000000000034,
+				1A10000000000080,
 			);
-			path = RSS;
+			path = Parser;
 			sourceTree = "<group>";
 		};
-		1A30000000000027 /* Local */ = {
+		'1A30000000000017' = {
 			isa = PBXGroup;
 			children = (
-				1A10000000000037 /* LocalBookViewModel.swift */,
+				1A10000000000041,
 			);
-			path = Local;
+			path = Model;
 			sourceTree = "<group>";
 		};
-		1A30000000000026 /* BookDetail */ = {
+		'1A30000000000020' = {
 			isa = PBXGroup;
 			children = (
-				1A10000000000029 /* BookDetailView.swift */,
+				1A30000000000021,
+				1A30000000000022,
+				1A30000000000023,
+				1A30000000000024,
+				1A30000000000025,
+				1A30000000000027,
+				1A30000000000026,
+				1A30000000000028,
+				1A30000000000063,
+				1A1000000000005C,
+				1A1000000000005D,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		'1A30000000000021' = {
+			isa = PBXGroup;
+			children = (
+				1A10000000000036,
+				1A10000000000020,
+				1A10000000000021,
+			);
+			path = Bookshelf;
+			sourceTree = "<group>";
+		};
+		'1A30000000000022' = {
+			isa = PBXGroup;
+			children = (
+				1A10000000000039,
+				1A10000000000022,
+				1A10000000000023,
+				1A10000000000083,
+				1A10000000000084,
+			);
+			path = Reader;
+			sourceTree = "<group>";
+		};
+		'1A30000000000023' = {
+			isa = PBXGroup;
+			children = (
+				1A10000000000035,
+				1A10000000000024,
+				1A10000000000025,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
+		'1A30000000000024' = {
+			isa = PBXGroup;
+			children = (
+				1A10000000000026,
+				1A10000000000027,
+				1A10000000000049,
+				1A1000000000004A,
+				1A1000000000005F,
+				1A10000000000060,
+				1A30000000000029,
+				1A10000000000043,
+				1A1000000000008A,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		'1A30000000000025' = {
+			isa = PBXGroup;
+			children = (
+				1A10000000000038,
+				1A1000000000003A,
+				1A10000000000028,
+				1A10000000000044,
+				1A10000000000046,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		'1A30000000000026' = {
+			isa = PBXGroup;
+			children = (
+				1A10000000000029,
 			);
 			path = BookDetail;
 			sourceTree = "<group>";
 		};
-		1A30000000000030 /* Resources */ = {
+		'1A30000000000027' = {
 			isa = PBXGroup;
 			children = (
-				1A10000000000003 /* Assets.xcassets */,
+				1A10000000000037,
+			);
+			path = Local;
+			sourceTree = "<group>";
+		};
+		'1A30000000000028' = {
+			isa = PBXGroup;
+			children = (
+				1A10000000000042,
+			);
+			path = RSS;
+			sourceTree = "<group>";
+		};
+		'1A30000000000029' = {
+			isa = PBXGroup;
+			children = (
+				1A1000000000004B,
+				1A1000000000004C,
+				1A1000000000004D,
+				1A1000000000004E,
+				1A1000000000004F,
+				1A10000000000050,
+				1A10000000000051,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		'1A30000000000030' = {
+			isa = PBXGroup;
+			children = (
+				1A10000000000003,
 			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
-1A30000000000040 /* Products */ = {
+		'1A30000000000040' = {
 			isa = PBXGroup;
 			children = (
-				1A10000000000005 /* Legado.app */,
+				1A10000000000005,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-1A30000000000063 /* Remote */ = {
+		'1A30000000000060' = {
 			isa = PBXGroup;
 			children = (
-				1A1000000000008B /* RemoteBookView.swift */,
+				1A10000000000055,
+				1A10000000000056,
+				1A10000000000057,
+				1A30000000000061,
+			);
+			path = Sync;
+			sourceTree = "<group>";
+		};
+		'1A30000000000061' = {
+			isa = PBXGroup;
+			children = (
+				1A10000000000052,
+				1A10000000000053,
+				1A10000000000054,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		'1A30000000000062' = {
+			isa = PBXGroup;
+			children = (
+				1A10000000000088,
+			);
+			path = Import;
+			sourceTree = "<group>";
+		};
+		'1A30000000000063' = {
+			isa = PBXGroup;
+			children = (
+				1A1000000000008B,
 			);
 			path = Remote;
 			sourceTree = "<group>";
 		};
-		1A30000000000064 /* Integration */ = {
+		'1A30000000000064' = {
 			isa = PBXGroup;
 			children = (
-				1A1000000000008D /* IntegrationTests.swift */,
+				1A1000000000008D,
 			);
 			path = Integration;
 			sourceTree = "<group>";
@@ -567,13 +572,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1A40000000000001 /* Legado */ = {
+		'1A40000000000001' = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1A50000000000001 /* Build configuration list for PBXNativeTarget "Legado" */;
+			buildConfigurationList = 1A50000000000001;
 			buildPhases = (
-				1A40000000000002 /* Sources */,
-				1A20000000000001 /* Frameworks */,
-				1A40000000000003 /* Resources */,
+				1A40000000000002,
+				1A20000000000001,
+				1A40000000000003,
 			);
 			buildRules = (
 			);
@@ -581,18 +586,18 @@
 			);
 			name = Legado;
 			packageProductDependencies = (
-				1AC0000000000001 /* SwiftSoup */,
-				1AC0000000000002 /* Kanna */,
-				1AC0000000000003 /* ZIPFoundation */,
+				1AC0000000000001,
+				1AC0000000000002,
+				1AC0000000000003,
 			);
 			productName = Legado;
-			productReference = 1A10000000000005 /* Legado.app */;
+			productReference = 1A10000000000005;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		1A60000000000001 /* Project object */ = {
+		'1A60000000000001' = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
@@ -604,7 +609,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 1A50000000000002 /* Build configuration list for PBXProject "Legado" */;
+			buildConfigurationList = 1A50000000000002;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
@@ -615,194 +620,154 @@
 			);
 			mainGroup = 1A30000000000001;
 			packageReferences = (
-				1AB0000000000001 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
-				1AB0000000000002 /* XCRemoteSwiftPackageReference "Kanna" */,
-				1AB0000000000003 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+				1AB0000000000001,
+				1AB0000000000002,
+				1AB0000000000003,
 			);
-			productRefGroup = 1A30000000000040 /* Products */;
+			productRefGroup = 1A30000000000040;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1A40000000000001 /* Legado */,
+				1A40000000000001,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1A40000000000003 /* Resources */ = {
+		'1A40000000000003' = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A00000000000004 /* Legado.xcdatamodeld in Resources */,
-				1A00000000000003 /* Assets.xcassets in Resources */,
+				1A00000000000004,
+				1A00000000000003,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1A40000000000002 /* Sources */ = {
+		'1A40000000000002' = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A00000000000001 /* LegadoApp.swift in Sources */,
-				1A00000000000030 /* MainTabView.swift in Sources */,
-				1A00000000000010 /* Book+CoreDataClass.swift in Sources */,
-				1A00000000000011 /* BookSource+CoreDataClass.swift in Sources */,
-				1A00000000000012 /* BookChapter+CoreDataClass.swift in Sources */,
-				1A00000000000013 /* Bookmark+CoreDataClass.swift in Sources */,
-				1A00000000000014 /* ReadConfig.swift in Sources */,
-				1A00000000000015 /* CoreDataStack.swift in Sources */,
-				1A00000000000031 /* CloudKitSyncManager.swift in Sources */,
-				1A00000000000032 /* AppConstants.swift in Sources */,
-				1A00000000000033 /* ImageCacheManager.swift in Sources */,
-				1A00000000000016 /* HTTPClient.swift in Sources */,
-				1A00000000000068 /* FullTextFetcher.swift in Sources */,
-				1A00000000000055 /* WebDAVClient.swift in Sources */,
-				1A00000000000056 /* WebDAVSyncManager.swift in Sources */,
-				1A00000000000057 /* WebDAVConfigView.swift in Sources */,
-				1A00000000000052 /* WebDAVCredentials.swift in Sources */,
-				1A00000000000053 /* WebDAVFile.swift in Sources */,
-				1A00000000000054 /* BackupInfo.swift in Sources */,
-				1A00000000000034 /* EPUBParser.swift in Sources */,
-				1A00000000000017 /* RuleEngine.swift in Sources */,
-				1A00000000000018 /* ReplaceEngine.swift in Sources */,
-				1A0000000000006C /* ReplaceEngineEnhanced.swift in Sources */,
-				1A00000000000019 /* RuleSplitter.swift in Sources */,
-				1A00000000000047 /* TemplateEngine.swift in Sources */,
-				1A00000000000048 /* JSBridge.swift in Sources */,
-				1A0000000000006B /* SearchOptimizer.swift in Sources */,
-				1A0000000000006A /* DataMigrationManager.swift in Sources */,
-				1A00000000000069 /* SourceSubscriptionManager.swift in Sources */,
-				1A00000000000062 /* TTSManager.swift in Sources */,
-				1A00000000000036 /* AddBookView.swift in Sources */,
-				1A00000000000020 /* BookshelfView.swift in Sources */,
-				1A00000000000021 /* BookshelfViewModel.swift in Sources */,
-				1A00000000000039 /* ReaderSettingsFullView.swift in Sources */,
-				1A00000000000022 /* ReaderView.swift in Sources */,
-				1A00000000000023 /* ReaderViewModel.swift in Sources */,
-				1A00000000000058 /* PagedReaderView.swift in Sources */,
-				1A00000000000059 /* PageSplitter.swift in Sources */,
-				1A0000000000005A /* CoverPageView.swift in Sources */,
-				1A0000000000005B /* SlidePageView.swift in Sources */,
-				1A00000000000064 /* CurlPageView.swift in Sources */,
-				1A00000000000067 /* ReadingEnhancementManager.swift in Sources */,
-				1A00000000000065 /* AutoPageTurnManager.swift in Sources */,
-				1A00000000000066 /* AutoPageTurnControlsView.swift in Sources */,
-				1A00000000000063 /* TTSControlsView.swift in Sources */,
-				1A0000000000005C /* DiscoveryView.swift in Sources */,
-				1A0000000000005D /* ReadingStatisticsView.swift in Sources */,
-				1A0000000000005E /* ReadingStatisticsManager.swift in Sources */,
-				1A0000000000005F /* SourceDebugView.swift in Sources */,
-				1A00000000000060 /* SourceDebugViewModel.swift in Sources */,
-				1A00000000000061 /* RuleDebugger.swift in Sources */,
-				1A00000000000035 /* SearchResultView.swift in Sources */,
-				1A00000000000024 /* SearchView.swift in Sources */,
-				1A00000000000025 /* SearchViewModel.swift in Sources */,
-				1A00000000000026 /* SourceManageView.swift in Sources */,
-				1A00000000000027 /* SourceViewModel.swift in Sources */,
-				1A00000000000049 /* SourceEditView.swift in Sources */,
-				1A0000000000004A /* SourceEditViewModel.swift in Sources */,
-				1A0000000000004B /* RuleFieldEditor.swift in Sources */,
-				1A0000000000004C /* BasicInfoSection.swift in Sources */,
-				1A0000000000004D /* SearchRuleSection.swift in Sources */,
-				1A0000000000004E /* ExploreRuleSection.swift in Sources */,
-				1A0000000000004F /* BookInfoRuleSection.swift in Sources */,
-				1A00000000000050 /* TocRuleSection.swift in Sources */,
-				1A00000000000051 /* ContentRuleSection.swift in Sources */,
-				1A00000000000038 /* BackupRestoreView.swift in Sources */,
-				1A0000000000003A /* ReplaceRuleView.swift in Sources */,
-				1A00000000000028 /* SettingsView.swift in Sources */,
-				1A00000000000037 /* LocalBookViewModel.swift in Sources */,
-				1A00000000000029 /* BookDetailView.swift in Sources */,
-				1A00000000000040 /* AnalyzeUrl.swift in Sources */,
-				1A00000000000041 /* WebBook.swift in Sources */,
-				1A00000000000042 /* RSSSubscriptionView.swift in Sources */,
-				1A00000000000043 /* QRCodeScanView.swift in Sources */,
-				1A00000000000044 /* DictRuleView.swift in Sources */,
-				1A00000000000045 /* ReplaceRule+CoreDataClass.swift in Sources */,
-				1A00000000000046 /* ReplaceRuleDebugView.swift in Sources */,
-				1A00000000000070 /* BookGroup+CoreDataClass.swift in Sources */,
-				1A00000000000071 /* SearchBook+CoreDataClass.swift in Sources */,
-				1A00000000000072 /* SearchKeyword+CoreDataClass.swift in Sources */,
-				1A00000000000073 /* RssSource+CoreDataClass.swift in Sources */,
-				1A00000000000074 /* RssArticle+CoreDataClass.swift in Sources */,
-				1A00000000000075 /* RssReadRecord+CoreDataClass.swift in Sources */,
-				1A00000000000076 /* RssStar+CoreDataClass.swift in Sources */,
-				1A00000000000077 /* CacheEntry+CoreDataClass.swift in Sources */,
-				1A00000000000078 /* Cookie+CoreDataClass.swift in Sources */,
-				1A00000000000079 /* ReadRecord+CoreDataClass.swift in Sources */,
-				1A0000000000007A /* BookProgress+CoreDataClass.swift in Sources */,
-				1A0000000000007B /* HttpTTS+CoreDataClass.swift in Sources */,
-				1A0000000000007C /* DictRule+CoreDataClass.swift in Sources */,
-				1A0000000000007D /* RuleSub+CoreDataClass.swift in Sources */,
-				1A0000000000007E /* TxtTocRule+CoreDataClass.swift in Sources */,
-				1A0000000000007F /* BookDeduplicator.swift in Sources */,
-				1A00000000000080 /* TableOfContentsParser.swift in Sources */,
-				1A00000000000081 /* ContentView.swift in Sources */,
-				1A00000000000082 /* Chapter.swift in Sources */,
-				1A00000000000083 /* ChangeSourceSheet.swift in Sources */,
-				1A00000000000084 /* BookmarkSheet.swift in Sources */,
-1A00000000000085 /* ChapterCacheManager.swift in Sources */,
-1A00000000000086 /* UTType+EPUB.swift in Sources */,
-				1A00000000000087 /* DocumentPickerHelper.swift in Sources */,
-				1A00000000000088 /* URLSchemeHandler.swift in Sources */,
-				1A00000000000089 /* URLConfirmHelper.swift in Sources */,
-1A0000000000008A /* VerificationWebView.swift in Sources */,
-				1A0000000000008B /* RemoteBookView.swift in Sources */,
-				1A0000000000008C /* BackgroundCacheService.swift in Sources */,
+				1A00000000000001,
+				1A00000000000030,
+				1A00000000000010,
+				1A00000000000011,
+				1A00000000000012,
+				1A00000000000013,
+				1A00000000000014,
+				1A00000000000015,
+				1A00000000000031,
+				1A00000000000032,
+				1A00000000000033,
+				1A00000000000016,
+				1A00000000000068,
+				1A00000000000055,
+				1A00000000000056,
+				1A00000000000057,
+				1A00000000000052,
+				1A00000000000053,
+				1A00000000000054,
+				1A00000000000034,
+				1A00000000000017,
+				1A00000000000018,
+				1A0000000000006C,
+				1A00000000000019,
+				1A00000000000047,
+				1A00000000000048,
+				1A0000000000006B,
+				1A0000000000006A,
+				1A00000000000069,
+				1A00000000000062,
+				1A00000000000036,
+				1A00000000000020,
+				1A00000000000021,
+				1A00000000000039,
+				1A00000000000022,
+				1A00000000000023,
+				1A00000000000058,
+				1A00000000000059,
+				1A0000000000005A,
+				1A0000000000005B,
+				1A00000000000064,
+				1A00000000000067,
+				1A00000000000065,
+				1A00000000000066,
+				1A00000000000063,
+				1A0000000000005C,
+				1A0000000000005D,
+				1A0000000000005E,
+				1A0000000000005F,
+				1A00000000000060,
+				1A00000000000061,
+				1A00000000000035,
+				1A00000000000024,
+				1A00000000000025,
+				1A00000000000026,
+				1A00000000000027,
+				1A00000000000049,
+				1A0000000000004A,
+				1A0000000000004B,
+				1A0000000000004C,
+				1A0000000000004D,
+				1A0000000000004E,
+				1A0000000000004F,
+				1A00000000000050,
+				1A00000000000051,
+				1A00000000000038,
+				1A0000000000003A,
+				1A00000000000028,
+				1A00000000000037,
+				1A00000000000029,
+				1A00000000000040,
+				1A00000000000041,
+				1A00000000000042,
+				1A00000000000043,
+				1A00000000000044,
+				1A00000000000045,
+				1A00000000000046,
+				1A00000000000070,
+				1A00000000000071,
+				1A00000000000072,
+				1A00000000000073,
+				1A00000000000074,
+				1A00000000000075,
+				1A00000000000076,
+				1A00000000000077,
+				1A00000000000078,
+				1A00000000000079,
+				1A0000000000007A,
+				1A0000000000007B,
+				1A0000000000007C,
+				1A0000000000007D,
+				1A0000000000007E,
+				1A0000000000007F,
+				1A00000000000080,
+				1A00000000000081,
+				1A00000000000082,
+				1A00000000000083,
+				1A00000000000084,
+				1A00000000000085,
+				1A00000000000086,
+				1A00000000000087,
+				1A00000000000088,
+				1A00000000000089,
+				1A0000000000008A,
+				1A0000000000008B,
+				1A0000000000008C,
+				9715449CA7354028C35FE6A4 /* AppSettings.swift in Sources */,
+				685244679399813BB5F4FCEF /* SearchFilter.swift in Sources */,
+				3D1A40C2A4189C837D98B616 /* TextConverter.swift in Sources */,
+				7E0044D9907502DC25731A2A /* SearchHistoryManager.swift in Sources */,
+				B2FE4CE99075FB46AFF46E97 /* SearchHotWordsManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		1AB0000000000001 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.6.0;
-			};
-		};
-		1AB0000000000002 /* XCRemoteSwiftPackageReference "Kanna" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/tid-kijyun/Kanna.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.2.8;
-			};
-		};
-		1AB0000000000003 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.18;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		1AC0000000000001 /* SwiftSoup */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1AB0000000000001 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
-			productName = SwiftSoup;
-		};
-		1AC0000000000002 /* Kanna */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1AB0000000000002 /* XCRemoteSwiftPackageReference "Kanna" */;
-			productName = Kanna;
-		};
-		1AC0000000000003 /* ZIPFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1AB0000000000003 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
-			productName = ZIPFoundation;
-		};
-/* End XCSwiftPackageProductDependency section */
-
 /* Begin XCBuildConfiguration section */
-		1A70000000000001 /* Debug */ = {
+		'1A70000000000001' = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -865,7 +830,7 @@
 			};
 			name = Debug;
 		};
-		1A70000000000002 /* Release */ = {
+		'1A70000000000002' = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -921,7 +886,7 @@
 			};
 			name = Release;
 		};
-		1A70000000000003 /* Debug */ = {
+		'1A70000000000003' = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -933,7 +898,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = 嘟嘟;
+				INFOPLIST_KEY_CFBundleDisplayName = "嘟嘟";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -954,7 +919,7 @@
 			};
 			name = Debug;
 		};
-		1A70000000000004 /* Release */ = {
+		'1A70000000000004' = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -966,7 +931,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = 嘟嘟;
+				INFOPLIST_KEY_CFBundleDisplayName = "嘟嘟";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -990,25 +955,70 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1A50000000000001 /* Build configuration list for PBXNativeTarget "Legado" */ = {
+		'1A50000000000001' = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1A70000000000003 /* Debug */,
-				1A70000000000004 /* Release */,
+				1A70000000000003,
+				1A70000000000004,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1A50000000000002 /* Build configuration list for PBXProject "Legado" */ = {
+		'1A50000000000002' = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1A70000000000001 /* Debug */,
-				1A70000000000002 /* Release */,
+				1A70000000000001,
+				1A70000000000002,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		'1AB0000000000001' = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.0;
+			};
+		};
+		'1AB0000000000002' = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tid-kijyun/Kanna.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.2.8;
+			};
+		};
+		'1AB0000000000003' = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.18;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		'1AC0000000000001' = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1AB0000000000001;
+			productName = SwiftSoup;
+		};
+		'1AC0000000000002' = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1AB0000000000002;
+			productName = Kanna;
+		};
+		'1AC0000000000003' = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1AB0000000000003;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = 1A60000000000001 /* Project object */;
+	rootObject = 1A60000000000001;
 }

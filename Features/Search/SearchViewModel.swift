@@ -18,6 +18,8 @@ class SearchViewModel: ObservableObject {
     @Published var selectedSources: [BookSource] = []
     @Published var searchHistory: [String] = []
     @Published var hotWords: [String] = []
+    @Published var searchedSourceCount = 0
+    @Published var totalSourceCount = 0
 
     private var ruleEngine: RuleEngine = RuleEngine()
     private let settings = AppSettings.shared
@@ -81,6 +83,12 @@ class SearchViewModel: ObservableObject {
     }
     
     // MARK: - 执行搜索
+
+    /// 同时在搜的源数量上限：防止把弱站点和手机网络打爆
+    private static let maxConcurrentSources = 12
+    /// 单个书源搜索超时（秒）：超时的源放弃，不拖慢整体
+    private static let sourceTimeoutSeconds: UInt64 = 10
+
     func search(keyword: String, sources: [BookSource]) async {
         guard !keyword.isEmpty else {
             searchResults = []
@@ -89,7 +97,6 @@ class SearchViewModel: ObservableObject {
             return
         }
 
-        // 添加到搜索历史
         historyManager.add(keyword)
         loadSearchHistory()
 
@@ -97,35 +104,65 @@ class SearchViewModel: ObservableObject {
         searchResults.removeAll()
         filteredResults.removeAll()
         errorMessage = nil
+        searchedSourceCount = 0
 
-        // 过滤书源类型
         let typeFiltered = SearchFilter.shared.filterBySourceType(sources, sourceType: settings.searchSourceType)
         let enabledSources = typeFiltered.filter { $0.enabled && $0.searchUrl != nil }
+        totalSourceCount = enabledSources.count
 
-        var merged: [SearchResult] = []
+        var nextIndex = 0
+        var seenBookKeys = Set<String>()
 
         await withTaskGroup(of: [SearchResult].self) { group in
-            for source in enabledSources {
-                group.addTask { [keyword] in
-                    do {
-                        return try await self.searchInSource(keyword: keyword, source: source)
-                    } catch {
-                        return []
-                    }
+            func addNextSource() {
+                guard nextIndex < enabledSources.count else { return }
+                let source = enabledSources[nextIndex]
+                nextIndex += 1
+                group.addTask {
+                    await self.searchWithTimeout(keyword: keyword, source: source)
                 }
             }
 
-            for await partial in group {
-                merged.append(contentsOf: partial)
+            for _ in 0..<min(Self.maxConcurrentSources, enabledSources.count) {
+                addNextSource()
+            }
+
+            // 流式回填：哪个源先出结果就先显示哪个，不等全部搜完
+            while let partial = await group.next() {
+                searchedSourceCount += 1
+                for result in partial {
+                    let key = result.displayName + "|" + result.displayAuthor
+                    if seenBookKeys.insert(key.lowercased()).inserted {
+                        searchResults.append(result)
+                    }
+                }
+                applyFilter(keyword: keyword)
+                if !Task.isCancelled {
+                    addNextSource()
+                }
             }
         }
 
-        searchResults = merged
-
-        // 应用搜索过滤
-        applyFilter(keyword: keyword)
-
+        if Task.isCancelled {
+            errorMessage = "搜索已取消"
+        }
         isSearching = false
+    }
+
+    /// 单源搜索，套一层超时：结果和超时赛跑，先到者胜，输家被取消
+    private nonisolated func searchWithTimeout(keyword: String, source: BookSource) async -> [SearchResult] {
+        await withTaskGroup(of: [SearchResult]?.self) { inner in
+            inner.addTask {
+                (try? await self.searchInSource(keyword: keyword, source: source)) ?? []
+            }
+            inner.addTask {
+                try? await Task.sleep(nanoseconds: Self.sourceTimeoutSeconds * 1_000_000_000)
+                return nil
+            }
+            let first = await inner.next() ?? []
+            inner.cancelAll()
+            return first
+        }
     }
 
     /// 应用搜索过滤
@@ -152,7 +189,8 @@ class SearchViewModel: ObservableObject {
     }
     
     // MARK: - 在单个书源中搜索
-    private func searchInSource(keyword: String, source: BookSource) async throws -> [SearchResult] {
+
+    private nonisolated func searchInSource(keyword: String, source: BookSource) async throws -> [SearchResult] {
         // 使用 WebBook 进行搜索
         let results = try await WebBook.searchBook(source: source, key: keyword)
         
