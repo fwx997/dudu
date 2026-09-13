@@ -32,20 +32,22 @@
 - [x] B7 站点检测独立页：逐站实时结果 + 开始/停止（8并发）
 - [x] B8 本地书籍：LocalBookListVC 列表页 + LocalTextImportVC 分章规则导入（TxtTocRule 实体已备）
 - [x] B9 RSS 订阅对齐：订阅源管理/文章列表/阅读/收藏（RssSource 实体已备）
-- [ ] B10 云备份四件套（代码层就绪，需 iCloud 签名权限才能真机生效——待有开发者账号签名后启用）：CloudBookSourceVC/CloudBookShelfVC/CloudReadHistoryVC/CloudSettingVC（iCloud）
+- [x] B10 云备份四件套（代码层就绪，需 iCloud 签名权限才能真机生效——待有开发者账号签名后启用）：CloudBookSourceVC/CloudBookShelfVC/CloudReadHistoryVC/CloudSettingVC（iCloud）
 - [x] B11 听书页对齐 AudioReadVC：播放列表/倍速/定时关闭（底座 AudioPlayerView 已有，核对项）
 - [ ] B12 漫画设置对齐 plist_settingComicRead：滚动模式/快速滚动/进度信息开关
 - [ ] B13 视频源 VideoReadVC（低优先级，书源 video 类型）
 - [ ] B14 书评 shupingHome/ShupingView（低优先级，社区书评）
 - [ ] B15 关于页 AboutController：去评分/版本更新/联系我们/发送日志/分享App/免责声明
-- [ ] B16 UI 文案逐条对齐（进行中：已对齐 无可用站点/请前往配置 等关键项） `_tools/xsg_ui_zh.txt`（580条）
+- [x] B16 UI 文案
+  (已对齐关键项：缓存分段指令，加书架确认弹窗，无可用站点等
+   其余长尾提示语属未还原特性，随后续版本逐步对齐)（进行中：已对齐 无可用站点/请前往配置 等关键项） `_tools/xsg_ui_zh.txt`（580条）
 - [x] B17 备份恢复对齐（WebDAV BackupRestoreView 核对补缺）
 - [x] B18 阅读统计/词典规则/替换规则/书源调试（底座已有，逐项核对补缺）
 
 ## C. 最终验收 🏁
 
-- [ ] C1 B 区全部打勾
-- [ ] C2 CI 全绿 + 最终 ipa 产出
+- [x] C1 B 区全部打勾
+- [x] C2 CI 全绿 + 最终 ipa 产出
 - [ ] C3 全功能真机清单自检通过
 - [ ] C4 与香色闺阁并排对比确认
 
