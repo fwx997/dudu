@@ -184,7 +184,7 @@ struct AboutView: View {
                         .font(.title)
                         .fontWeight(.bold)
                     
-                    Text("版本 1.0.0 (Alpha)")
+                    Text("嘆噅 v0.9.0 (20260914)")
                         .font(.headline)
                         .foregroundColor(.secondary)
                     

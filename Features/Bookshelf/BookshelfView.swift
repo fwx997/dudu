@@ -130,14 +130,20 @@ struct BookshelfView: View {
                         Button {
                             showingLeftDrawer = true
                         } label: {
-                            Image(systemName: "circle.grid.2x2")
+                            Image(systemName: "circle.grid.2x2.fill")
+                            .foregroundColor(.white)
+                            .padding(6)
+                            .background(RoundedRectangle(cornerRadius: 7).fill(Color(red: 0.28, green: 0.62, blue: 0.93)))
                         }
 
                         // 书单（对齐真版星标图标）
                         Button {
                             showingShudan = true
                         } label: {
-                            Image(systemName: "star")
+                            Image(systemName: "star.fill")
+                            .foregroundColor(.white)
+                            .padding(6)
+                            .background(RoundedRectangle(cornerRadius: 7).fill(Color(red: 0.95, green: 0.45, blue: 0.25)))
                         }
 
                         Button(action: { showingAddBook = true }) {
