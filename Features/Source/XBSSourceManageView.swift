@@ -15,6 +15,8 @@ struct XBSSourceManageView: View {
     @State private var importURLText = ""
     @State private var statusMessage: String?
     @State private var importing = false
+    @State private var showingEditor = false
+    @State private var editingSource: XBSSource?
 
     var body: some View {
         Group {
@@ -73,6 +75,10 @@ struct XBSSourceManageView: View {
                             .labelsHidden()
                         }
                     }
+                    .onTapGesture {
+                        editingSource = source
+                        showingEditor = true
+                    }
                     .onDelete { indexSet in
                         for index in indexSet {
                             store.remove(store.sources[index].alias)
@@ -87,6 +93,17 @@ struct XBSSourceManageView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
+                    Button {
+                        editingSource = nil
+                        showingEditor = true
+                    } label: {
+                        Label("新建站点", systemImage: "square.and.pencil")
+                    }
+                    NavigationLink {
+                        XBSSourceCheckView()
+                    } label: {
+                        Label("检测站点", systemImage: "list.bullet.rectangle")
+                    }
                     Button {
                         importURLText = ""
                         showingNetworkImport = true
@@ -155,6 +172,9 @@ struct XBSSourceManageView: View {
             Button("取消", role: .cancel) {}
         } message: {
             Text("支持 .xbs 加密书源与明文 JSON 书源")
+        }
+        .sheet(isPresented: $showingEditor) {
+            NavigationStack { XBSSourceEditView(store: store, source: editingSource) }
         }
         .alert("导入结果", isPresented: Binding(
             get: { statusMessage != nil },

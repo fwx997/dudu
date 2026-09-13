@@ -131,10 +131,17 @@ final class XBSSourceStore: ObservableObject {
         }
     }
 
-    /// 并发检测全部站点（8 路）：跑一次真实搜索，成功=可用
+    /// 并发检测全部站点（8 路）：跑一次真实搜索，成功=可用；可中途停止
+    private var checkCancelled = false
+
+    func stopChecking() {
+        checkCancelled = true
+    }
+
     func checkAll() async {
         guard !isChecking else { return }
         isChecking = true
+        checkCancelled = false
         checkDone = 0
         checkTotal = sources.count
         defer {
@@ -150,7 +157,7 @@ final class XBSSourceStore: ObservableObject {
             let maxConcurrent = 8
 
             func addNext() {
-                guard running < maxConcurrent, let source = iterator.next() else { return }
+                guard !checkCancelled, running < maxConcurrent, let source = iterator.next() else { return }
                 running += 1
                 group.addTask {
                     (source.alias, await XBSEngine.shared.checkSource(source: source))
@@ -161,7 +168,7 @@ final class XBSSourceStore: ObservableObject {
 
             for await (alias, ok) in group {
                 running -= 1
-                addNext()
+                if !checkCancelled { addNext() }
                 checkDone += 1
                 checkStatus[alias] = ok ? "ok" : "fail"
             }
