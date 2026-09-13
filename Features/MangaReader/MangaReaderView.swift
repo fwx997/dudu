@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct MangaReaderView: View {
     @StateObject private var viewModel = MangaReaderViewModel()
@@ -114,6 +115,24 @@ class MangaReaderViewModel: ObservableObject {
         isLoading = false
     }
     
+    /// 从 HTML 内容提取图片地址（legado 源路径）
+    static func extractImageURLs(from html: String) -> [String] {
+        var urls: [String] = []
+        if let regex = try? NSRegularExpression(pattern: "<img[^>]+src=[\"']([^>\"'\s]+)", options: [.caseInsensitive]) {
+            let ns = html as NSString
+            for m in regex.matches(in: html, range: NSRange(location: 0, length: ns.length)) {
+                urls.append(ns.substring(with: m.range(at: 1)))
+            }
+        }
+        if urls.isEmpty {
+            for line in html.components(separatedBy: .newlines) {
+                let t = line.trimmingCharacters(in: .whitespacesAndNewlines)
+                if t.hasPrefix("http") { urls.append(t) }
+            }
+        }
+        return urls
+    }
+
     func loadChapter(_ chapter: BookChapter) async {
         guard let book = currentBook else { return }
 
@@ -137,7 +156,7 @@ class MangaReaderViewModel: ObservableObject {
 
         do {
             let content = try await WebBook.getContent(source: source, book: book, chapter: chapter)
-            let imageURLs = content.imageURLs
+            let imageURLs = Self.extractImageURLs(from: content)
             
             if !imageURLs.isEmpty {
                 images = imageURLs

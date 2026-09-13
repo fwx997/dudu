@@ -44,3 +44,15 @@ struct BookReaderRouter: View {
         }
     }
 }
+
+extension Color {
+    /// "#1a1a2e" / "1a1a2e" 形式的十六进制颜色
+    init?(hex: String) {
+        var value = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        if value.hasPrefix("#") { value.removeFirst() }
+        guard value.count == 6, let rgb = UInt64(value, radix: 16) else { return nil }
+        self.init(red: Double((rgb >> 16) & 0xFF) / 255.0,
+                  green: Double((rgb >> 8) & 0xFF) / 255.0,
+                  blue: Double(rgb & 0xFF) / 255.0)
+    }
+}
