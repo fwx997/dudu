@@ -15,6 +15,10 @@ struct MangaReaderView: View {
     
     @State private var showUI = true
     @State private var currentImageIndex = 0
+    @AppStorage("cr_imgSpacing") private var imgSpacing: Double = 2
+    @AppStorage("cr_showCpTitle") private var showChapterTitle = true
+    @AppStorage("cr_showPProgress") private var showPageProgress = true
+    @State private var showingSettings = false
     
     let book: Book
     
@@ -39,7 +43,7 @@ struct MangaReaderView: View {
             } else {
                 // 图片列表（纵向长条模式）
                 ScrollView {
-                    LazyVStack(spacing: 2) {
+                    LazyVStack(spacing: Int(imgSpacing)) {
                         ForEach(Array(viewModel.images.enumerated()), id: \.offset) { index, imageURL in
                             ZoomableImageView(url: imageURL) {
                                 withAnimation { showUI.toggle() }
@@ -67,8 +71,13 @@ struct MangaReaderView: View {
                         }
                         Text(book.name).foregroundColor(.white).lineLimit(1)
                         Spacer()
-                        Text("\(currentImageIndex + 1)/\(viewModel.images.count)")
-                            .font(.caption).foregroundColor(.white)
+                        Button { showingSettings.toggle() } label: {
+                            Image(systemName: "gearshape").foregroundColor(.white)
+                        }
+                        if showPageProgress {
+                            Text("\(currentImageIndex + 1)/\(viewModel.images.count)")
+                                .font(.caption).foregroundColor(.white)
+                            }
                     }
                     .padding()
                     .background(Color.black.opacity(0.6))
@@ -78,6 +87,9 @@ struct MangaReaderView: View {
             }
         }
         .statusBar(hidden: !showUI)
+        .sheet(isPresented: $showingSettings) {
+            ComicSettingsSheet(spacing: $imgSpacing, showChapterTitle: $showChapterTitle, showPageProgress: $showPageProgress)
+        }
         .onAppear { Task { await viewModel.loadBook(book) } }
     }
 }
@@ -227,3 +239,33 @@ struct ZoomableImageView: View {
 }
 
 // subscript(safe:) 已移至 BookReaderRouter.swift 全局实现
+
+// MARK: - 漫画设置面板（对齐 plist_settingComicRead）
+
+struct ComicSettingsSheet: View {
+    @Binding var spacing: Double
+    @Binding var showChapterTitle: Bool
+    @Binding var showPageProgress: Bool
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationView {
+            Form {
+                Section("图片间距") {
+                    Slider(value: $spacing, in: 0...20, step: 1)
+                }
+                Section("进度信息") {
+                    Toggle("显示页码进度", isOn: $showPageProgress)
+                    Toggle("显示章节信息", isOn: $showChapterTitle)
+                }
+            }
+            .navigationTitle("漫画设置")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("完成") { dismiss() }
+                }
+            }
+        }
+    }
+}
