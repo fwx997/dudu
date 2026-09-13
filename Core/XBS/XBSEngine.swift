@@ -563,7 +563,20 @@ final class XBSEngine {
                 for (k, v) in actionHeaders { headers[k] = "\(v)" }
             }
             let isPOST = (dict["POST"] as? Bool) == true || dict.string("POST") == "true"
-            return BuiltRequest(url: url, isPOST: isPOST, headers: headers, bodyParams: dict["httpParams"] as? [String: Any])
+            var bodyParams = dict["httpParams"] as? [String: Any]
+            if isPOST {
+                // POST：参数放 body，值里的占位符先替换
+                if let hp = bodyParams {
+                    bodyParams = hp.mapValues { substitutePlaceholders("\($0)", params: params, encodeValues: false) }
+                }
+            } else {
+                // GET：httpParams 必须拼进 URL 查询串（此前被丢弃，导致搜索空参请求）
+                if let hp = bodyParams {
+                    url = appendQuery(url, items: hp.mapValues { substitutePlaceholders("\($0)", params: params, encodeValues: true) })
+                    bodyParams = nil
+                }
+            }
+            return BuiltRequest(url: url, isPOST: isPOST, headers: headers, bodyParams: bodyParams)
         }
 
         // 模板占位符替换
@@ -582,7 +595,46 @@ final class XBSEngine {
             for (k, v) in actionHeaders { headers[k] = "\(v)" }
         }
         let isPOST = (action["POST"] as? Bool) == true || action.string("POST") == "true"
-        return BuiltRequest(url: url, isPOST: isPOST, headers: headers, bodyParams: action["httpParams"] as? [String: Any])
+        var bodyParams = action["httpParams"] as? [String: Any]
+        if isPOST {
+            if let hp = bodyParams {
+                bodyParams = hp.mapValues { substitutePlaceholders("\($0)", params: params, encodeValues: false) }
+            }
+        } else {
+            if let hp = bodyParams {
+                url = appendQuery(url, items: hp.mapValues { substitutePlaceholders("\($0)", params: params, encodeValues: true) })
+                bodyParams = nil
+            }
+        }
+        return BuiltRequest(url: url, isPOST: isPOST, headers: headers, bodyParams: bodyParams)
+    }
+
+    /// 替换参数值中的 %@keyWord 等占位符
+    private func substitutePlaceholders(_ text: String, params: [String: Any], encodeValues: Bool) -> String {
+        let keyword = params.string("keyWord") ?? ""
+        var out = text
+            .replacingOccurrences(of: "%@keyWord", with: encodeValues ? urlEncode(keyword) : keyword)
+            .replacingOccurrences(of: "%@pageIndex", with: params.string("pageIndex") ?? "1")
+            .replacingOccurrences(of: "%@offset", with: params.string("offset") ?? "0")
+            .replacingOccurrences(of: "%@filter", with: encodeValues ? urlEncode(params.string("filter") ?? "") : (params.string("filter") ?? ""))
+            .replacingOccurrences(of: "%@result", with: params.string("result") ?? "")
+        if encodeValues {
+            // 已是完整 URL/绝对路径的值不再二次编码
+            if out.hasPrefix("http") { out = out.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? out }
+        }
+        return out
+    }
+
+    /// 把字典拼成 URL 查询串（保留已有 query）
+    private func appendQuery(_ urlString: String, items: [String: String]) -> String {
+        guard !items.isEmpty, var comps = URLComponents(string: urlString) else { return urlString }
+        var queryItems = comps.queryItems ?? []
+        let existing = Set(queryItems.map { $0.name })
+        for (k, v) in items.sorted(by: { $0.key < $1.key }) where !existing.contains(k) {
+            queryItems.append(URLQueryItem(name: k, value: v))
+        }
+        comps.queryItems = queryItems
+        return comps.url?.absoluteString ?? urlString
     }
 
     // MARK: - 列表与字段解析

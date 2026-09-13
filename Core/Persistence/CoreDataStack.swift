@@ -78,6 +78,8 @@ final class CoreDataStack {
             for: .applicationSupportDirectory,
             in: .userDomainMask
         ).first!
+        // Application Support 目录新装应用不存在，必须先创建，否则 SQLite 建库失败
+        try? FileManager.default.createDirectory(at: appSupportURL, withIntermediateDirectories: true)
         return appSupportURL.appendingPathComponent(storeFileName)
     }
     
