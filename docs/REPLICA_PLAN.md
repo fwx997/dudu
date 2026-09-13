@@ -1,0 +1,54 @@
+# 嘟嘟复刻计划（全部完成才结束）
+
+> **规则：本计划为唯一进度真相源。做完一项打一项的勾并提交，全部打勾之前不停工、不找用户确认。**
+> 规格来源：`_tools/xsg_perclass_methods.txt`（438类/6242方法）、`_tools/xsg_ui_zh.txt`（580条UI文案）、`xsg_extracted/`（配置plist+图标）、社区书源格式文档。
+> 原则：先 1:1 还原原版行为，再评估升级；并发搜索/缓存/检测为已完成的升级层，不回退。
+
+## A. 已完成 ✅
+
+- [x] A1 XBS 引擎（.xbs 解密/搜索/详情/目录/正文/分页/二段规则/XPath）——真实网站 E2E 验证通过
+- [x] A2 运行时三大阻断修复（ATS 放行 http / Application Support 建目录 / GET 参数拼接）
+- [x] A3 导入三入口：网络导入 / 剪贴板导入 / 本地文件导入（UIKit 选择器）
+- [x] A4 书架：多书架（ShelfStore/BookGroup）/ 双抽屉 / 编辑模式（长按多选/全选/移动/删除）
+- [x] A5 聚合搜索：历史/热词/12并发/超时/去重/过滤方式/书源类型/繁简转换
+- [x] A6 发现页：书世界（分类浏览）+ 书单（搜索/详情）
+- [x] A7 阅读器：四种翻页/字号/字体/行距/主题/亮度/显示项开关（时间/电量/章节标题/进度）
+- [x] A8 漫画/听书路由（BookReaderRouter）+ XBS 取图/取音频
+- [x] A9 站点管理：启停/删除/检测全部站点(8并发+徽标)/导出.xbs
+- [x] A10 书架更新检查（6并发 bookDetail）
+- [x] A11 缓存全本（4并发+进度浮层）
+- [x] A12 TTS 朗读（按页/按章接线）+ 自动夜间 + 屏幕常亮
+- [x] A13 目录页：章节搜索 + 正序/倒序
+- [x] A14 阅读器更多菜单（详情/刷新/搜索内容/过滤内容/翻页区域/百度/报错）
+
+## B. 还原中 🚧（做完才结束）
+
+- [ ] B1 书籍详情对齐 BookDetailController：updateDetail（详情刷新）/updateSource（换源面板）/updateCatalog（目录刷新）三动作入 UI
+- [ ] B2 正文过滤页 TextReadFilterVC：按正则/关键词净化章节内容并保存
+- [ ] B3 正文搜索 TextReadSearchVC：核对搜索范围含"已缓存内容"（缓存优先搜索）
+- [ ] B4 相关词 relatedWord：搜索无结果时展示站点相关词联想
+- [ ] B5 书架手动排序：编辑模式拖拽排序（onMoveEvent），持久化 order
+- [ ] B6 站点编辑器：新建/编辑站点表单（基础信息+搜索/详情/目录/正文四配置，照 plist 页面结构）
+- [ ] B7 站点检测独立页 ConfigSourceCheckVC：逐站结果列表 + 开始/停止
+- [ ] B8 本地书籍：LocalBookListVC 列表页 + LocalTextImportVC 分章规则导入（TxtTocRule 实体已备）
+- [ ] B9 RSS 订阅对齐：订阅源管理/文章列表/阅读/收藏（RssSource 实体已备）
+- [ ] B10 云备份四件套：CloudBookSourceVC/CloudBookShelfVC/CloudReadHistoryVC/CloudSettingVC（iCloud）
+- [ ] B11 听书页对齐 AudioReadVC：播放列表/倍速/定时关闭（底座 AudioPlayerView 已有，核对项）
+- [ ] B12 漫画设置对齐 plist_settingComicRead：滚动模式/快速滚动/进度信息开关
+- [ ] B13 视频源 VideoReadVC（低优先级，书源 video 类型）
+- [ ] B14 书评 shupingHome/ShupingView（低优先级，社区书评）
+- [ ] B15 关于页 AboutController：去评分/版本更新/联系我们/发送日志/分享App/免责声明
+- [ ] B16 UI 文案逐条对齐 `_tools/xsg_ui_zh.txt`（580条）
+- [ ] B17 备份恢复对齐（WebDAV BackupRestoreView 核对补缺）
+- [ ] B18 阅读统计/词典规则/替换规则/书源调试（底座已有，逐项核对补缺）
+
+## C. 最终验收 🏁
+
+- [ ] C1 B 区全部打勾
+- [ ] C2 CI 全绿 + 最终 ipa 产出
+- [ ] C3 全功能真机清单自检通过
+- [ ] C4 与香色闺阁并排对比确认
+
+## 升级层（保留，不回退）
+
+- 并发搜索 12 池 / 缓存 4 并发 / 检测 8 并发 / 更新检查 6 并发 / 流式回填 / 去重
