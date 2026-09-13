@@ -177,7 +177,7 @@ final class BookshelfViewModel: ObservableObject {
     }
 
     /// 编辑模式：批量移动到书架（对齐 onMoveEvent:）
-    func moveBooks(_ books: [Book], to group: Int32) {
+    func moveBooks(_ books: [Book], to group: Int64) {
         for b in books { b.group = group }
         try? CoreDataStack.shared.save()
         Task { await forceReload() }

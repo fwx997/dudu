@@ -161,7 +161,7 @@ struct BookshelfView: View {
             ForEach(shelfStore.shelves) { shelf in
                 Button(shelf.name) {
                     let books = viewModel.books.filter { selectedBookIds.contains($0.bookId) }
-                    viewModel.moveBooks(books, to: Int32(truncatingIfNeeded: shelf.id))
+                    viewModel.moveBooks(books, to: shelf.id)
                     selectedBookIds.removeAll()
                     isEditing = false
                 }
