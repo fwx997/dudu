@@ -126,6 +126,27 @@ struct XBSBookDetailView: View {
         }
         .navigationTitle("书籍详情")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    // 对齐 BookDetailController.updateDetail
+                    Button {
+                        Task { await refreshDetail(force: true) }
+                    } label: {
+                        Label("刷新详情", systemImage: "arrow.clockwise")
+                    }
+                    // 对齐 BookDetailController.updateCatalog
+                    Button {
+                        Task { await refreshToc() }
+                    } label: {
+                        Label("刷新目录", systemImage: "list.bullet")
+                    }
+                    .disabled(shelfBook == nil)
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
         .task {
             await refreshDetail()
         }
@@ -147,8 +168,9 @@ struct XBSBookDetailView: View {
     // MARK: - 数据
 
     /// 用 bookDetail 配置补全详情
-    private func refreshDetail() async {
-        defer { isLoadingDetail = false }
+    private func refreshDetail(force: Bool = false) async {
+        if force { isLoadingDetail = true }
+        defer { if force { isLoadingDetail = false } }
         let alias = book.sourceAlias
         guard let source = XBSSourceStore.shared.source(alias: alias) else { return }
         guard source.action("bookDetail") != nil else { return }
@@ -159,6 +181,33 @@ struct XBSBookDetailView: View {
             if let desc = detail.desc, !desc.isEmpty { book.desc = desc }
             if let latest = detail.lastChapterTitle, !latest.isEmpty { book.lastChapterTitle = latest }
             if let status = detail.status, !status.isEmpty { book.status = status }
+            if force { actionMessage = "详情已更新" }
+        }
+    }
+
+    /// 刷新目录：清掉旧章节记录后按站点规则重建（对齐 updateCatalog）
+    private func refreshToc() async {
+        guard let shelfBook else { return }
+        isLoadingDetail = true
+        defer { isLoadingDetail = false }
+        let context = CoreDataStack.shared.viewContext
+        guard let source = XBSSourceStore.shared.source(alias: book.sourceAlias) else { return }
+        do {
+            let request = BookChapter.fetchRequest(byBookId: shelfBook.bookId)
+            for old in try context.fetch(request) {
+                context.delete(old)
+            }
+            let chapters = try await XBSEngine.shared.chapterList(source: source, url: shelfBook.tocUrl.isEmpty ? shelfBook.bookUrl : shelfBook.tocUrl)
+            for (index, c) in chapters.enumerated() {
+                let chapter = BookChapter.create(in: context, bookId: shelfBook.bookId, url: c.url, index: Int32(index), title: c.title)
+                chapter.book = shelfBook
+                chapter.sourceId = shelfBook.origin
+            }
+            shelfBook.totalChapterNum = Int32(chapters.count)
+            try CoreDataStack.shared.save()
+            actionMessage = "目录已更新，共 \(chapters.count) 章"
+        } catch {
+            actionMessage = "目录刷新失败：\(error.localizedDescription)"
         }
     }
 

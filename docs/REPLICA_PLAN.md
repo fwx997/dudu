@@ -23,7 +23,7 @@
 
 ## B. 还原中 🚧（做完才结束）
 
-- [ ] B1 书籍详情对齐 BookDetailController：updateDetail（详情刷新）/updateSource（换源面板）/updateCatalog（目录刷新）三动作入 UI
+- [x] B1 书籍详情对齐 BookDetailController：刷新详情(updateDetail)/刷新目录(updateCatalog)入 UI，换源面板已有
 - [ ] B2 正文过滤页 TextReadFilterVC：按正则/关键词净化章节内容并保存
 - [ ] B3 正文搜索 TextReadSearchVC：核对搜索范围含"已缓存内容"（缓存优先搜索）
 - [ ] B4 相关词 relatedWord：搜索无结果时展示站点相关词联想
