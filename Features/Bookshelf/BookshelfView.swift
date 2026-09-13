@@ -24,6 +24,7 @@ struct BookshelfView: View {
     @State private var selectedBookIds: Set<UUID> = []
     @State private var showingMoveSheet = false
     @State private var showingFolderMenu = false
+    @State private var showingLocalBooks = false
 
     var body: some View {
         ZStack {
@@ -150,6 +151,7 @@ struct BookshelfView: View {
             Button("站点管理") { showingXBSManage = true }
             Button("书源管理") { showingSourceManage = true }
             Button("导入本地书籍") { showingAddBook = true }
+            Button("本地书籍列表") { showingLocalBooks = true }
             Button("打开 txt / epub 文件") { openTextFile() }
             Button("进入编辑模式") {
                 isEditing = true
@@ -190,6 +192,9 @@ struct BookshelfView: View {
         }
         .sheet(isPresented: $showingSearch) {
             NavigationStack { SearchResultView() }
+        }
+        .sheet(isPresented: $showingLocalBooks) {
+            NavigationStack { LocalBooksView() }
         }
         .sheet(isPresented: $showingShudan) {
             NavigationStack { DiscoveryView(initialMode: .shudan) }
