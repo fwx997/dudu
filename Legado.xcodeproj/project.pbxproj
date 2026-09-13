@@ -120,6 +120,7 @@
 		'1A0000000000008C' = {isa = PBXBuildFile; fileRef = 1A1000000000008C; };
 		'1A0000000000008D' = {isa = PBXBuildFile; fileRef = 1A1000000000008D; };
 		3D1A40C2A4189C837D98B616 /* TextConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BE4951AA6726A4DB32A615 /* TextConverter.swift */; };
+		DDC0AAB90000000000000FF /* LocalBooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AABB00000000000000FF /* LocalBooksView.swift */; };
 		DDC0AAB80000000000000FE /* XBSSourceCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AABB00000000000000FE /* XBSSourceCheckView.swift */; };
 		DDC0AAB70000000000000FD /* XBSSourceEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AABB00000000000000FD /* XBSSourceEditView.swift */; };
 		DDC0AAB60000000000000FC /* ShelfStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC0AABB00000000000000FC /* ShelfStore.swift */; };
@@ -257,6 +258,7 @@
 		DA0C4165B98E48B164F2D5A2 /* SearchFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchFilter.swift; path = Core/Utils/SearchFilter.swift; sourceTree = SOURCE_ROOT; };
 		FB28466C90CB7AE293DE4B17 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppSettings.swift; path = Core/Settings/AppSettings.swift; sourceTree = SOURCE_ROOT; };
 		FDBB4804934C20219DA82E34 /* SearchHistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchHistoryManager.swift; path = Features/Search/SearchHistoryManager.swift; sourceTree = SOURCE_ROOT; };
+		DDC0AABB00000000000000FF /* LocalBooksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalBooksView.swift; path = Features/Local/LocalBooksView.swift; sourceTree = SOURCE_ROOT; };
 		DDC0AABB00000000000000FE /* XBSSourceCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = XBSSourceCheckView.swift; path = Features/Source/XBSSourceCheckView.swift; sourceTree = SOURCE_ROOT; };
 		DDC0AABB00000000000000FD /* XBSSourceEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = XBSSourceEditView.swift; path = Features/Source/XBSSourceEditView.swift; sourceTree = SOURCE_ROOT; };
 		DDC0AABB00000000000000FC /* ShelfStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShelfStore.swift; path = Features/Bookshelf/ShelfStore.swift; sourceTree = SOURCE_ROOT; };
@@ -301,6 +303,7 @@
 				DA0C4165B98E48B164F2D5A2 /* SearchFilter.swift */,
 				C2BE4951AA6726A4DB32A615 /* TextConverter.swift */,
 				FDBB4804934C20219DA82E34 /* SearchHistoryManager.swift */,
+				DDC0AABB00000000000000FF /* LocalBooksView.swift */,
 				DDC0AABB00000000000000FE /* XBSSourceCheckView.swift */,
 				DDC0AABB00000000000000FD /* XBSSourceEditView.swift */,
 				DDC0AABB00000000000000FC /* ShelfStore.swift */,
@@ -807,6 +810,7 @@
 				685244679399813BB5F4FCEF /* SearchFilter.swift in Sources */,
 				3D1A40C2A4189C837D98B616 /* TextConverter.swift in Sources */,
 				7E0044D9907502DC25731A2A /* SearchHistoryManager.swift in Sources */,
+				DDC0AAB90000000000000FF /* LocalBooksView.swift in Sources */,
 				DDC0AAB80000000000000FE /* XBSSourceCheckView.swift in Sources */,
 				DDC0AAB70000000000000FD /* XBSSourceEditView.swift in Sources */,
 				DDC0AAB60000000000000FC /* ShelfStore.swift in Sources */,

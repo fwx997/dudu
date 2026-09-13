@@ -27,9 +27,9 @@
 - [x] B2 正文过滤：编辑内容面板内置正则净化（模式/替换/应用），对齐 TextReadFilterVC
 - [ ] B3 正文搜索 TextReadSearchVC：核对搜索范围含"已缓存内容"（缓存优先搜索）
 - [x] B4 相关词 relatedWord：无结果时并发询问站点联想词，点击即搜
-- [ ] B5 书架手动排序：编辑模式拖拽排序（onMoveEvent），持久化 order
-- [ ] B6 站点编辑器：新建/编辑站点表单（基础信息+搜索/详情/目录/正文四配置，照 plist 页面结构）
-- [ ] B7 站点检测独立页 ConfigSourceCheckVC：逐站结果列表 + 开始/停止
+- [x] B5 书架手动排序：列表模式拖拽（onMove）持久化 order + 手动排序选项
+- [x] B6 站点编辑器：新建/编辑表单（基础信息+四大动作配置），行点击进入编辑
+- [x] B7 站点检测独立页：逐站实时结果 + 开始/停止（8并发）
 - [ ] B8 本地书籍：LocalBookListVC 列表页 + LocalTextImportVC 分章规则导入（TxtTocRule 实体已备）
 - [ ] B9 RSS 订阅对齐：订阅源管理/文章列表/阅读/收藏（RssSource 实体已备）
 - [ ] B10 云备份四件套：CloudBookSourceVC/CloudBookShelfVC/CloudReadHistoryVC/CloudSettingVC（iCloud）
