@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct PagedReaderView: View {
     @ObservedObject var viewModel: ReaderViewModel
@@ -55,6 +56,7 @@ struct PagedReaderView: View {
                 }
             }
             .onAppear {
+                UIDevice.current.isBatteryMonitoringEnabled = true
                 containerSize = geometry.size
                 splitPages()
             }
@@ -136,18 +138,47 @@ struct PagedReaderView: View {
     
     // MARK: - 页码指示器
     
+    @AppStorage("tr_showTime") private var showTime = true
+    @AppStorage("tr_showBatView") private var showBattery = true
+    @AppStorage("tr_showCpTitle") private var showCpTitle = true
+    @AppStorage("tr_showProgress") private var showProgress = true
+
+    private var batteryText: String {
+        let level = UIDevice.current.batteryLevel
+        return level >= 0 ? "\(Int(level * 100))%" : "--"
+    }
+
+    private var timeText: String {
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm"
+        return f.string(from: Date())
+    }
+
     private var pageIndicator: some View {
         HStack(spacing: 4) {
-            Text("\(min(viewModel.currentPageIndex + 1, pages.count)) / \(pages.count)")
-                .font(.caption2)
-                .foregroundColor(.secondary)
-            
-            if viewModel.totalChapters > 0 {
-                Text("·")
-                    .foregroundColor(.secondary.opacity(0.5))
-                Text("第\(viewModel.currentChapterIndex + 1)章")
+            if showTime {
+                Text(timeText)
                     .font(.caption2)
                     .foregroundColor(.secondary)
+            }
+            if showBattery {
+                Text(batteryText)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            if showProgress {
+                Text("\(min(viewModel.currentPageIndex + 1, pages.count)) / \(pages.count)")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+
+            if showCpTitle, viewModel.totalChapters > 0, let title = viewModel.currentChapter?.title {
+                Text("·")
+                    .foregroundColor(.secondary.opacity(0.5))
+                Text(title)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
             }
         }
         .padding(.horizontal, 12)

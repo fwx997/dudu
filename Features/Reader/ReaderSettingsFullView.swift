@@ -8,6 +8,11 @@
 import SwiftUI
 
 struct ReaderSettingsFullView: View {
+
+    @AppStorage("tr_showTime") private var showTime = true
+    @AppStorage("tr_showBatView") private var showBattery = true
+    @AppStorage("tr_showCpTitle") private var showCpTitle = true
+    @AppStorage("tr_showProgress") private var showProgress = true
     @Environment(\.dismiss) var dismiss
 
     @AppStorage("reader.fontSize") private var storedFontSize: Double = 18
@@ -103,6 +108,11 @@ struct ReaderSettingsFullView: View {
                     }
                     
                     Toggle("显示状态栏", isOn: $showStatusBar)
+
+                    Toggle("显示时间", isOn: $showTime)
+                    Toggle("显示电量", isOn: $showBattery)
+                    Toggle("显示章节标题", isOn: $showCpTitle)
+                    Toggle("显示页面进度", isOn: $showProgress)
                 }
                 
                 Section(header: Text("预览")) {
