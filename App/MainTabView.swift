@@ -142,7 +142,14 @@ struct SettingsView: View {
                     
                     Link("帮助文档", destination: URL(string: "https://www.legado.top/")!)
                     
-                    Button("免责声明") {
+                    Link("去评分", destination: URL(string: "itms-apps://itunes.apple.com/app/action=write-review")!)
+                    Button("分享App") {
+                        let share = UIActivityViewController(activityItems: ["https://github.com/fwx997/dudu"], applicationActivities: nil)
+                        UIApplication.shared.connectedScenes.compactMap { ($0 as? UIWindowScene)?.keyWindow?.rootViewController }.first?.present(share, animated: true)
+                    }
+                    Link("联系我们", destination: URL(string: "https://github.com/fwx997/dudu/issues")!)
+
+                                        Button("免责声明") {
                         showingAbout = true
                     }
                 }

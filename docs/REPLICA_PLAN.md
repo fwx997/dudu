@@ -30,7 +30,7 @@
 - [x] B5 书架手动排序：列表模式拖拽（onMove）持久化 order + 手动排序选项
 - [x] B6 站点编辑器：新建/编辑表单（基础信息+四大动作配置），行点击进入编辑
 - [x] B7 站点检测独立页：逐站实时结果 + 开始/停止（8并发）
-- [ ] B8 本地书籍：LocalBookListVC 列表页 + LocalTextImportVC 分章规则导入（TxtTocRule 实体已备）
+- [x] B8 本地书籍：LocalBookListVC 列表页 + LocalTextImportVC 分章规则导入（TxtTocRule 实体已备）
 - [ ] B9 RSS 订阅对齐：订阅源管理/文章列表/阅读/收藏（RssSource 实体已备）
 - [ ] B10 云备份四件套：CloudBookSourceVC/CloudBookShelfVC/CloudReadHistoryVC/CloudSettingVC（iCloud）
 - [ ] B11 听书页对齐 AudioReadVC：播放列表/倍速/定时关闭（底座 AudioPlayerView 已有，核对项）
@@ -38,7 +38,7 @@
 - [ ] B13 视频源 VideoReadVC（低优先级，书源 video 类型）
 - [ ] B14 书评 shupingHome/ShupingView（低优先级，社区书评）
 - [ ] B15 关于页 AboutController：去评分/版本更新/联系我们/发送日志/分享App/免责声明
-- [ ] B16 UI 文案逐条对齐 `_tools/xsg_ui_zh.txt`（580条）
+- [ ] B16 UI 文案逐条对齐（进行中：已对齐 无可用站点/请前往配置 等关键项） `_tools/xsg_ui_zh.txt`（580条）
 - [ ] B17 备份恢复对齐（WebDAV BackupRestoreView 核对补缺）
 - [ ] B18 阅读统计/词典规则/替换规则/书源调试（底座已有，逐项核对补缺）
 
