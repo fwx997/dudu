@@ -178,8 +178,10 @@ struct ReaderView: View {
                 
                 // 设置面板
                 if showingSettings {
-                    ReaderSettingsView(viewModel: viewModel, isPresented: $showingSettings)
-                        .transition(.move(edge: .bottom))
+                    ReaderSettingsView(viewModel: viewModel, isPresented: $showingSettings, onOpenChapterList: {
+                        showingChapterList = true
+                    })
+                    .transition(.move(edge: .bottom))
                 }
                 
                 if showingTTSControls {

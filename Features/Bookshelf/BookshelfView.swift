@@ -12,6 +12,7 @@ struct BookshelfView: View {
     @StateObject private var viewModel = BookshelfViewModel()
     @StateObject private var localBookViewModel = LocalBookViewModel()
     @State private var showingSourceManage = false
+    @State private var showingXBSManage = false
     @State private var showingAddBook = false
     @State private var showingSearch = false
     
@@ -30,26 +31,28 @@ struct BookshelfView: View {
         .navigationTitle("书架")
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Picker("", selection: $viewModel.viewMode) {
-                    Image(systemName: "square.grid.2x2")
-                        .tag(BookshelfViewModel.ViewMode.grid)
-                    Image(systemName: "list.bullet")
-                        .tag(BookshelfViewModel.ViewMode.list)
-                }
-                .pickerStyle(.segmented)
-            }
-            
-ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 12) {
-                    Button(action: { showingSearch = true }) {
-                        Image(systemName: "magnifyingglass")
+                Menu {
+                    Button {
+                        showingXBSManage = true
+                    } label: {
+                        Label("站点管理", systemImage: "square.grid.2x2")
                     }
 
-                    Button(action: { showingSourceManage = true }) {
-                        Image(systemName: "gearshape")
+                    Button {
+                        showingSourceManage = true
+                    } label: {
+                        Label("书源管理", systemImage: "books.vertical")
                     }
-                    
-                    Button(action: {
+
+                    Button {
+                        showingAddBook = true
+                    } label: {
+                        Label("导入本地书籍", systemImage: "square.and.arrow.down")
+                    }
+
+                    Divider()
+
+                    Button {
                         DocumentPickerHelper.shared.present(contentTypes: [.plainText, .epub]) { urls in
                             guard let url = urls.first else { return }
                             Task { @MainActor in
@@ -61,10 +64,29 @@ ToolbarItem(placement: .navigationBarTrailing) {
                                 }
                             }
                         }
-                    }) {
-                        Image(systemName: "square.and.arrow.down")
+                    } label: {
+                        Label("打开 txt / epub 文件", systemImage: "doc.text")
                     }
-                    
+
+                    Divider()
+
+                    Button {
+                        viewModel.viewMode = viewModel.viewMode == .grid ? .list : .grid
+                    } label: {
+                        Label(viewModel.viewMode == .grid ? "列表显示" : "宫格显示",
+                              systemImage: viewModel.viewMode == .grid ? "list.bullet" : "square.grid.2x2")
+                    }
+                } label: {
+                    Image(systemName: "folder")
+                }
+            }
+
+            ToolbarItem(placement: .navigationBarTrailing) {
+                HStack(spacing: 12) {
+                    Button(action: { showingSearch = true }) {
+                        Image(systemName: "magnifyingglass")
+                    }
+
                     Button(action: { showingAddBook = true }) {
                         Image(systemName: "plus")
                     }
@@ -72,7 +94,10 @@ ToolbarItem(placement: .navigationBarTrailing) {
             }
         }
         .sheet(isPresented: $showingSourceManage) {
-            SourceManageView()
+            NavigationStack { SourceManageView() }
+        }
+        .sheet(isPresented: $showingXBSManage) {
+            NavigationStack { XBSSourceManageView() }
         }
         .sheet(isPresented: $showingAddBook) {
             AddBookView { url, completion in

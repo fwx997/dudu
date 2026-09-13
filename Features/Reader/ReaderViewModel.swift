@@ -56,6 +56,16 @@ class ReaderViewModel: ObservableObject {
     // MARK: - 新增阅读设置
     @Published var paragraphSpacing: CGFloat = 12
     @Published var letterSpacing: CGFloat = 0
+    @Published var fontName: String = "" {
+        didSet {
+            UserDefaults.standard.set(fontName, forKey: "reader.fontName")
+        }
+    }
+
+    /// 香色闺阁式字体：空 = 系统默认，否则按 PostScript 名取自定义字体
+    var readerFont: Font {
+        fontName.isEmpty ? .system(size: fontSize) : .custom(fontName, size: fontSize)
+    }
     
     // MARK: - 私有属性
     private var ruleEngine: RuleEngine = RuleEngine()
@@ -84,6 +94,8 @@ class ReaderViewModel: ObservableObject {
             let margin = CGFloat(storedMargin)
             pagePadding = EdgeInsets(top: 20, leading: margin, bottom: 20, trailing: margin)
         }
+
+        fontName = defaults.string(forKey: "reader.fontName") ?? ""
 
         if let storedTheme = defaults.string(forKey: "reader.theme") {
             applyTheme(themeFromStorage(storedTheme))
@@ -614,49 +626,210 @@ enum ReaderError: LocalizedError {
         }
     }
 }
-// MARK: - 设置视图
+// MARK: - 阅读设置面板（香色闺阁式底部面板）
 struct ReaderSettingsView: View {
     @ObservedObject var viewModel: ReaderViewModel
     @Binding var isPresented: Bool
-    
+    var onOpenChapterList: (() -> Void)? = nil
+
+    @AppStorage("pageAnimation") private var pageAnimationRaw: String = PageAnimationType.cover.rawValue
+    @State private var brightness: Double = Double(UIScreen.main.brightness)
+    @State private var showingFullSettings = false
+
+    private let fontOptions: [(title: String, postScript: String)] = [
+        ("系统默认", ""),
+        ("宋体", "Songti SC"),
+        ("楷体", "Kaiti SC"),
+        ("圆体", "Yuanti SC"),
+        ("黑体", "Heiti SC"),
+    ]
+
+    private let themes: [(String, ReaderViewModel.ReaderTheme)] = [
+        ("亮色", .light),
+        ("羊皮纸", .sepia),
+        ("护眼", .eyeProtection),
+        ("夜间", .dark),
+    ]
+
     var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("字体")) {
-                    Stepper("字号：\(Int(viewModel.fontSize))", value: $viewModel.fontSize, in: 12...32, step: 1)
+        VStack(alignment: .leading, spacing: 14) {
+            // 章节导航
+            HStack(spacing: 12) {
+                navButton("上一章", "chevron.left.2") {
+                    Task { await viewModel.prevChapter() }
                 }
-                
-                Section(header: Text("间距")) {
-                    Stepper("行距：\(Int(viewModel.lineSpacing))", value: $viewModel.lineSpacing, in: 4...20, step: 1)
+                navButton("目录", "list.bullet") {
+                    isPresented = false
+                    onOpenChapterList?()
                 }
-                
-                Section(header: Text("主题")) {
-                    Button("亮色") {
-                        viewModel.applyTheme(.light)
+                navButton("下一章", "chevron.right.2") {
+                    Task { await viewModel.nextChapter() }
+                }
+            }
+
+            Divider()
+
+            // 主题
+            HStack(spacing: 14) {
+                Text("背景")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                ForEach(themes, id: \.1) { item in
+                    Button {
+                        viewModel.applyTheme(item.1)
+                    } label: {
+                        Circle()
+                            .fill(item.1.backgroundColor)
+                            .frame(width: 30, height: 30)
+                            .overlay(
+                                Circle().stroke(
+                                    viewModel.theme == item.1 ? Color.accentColor : Color.secondary.opacity(0.3),
+                                    lineWidth: viewModel.theme == item.1 ? 2.5 : 1
+                                )
+                            )
                     }
-                    
-                    Button("暗色") {
-                        viewModel.applyTheme(.dark)
-                    }
-                    
-                    Button("护眼") {
-                        viewModel.applyTheme(.eyeProtection)
-                    }
-                    
-                    Button("羊皮纸") {
-                        viewModel.applyTheme(.sepia)
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(item.0)
+                }
+                Spacer()
+            }
+
+            // 字号
+            HStack(spacing: 14) {
+                Text("字号")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                roundButton("A-") { viewModel.fontSize = max(12, viewModel.fontSize - 1) }
+                Text("\(Int(viewModel.fontSize))")
+                    .font(.subheadline)
+                    .frame(minWidth: 28)
+                roundButton("A+") { viewModel.fontSize = min(40, viewModel.fontSize + 1) }
+                Spacer()
+            }
+
+            // 字体
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(fontOptions, id: \.postScript) { option in
+                        Button {
+                            viewModel.fontName = option.postScript
+                        } label: {
+                            Text(option.title)
+                                .font(.subheadline)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(viewModel.fontName == option.postScript ? Color.accentColor.opacity(0.18) : Color(.systemGray6))
+                                .foregroundColor(viewModel.fontName == option.postScript ? .accentColor : .primary)
+                                .cornerRadius(999)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
-            .navigationTitle("阅读设置")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("完成") {
-                        isPresented = false
-                    }
-                }
+
+            // 行距预设（对齐香色闺阁排版预设：紧凑/默认/宽松）
+            HStack(spacing: 14) {
+                Text("行距")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                spacingChip("紧凑", 6)
+                spacingChip("标准", 10)
+                spacingChip("宽松", 16)
+                Spacer()
             }
+
+            // 翻页方式
+            HStack(spacing: 14) {
+                Text("翻页")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Picker("", selection: $pageAnimationRaw) {
+                    Text("覆盖").tag(PageAnimationType.cover.rawValue)
+                    Text("平移").tag(PageAnimationType.slide.rawValue)
+                    Text("仿真").tag(PageAnimationType.simulation.rawValue)
+                    Text("滚动").tag(PageAnimationType.scroll.rawValue)
+                }
+                .pickerStyle(.segmented)
+            }
+
+            // 亮度
+            HStack(spacing: 10) {
+                Image(systemName: "sun.min")
+                    .foregroundColor(.secondary)
+                Slider(value: $brightness, in: 0.05...1)
+                    .onChange(of: brightness) { newValue in
+                        UIScreen.main.brightness = CGFloat(newValue)
+                    }
+            }
+
+            // 更多设置
+            Button {
+                showingFullSettings = true
+            } label: {
+                Text("更多阅读设置")
+                    .font(.subheadline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+            }
+            .buttonStyle(.plain)
         }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.15), radius: 12, y: -2)
+        )
+        .padding(.horizontal, 12)
+        .padding(.bottom, 8)
+        .sheet(isPresented: $showingFullSettings) {
+            ReaderSettingsFullView()
+        }
+        .onDisappear {
+            UIScreen.main.brightness = CGFloat(brightness)
+        }
+    }
+
+    private func navButton(_ title: String, _ icon: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                Text(title)
+            }
+            .font(.subheadline)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 9)
+            .background(Color(.systemGray6))
+            .cornerRadius(8)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func roundButton(_ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline.bold())
+                .frame(width: 44, height: 30)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func spacingChip(_ title: String, _ value: CGFloat) -> some View {
+        Button {
+            viewModel.lineSpacing = value
+        } label: {
+            Text(title)
+                .font(.subheadline)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(abs(viewModel.lineSpacing - value) < 0.5 ? Color.accentColor.opacity(0.18) : Color(.systemGray6))
+                .foregroundColor(abs(viewModel.lineSpacing - value) < 0.5 ? .accentColor : .primary)
+                .cornerRadius(999)
+        }
+        .buttonStyle(.plain)
     }
 }
 

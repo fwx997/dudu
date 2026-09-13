@@ -122,7 +122,7 @@ struct PagedReaderView: View {
         ScrollView {
             if let content = viewModel.chapterContent {
                 Text(content)
-                    .font(.system(size: viewModel.fontSize))
+                    .font(viewModel.readerFont)
                     .foregroundColor(viewModel.textColor)
                     .lineSpacing(viewModel.lineSpacing)
                     .padding(viewModel.pagePadding)
@@ -231,7 +231,7 @@ struct InstantPageView: View {
                 if currentPage >= 0 && currentPage < pages.count {
                     ScrollView(.vertical, showsIndicators: false) {
                         Text(pages[currentPage])
-                            .font(.system(size: viewModel.fontSize))
+                            .font(viewModel.readerFont)
                             .foregroundColor(viewModel.textColor)
                             .lineSpacing(viewModel.lineSpacing)
                             .frame(maxWidth: .infinity, alignment: .leading)

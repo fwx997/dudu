@@ -44,7 +44,7 @@ private struct SinglePageContent: View {
             
             ScrollView(.vertical, showsIndicators: false) {
                 Text(text)
-                    .font(.system(size: viewModel.fontSize))
+                    .font(viewModel.readerFont)
                     .foregroundColor(viewModel.textColor)
                     .lineSpacing(viewModel.lineSpacing)
                     .frame(maxWidth: .infinity, alignment: .leading)

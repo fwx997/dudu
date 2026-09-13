@@ -109,7 +109,7 @@ struct CoverPageView: View {
         if index >= 0 && index < pages.count {
             ScrollView(.vertical, showsIndicators: false) {
                 Text(pages[index])
-                    .font(.system(size: viewModel.fontSize))
+                    .font(viewModel.readerFont)
                     .foregroundColor(viewModel.textColor)
                     .lineSpacing(viewModel.lineSpacing)
                     .frame(maxWidth: .infinity, alignment: .leading)

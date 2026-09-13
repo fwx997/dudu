@@ -89,6 +89,26 @@ struct XBSSourceManageView: View {
                     } label: {
                         Label("本地文件导入", systemImage: "doc")
                     }
+
+                    if !store.sources.isEmpty {
+                        Divider()
+                        ShareLink(item: exportURL(), preview: SharePreview("站点备份.xbs")) {
+                            Label("导出全部站点（.xbs）", systemImage: "square.and.arrow.up")
+                        }
+                    }
+
+                    Divider()
+                    Section("搜索站点") {
+                        Link(destination: URL(string: "https://search.gitee.com/?q=%e9%a6%99%e8%89%b2%e9%97%ba%e9%98%81&skin=rec&type=none&sort=stars_count")!) {
+                            Label("gitee", systemImage: "safari")
+                        }
+                        Link(destination: URL(string: "https://github.com/search?q=%E9%A6%99%E8%89%B2%E9%97%BA%E9%98%81&s=stars")!) {
+                            Label("github", systemImage: "safari")
+                        }
+                        Link(destination: URL(string: "https://www.baidu.com/s?wd=%E9%A6%99%E8%89%B2%E9%97%BA%E9%98%81")!) {
+                            Label("baidu", systemImage: "safari")
+                        }
+                    }
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -127,6 +147,16 @@ struct XBSSourceManageView: View {
     }
 
     // MARK: - 导入
+
+    // MARK: - 导出
+
+    /// 导出全部站点为临时 .xbs 文件（与香色闺阁格式互通）
+    private func exportURL() -> URL {
+        let data = XBSSourceFile.exportXBS(sources: store.sources)
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("dudu_站点备份.xbs")
+        try? data.write(to: url, options: .atomic)
+        return url
+    }
 
     private func importFromNetwork() async {
         let trimmed = importURLText.trimmingCharacters(in: .whitespacesAndNewlines)
