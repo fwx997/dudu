@@ -70,7 +70,12 @@ struct AudioPlayerView: View {
                 
                 // 进度条
                 VStack(spacing: 8) {
-                    Slider(value: Binding(get: { playerManager.currentTime }, set: { Task { await playerManager.seekTo($0) } }), in: 0...max(1, playerManager.duration))
+                    Slider(value: Binding(
+                        get: { playerManager.currentTime },
+                        set: { newValue in
+                            Task { await playerManager.seekTo(newValue) }
+                        }
+                    ), in: 0...max(1, playerManager.duration))
                         .accentColor(.white).padding(.horizontal)
                     HStack {
                         Text(formatTime(playerManager.currentTime)).font(.caption).foregroundColor(.gray)

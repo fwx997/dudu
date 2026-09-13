@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 import AVFoundation
 import MediaPlayer
 
@@ -40,7 +41,7 @@ class AudioPlayManager: ObservableObject {
     }
     
     deinit {
-        cleanup()
+        // cleanup moved to stop() (deinit cannot call MainActor)
     }
     
     // MARK: - 音频会话配置
@@ -153,7 +154,7 @@ class AudioPlayManager: ObservableObject {
             
             // 恢复播放位置
             if let book = currentBook, chapter.index == Int32(currentChapterIndex) {
-                await seekTo(book.durChapterPos)
+                await seekTo(Double(book.durChapterPos))
             }
             
         } catch {
@@ -184,12 +185,19 @@ class AudioPlayManager: ObservableObject {
         )
         
         // 解析音频 URL
-        guard let audioURLString = content.audioURL,
-              let url = URL(string: audioURLString) else {
-            throw AudioError.invalidAudioURL
+        // extract audio url from text
+        if let regex = try? NSRegularExpression(pattern: "https?://[^\s\"\'<>]*\.(?:mp3|m4a|aac|wav|ogg|flac|m3u8|mp4)[^\s\"\'<>]*", options: [.caseInsensitive]) {
+            let ns = content as NSString
+            if let m = regex.firstMatch(in: content, range: NSRange(location: 0, length: ns.length)),
+               let candidate = ns.substring(with: m.range) as String?,
+               let url = URL(string: candidate) {
+                return url
+            }
         }
-        
-        return url
+        if let url = URL(string: content.trimmingCharacters(in: .whitespacesAndNewlines)) {
+            return url
+        }
+        throw AudioError.invalidAudioURL
     }
     
     /// 播放
@@ -350,8 +358,4 @@ enum AudioError: LocalizedError {
 
 // MARK: - 数组安全访问
 
-extension Array {
-    subscript(safe index: Int) -> Element? {
-        indices.contains(index) ? self[index] : nil
-    }
 }

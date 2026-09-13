@@ -118,7 +118,7 @@ class MangaReaderViewModel: ObservableObject {
     /// 从 HTML 内容提取图片地址（legado 源路径）
     static func extractImageURLs(from html: String) -> [String] {
         var urls: [String] = []
-        if let regex = try? NSRegularExpression(pattern: "<img[^>]+src=[\"']([^>\"'\s]+)", options: [.caseInsensitive]) {
+        if let regex = try? NSRegularExpression(pattern: "<img[^>]+src=[\"']([^>\"'\\s]+)", options: [.caseInsensitive]) {
             let ns = html as NSString
             for m in regex.matches(in: html, range: NSRange(location: 0, length: ns.length)) {
                 urls.append(ns.substring(with: m.range(at: 1)))
