@@ -359,6 +359,9 @@ struct BookshelfView: View {
                     }
                 }
             }
+            .onMove { from, to in
+                viewModel.moveBookAt(from: from, to: to)
+            }
             .onDelete { indexSet in
                 if let index = indexSet.first {
                     viewModel.removeBook(viewModel.books[index])
@@ -366,6 +369,7 @@ struct BookshelfView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .environment(\.editMode, .constant(isEditing ? .active : .inactive))
     }
 }
 
@@ -502,6 +506,7 @@ struct ShelfSideMenu: View {
         case .name: return "书名"
         case .author: return "作者"
         case .update: return "更新时间"
+        case .manual: return "手动排序"
         }
     }
 }

@@ -33,6 +33,7 @@ final class BookshelfViewModel: ObservableObject {
         case name = 1
         case author = 2
         case update = 3
+        case manual = 4
     }
     
     private var loadTask: Task<Void, Never>?
@@ -106,6 +107,8 @@ final class BookshelfViewModel: ObservableObject {
             request.sortDescriptors = [NSSortDescriptor(key: "author", ascending: true)]
         case .update:
             request.sortDescriptors = [NSSortDescriptor(key: "lastCheckTime", ascending: false)]
+        case .manual:
+            request.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
         }
 
         return try context.fetch(request)
@@ -174,6 +177,15 @@ final class BookshelfViewModel: ObservableObject {
     func removeBook(_ book: Book) {
         CoreDataStack.shared.viewContext.delete(book)
         try? CoreDataStack.shared.save()
+    }
+
+    /// 编辑模式：列表拖拽排序（对齐 onMoveEvent:），持久化 order
+    func moveBookAt(from: IndexSet, to: Int) {
+        var arr = books
+        arr.move(fromOffsets: from, toOffset: to)
+        for (i, b) in arr.enumerated() { b.order = Int32(i) }
+        try? CoreDataStack.shared.save()
+        Task { await forceReload() }
     }
 
     /// 编辑模式：批量移动到书架（对齐 onMoveEvent:）
