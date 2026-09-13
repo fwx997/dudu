@@ -24,13 +24,17 @@ struct DiscoveryView: View {
         case bookWorld = "书世界"
         case shudan = "书单"
     }
-    @State private var mode: DiscoveryMode = .bookWorld
+    @State private var mode: DiscoveryMode
     @State private var shudanKeyword = ""
     @State private var shudanResults: [XBSEngine.XBSShudan] = []
     @State private var shudanSearching = false
     @State private var shudanError: String?
     @State private var selectedShudan: XBSEngine.XBSShudan?
     @State private var showingShudanDetail = false
+
+    init(initialMode: DiscoveryMode = .bookWorld) {
+        _mode = State(initialValue: initialMode)
+    }
 
     private var bookWorldSources: [XBSSource] {
         store.sources.filter { $0.enabled && $0.action("bookWorld") != nil }
