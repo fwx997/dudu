@@ -18,6 +18,9 @@ struct ContentEditSheet: View {
     @State private var originalContent: String = ""
     @State private var isLoading: Bool = true
     @State private var hasChanges: Bool = false
+    @State private var filterPattern: String = ""
+    @State private var filterReplacement: String = ""
+    @State private var filterMessage: String?
     
     var body: some View {
         NavigationView {
@@ -25,6 +28,27 @@ struct ContentEditSheet: View {
                 if isLoading {
                     ProgressView("加载中...")
                 } else {
+                    // 正则净化（对齐 TextReadFilterVC）
+                    VStack(spacing: 6) {
+                        HStack(spacing: 8) {
+                            TextField("正则表达式，如 广告.*?尾", text: $filterPattern)
+                                .textFieldStyle(.roundedBorder)
+                            TextField("替换为(可空)", text: $filterReplacement)
+                                .textFieldStyle(.roundedBorder)
+                            Button("应用") {
+                                applyRegexFilter()
+                            }
+                            .disabled(filterPattern.isEmpty)
+                        }
+                        .font(.caption)
+                        if let filterMessage {
+                            Text(filterMessage)
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 6)
                     TextEditor(text: $editedContent)
                         .font(.system(.body, design: .serif))
                         .padding()
@@ -94,6 +118,17 @@ struct ContentEditSheet: View {
         }
     }
     
+    private func applyRegexFilter() {
+        guard let regex = try? NSRegularExpression(pattern: filterPattern) else {
+            filterMessage = "正则表达式无效"
+            return
+        }
+        let ns = editedContent as NSString
+        editedContent = regex.stringByReplacingMatches(in: editedContent, range: NSRange(location: 0, length: ns.length), withTemplate: filterReplacement)
+        filterMessage = "已应用替换"
+        hasChanges = editedContent != originalContent
+    }
+
     private func saveContent() {
         // 保存到缓存文件
         if let cachePath = chapter.cachePath {

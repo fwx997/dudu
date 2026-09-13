@@ -24,9 +24,9 @@
 ## B. 还原中 🚧（做完才结束）
 
 - [x] B1 书籍详情对齐 BookDetailController：刷新详情(updateDetail)/刷新目录(updateCatalog)入 UI，换源面板已有
-- [ ] B2 正文过滤页 TextReadFilterVC：按正则/关键词净化章节内容并保存
+- [x] B2 正文过滤：编辑内容面板内置正则净化（模式/替换/应用），对齐 TextReadFilterVC
 - [ ] B3 正文搜索 TextReadSearchVC：核对搜索范围含"已缓存内容"（缓存优先搜索）
-- [ ] B4 相关词 relatedWord：搜索无结果时展示站点相关词联想
+- [x] B4 相关词 relatedWord：无结果时并发询问站点联想词，点击即搜
 - [ ] B5 书架手动排序：编辑模式拖拽排序（onMoveEvent），持久化 order
 - [ ] B6 站点编辑器：新建/编辑站点表单（基础信息+搜索/详情/目录/正文四配置，照 plist 页面结构）
 - [ ] B7 站点检测独立页 ConfigSourceCheckVC：逐站结果列表 + 开始/停止

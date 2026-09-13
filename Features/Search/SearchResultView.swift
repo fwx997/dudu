@@ -16,6 +16,7 @@ struct SearchResultView: View {
     @State private var navigatingToBookDetail = false
     @State private var selectedBook: Book?
     @State private var openingResultId: UUID?
+    @State private var relatedWords: [String] = []
 
     var body: some View {
         Group {
@@ -82,9 +83,31 @@ struct SearchResultView: View {
 
     private func performSearch() {
         guard !viewModel.searchText.isEmpty else { return }
+        relatedWords.removeAll()
         Task {
             await viewModel.search(keyword: viewModel.searchText, sources: viewModel.selectedSources)
+            // 对齐 arrRelateWord：无结果时展示站点联想词
+            if viewModel.filteredResults.isEmpty {
+                await loadRelatedWords(viewModel.searchText)
+            }
         }
+    }
+
+    /// 相关词联想（并发询问所有启用站点）
+    private func loadRelatedWords(_ keyword: String) async {
+        var words: [String] = []
+        await withTaskGroup(of: [String].self) { group in
+            for source in XBSSourceStore.shared.enabledSources where source.action("relatedWord") != nil {
+                group.addTask {
+                    await XBSEngine.shared.relatedWords(source: source, keyword: keyword)
+                }
+            }
+            for await w in group {
+                words.append(contentsOf: w)
+            }
+        }
+        var seen = Set<String>()
+        relatedWords = words.filter { seen.insert($0).inserted }.prefix(12).map { $0 }
     }
 
     // MARK: - 空状态：搜索历史 + 热门搜索
@@ -191,17 +214,47 @@ struct SearchResultView: View {
     // MARK: - 无结果
 
     private var noResultView: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "book.closed")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
-            Text("未找到相关书籍")
-                .foregroundColor(.secondary)
-            Text("试试更换关键词或切换书源类型")
-                .font(.caption)
-                .foregroundColor(.secondary.opacity(0.7))
+        ScrollView {
+            VStack(spacing: 16) {
+                Image(systemName: "book.closed")
+                    .font(.system(size: 48))
+                    .foregroundColor(.secondary)
+                Text("未找到相关书籍")
+                    .foregroundColor(.secondary)
+                Text("试试更换关键词或切换书源类型")
+                    .font(.caption)
+                    .foregroundColor(.secondary.opacity(0.7))
+
+                // 相关词联想（对齐 arrRelateWord）
+                if !relatedWords.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("相关词")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        FlowLayout(spacing: 8) {
+                            ForEach(relatedWords, id: \.self) { word in
+                                Button {
+                                    viewModel.searchWithHistory(word)
+                                } label: {
+                                    Text(word)
+                                        .font(.subheadline)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(Color.accentColor.opacity(0.1))
+                                        .foregroundColor(.accentColor)
+                                        .cornerRadius(999)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                    .padding(.top, 8)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.top, 40)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - 结果列表（搜索中也持续流式刷新）

@@ -106,6 +106,35 @@ final class XBSEngine {
         }
     }
 
+    // MARK: - 相关词 (relatedWord)
+
+    /// 搜索无结果时的站点联想词
+    func relatedWords(source: XBSSource, keyword: String) async -> [String] {
+        guard let action = source.action("relatedWord"), action.string("requestInfo") != nil else { return [] }
+        let params: [String: Any] = ["keyWord": keyword, "pageIndex": 1]
+        guard let requestInfo = action.string("requestInfo"),
+              let built = try? buildRequest(action: action, requestInfo: requestInfo, source: source, params: params),
+              let requestURL = URL(string: built.url) else { return [] }
+        var request = URLRequest(url: requestURL)
+        request.timeoutInterval = 10
+        for (k, v) in built.headers { request.setValue(v, forHTTPHeaderField: k) }
+        guard let (data, _) = try? await URLSession.shared.data(for: request) else { return [] }
+        let text = WebPageDecoder.decode(data)
+        let doc = XPathDocument(html: text, baseURL: built.url)
+        guard doc.isUsable, let listRule = action.string("list") else { return [] }
+        var words: [String] = []
+        let response = Response(url: built.url, text: text, json: nil, document: doc)
+        if case .nodes(let nodes) = doc.evaluate(listRule) {
+            for node in nodes {
+                let wordRule = action.string("word") ?? "//text()"
+                let w = evaluateRule(wordRule, item: node, response: response, params: params)
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                if !w.isEmpty { words.append(w) }
+            }
+        }
+        return Array(words.prefix(10))
+    }
+
     // MARK: - 书单（社区书单）
 
     struct XBSShudan: Identifiable {
