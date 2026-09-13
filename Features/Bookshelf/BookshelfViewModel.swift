@@ -175,6 +175,21 @@ final class BookshelfViewModel: ObservableObject {
         CoreDataStack.shared.viewContext.delete(book)
         try? CoreDataStack.shared.save()
     }
+
+    /// 编辑模式：批量移动到书架（对齐 onMoveEvent:）
+    func moveBooks(_ books: [Book], to group: Int32) {
+        for b in books { b.group = group }
+        try? CoreDataStack.shared.save()
+        Task { await forceReload() }
+    }
+
+    /// 编辑模式：批量删除（对齐 onDeleteEvent:）
+    func deleteBooks(_ books: [Book]) {
+        let context = CoreDataStack.shared.viewContext
+        for b in books { context.delete(b) }
+        try? CoreDataStack.shared.save()
+        Task { await forceReload() }
+    }
     
     func updateGroup(for book: Book, group: Int32) {
         book.group = Int64(group)

@@ -20,40 +20,44 @@ struct BookshelfView: View {
     @State private var showingShudan = false
     @State private var showingLeftDrawer = false
     @State private var showingRightDrawer = false
+    @State private var isEditing = false
+    @State private var selectedBookIds: Set<UUID> = []
+    @State private var showingMoveSheet = false
+    @State private var showingFolderMenu = false
 
     var body: some View {
         ZStack {
             mainContent
 
-            // 左抽屉：功能菜单（对齐香色闺阁 LeftViewController）
+            // 左抽屉：书架分组选择（对齐 LeftViewController.selectedBookShelfGroup:）
             DrawerOverlay(side: .left, isPresented: $showingLeftDrawer) {
+                ShelfGroupDrawer(store: shelfStore) {
+                    showingLeftDrawer = false
+                    Task { await viewModel.loadBooks() }
+                }
+            }
+
+            // 右抽屉：功能菜单
+            DrawerOverlay(side: .right, isPresented: $showingRightDrawer) {
                 ShelfSideMenu(
-                    onSites: { showingLeftDrawer = false; showingXBSManage = true },
-                    onLegadoSources: { showingLeftDrawer = false; showingSourceManage = true },
-                    onImportLocal: { showingLeftDrawer = false; showingAddBook = true },
+                    onSites: { showingRightDrawer = false; showingXBSManage = true },
+                    onLegadoSources: { showingRightDrawer = false; showingSourceManage = true },
+                    onImportLocal: { showingRightDrawer = false; showingAddBook = true },
                     onOpenFile: {
-                        showingLeftDrawer = false
+                        showingRightDrawer = false
                         openTextFile()
                     },
                     onSort: { sort in
-                        showingLeftDrawer = false
+                        showingRightDrawer = false
                         viewModel.sortBy = sort
                     },
                     currentSort: viewModel.sortBy,
                     onViewMode: {
-                        showingLeftDrawer = false
+                        showingRightDrawer = false
                         viewModel.viewMode = viewModel.viewMode == .grid ? .list : .grid
                     },
                     currentViewMode: viewModel.viewMode
                 )
-            }
-
-            // 右抽屉：多书架管理（对齐香色闺阁 RightViewController / BookShelfListVC）
-            DrawerOverlay(side: .right, isPresented: $showingRightDrawer) {
-                ShelfListDrawer(store: shelfStore) {
-                    showingRightDrawer = false
-                    Task { await viewModel.loadBooks() }
-                }
             }
         }
     }
@@ -72,39 +76,94 @@ struct BookshelfView: View {
                 bookshelfContent
             }
         }
-        .navigationTitle(shelfStore.currentName)
+        .navigationTitle(isEditing ? "已选 \(selectedBookIds.count) 本" : shelfStore.currentName)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    showingLeftDrawer = true
-                } label: {
-                    Image(systemName: "line.3.horizontal")
+            if isEditing {
+                // 编辑模式工具栏（对齐 onSelectAllEvent/onMoveEvent/onDeleteEvent/onEndEditEvent）
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("全选") {
+                        if selectedBookIds.count == viewModel.books.count {
+                            selectedBookIds.removeAll()
+                        } else {
+                            selectedBookIds = Set(viewModel.books.map { $0.bookId })
+                        }
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    HStack(spacing: 14) {
+                        Button("移动") {
+                            guard !selectedBookIds.isEmpty else { return }
+                            showingMoveSheet = true
+                        }
+                        .foregroundColor(selectedBookIds.isEmpty ? .secondary : .accentColor)
+
+                        Button("删除", role: .destructive) {
+                            let books = viewModel.books.filter { selectedBookIds.contains($0.bookId) }
+                            viewModel.deleteBooks(books)
+                            selectedBookIds.removeAll()
+                        }
+                        .foregroundColor(selectedBookIds.isEmpty ? .secondary : .red)
+
+                        Button("完成") {
+                            isEditing = false
+                            selectedBookIds.removeAll()
+                        }
+                    }
+                }
+            } else {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showingFolderMenu = true
+                    } label: {
+                        Image(systemName: "folder")
+                    }
+                }
+
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    HStack(spacing: 14) {
+                        Button(action: { showingSearch = true }) {
+                            Image(systemName: "magnifyingglass")
+                        }
+
+                        // 分组/多书架（对齐真版四圆图标）
+                        Button {
+                            showingLeftDrawer = true
+                        } label: {
+                            Image(systemName: "circle.grid.2x2")
+                        }
+
+                        // 书单（对齐真版星标图标）
+                        Button {
+                            showingShudan = true
+                        } label: {
+                            Image(systemName: "star")
+                        }
+
+                        Button(action: { showingAddBook = true }) {
+                            Image(systemName: "plus")
+                        }
+                    }
                 }
             }
-
-            ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 14) {
-                    Button(action: { showingSearch = true }) {
-                        Image(systemName: "magnifyingglass")
-                    }
-
-                    // 分组/多书架（对齐真版四圆图标）
-                    Button {
-                        showingRightDrawer = true
-                    } label: {
-                        Image(systemName: "circle.grid.2x2")
-                    }
-
-                    // 书单（对齐真版星标图标）
-                    Button {
-                        showingShudan = true
-                    } label: {
-                        Image(systemName: "star")
-                    }
-
-                    Button(action: { showingAddBook = true }) {
-                        Image(systemName: "plus")
-                    }
+        }
+        .confirmationDialog("文件夹", isPresented: $showingFolderMenu, titleVisibility: .visible) {
+            Button("站点管理") { showingXBSManage = true }
+            Button("书源管理") { showingSourceManage = true }
+            Button("导入本地书籍") { showingAddBook = true }
+            Button("打开 txt / epub 文件") { openTextFile() }
+            Button("进入编辑模式") {
+                isEditing = true
+                selectedBookIds.removeAll()
+            }
+            Button("取消", role: .cancel) {}
+        }
+        .confirmationDialog("移动到书架", isPresented: $showingMoveSheet, titleVisibility: .visible) {
+            ForEach(shelfStore.shelves) { shelf in
+                Button(shelf.name) {
+                    let books = viewModel.books.filter { selectedBookIds.contains($0.bookId) }
+                    viewModel.moveBooks(books, to: Int32(truncatingIfNeeded: shelf.id))
+                    selectedBookIds.removeAll()
+                    isEditing = false
                 }
             }
         }
@@ -221,10 +280,37 @@ struct BookshelfView: View {
                 GridItem(.flexible())
             ], spacing: 16) {
                 ForEach(viewModel.books, id: \.bookId) { book in
-                    NavigationLink(destination: BookReaderRouter(book: book)) {
-                        BookGridItemView(book: book)
+                    Group {
+                        if isEditing {
+                            Button {
+                                if selectedBookIds.contains(book.bookId) {
+                                    selectedBookIds.remove(book.bookId)
+                                } else {
+                                    selectedBookIds.insert(book.bookId)
+                                }
+                            } label: {
+                                BookGridItemView(book: book)
+                                    .overlay(alignment: .topTrailing) {
+                                        Image(systemName: selectedBookIds.contains(book.bookId) ? "checkmark.circle.fill" : "circle")
+                                            .font(.title3)
+                                            .foregroundColor(selectedBookIds.contains(book.bookId) ? .accentColor : .white)
+                                            .shadow(radius: 2)
+                                            .padding(4)
+                                    }
+                                    .opacity(selectedBookIds.isEmpty || selectedBookIds.contains(book.bookId) ? 1 : 0.5)
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            NavigationLink(destination: BookReaderRouter(book: book)) {
+                                BookGridItemView(book: book)
+                            }
+                            .buttonStyle(.plain)
+                            .simultaneousGesture(LongPressGesture().onEnded { _ in
+                                isEditing = true
+                                selectedBookIds.insert(book.bookId)
+                            })
+                        }
                     }
-                    .buttonStyle(.plain)
                 }
 
                 if viewModel.isLoading {
@@ -250,8 +336,27 @@ struct BookshelfView: View {
     private var bookListView: some View {
         List {
             ForEach(viewModel.books, id: \.bookId) { book in
-                NavigationLink(destination: BookReaderRouter(book: book)) {
-                    BookListItemView(book: book)
+                Group {
+                    if isEditing {
+                        Button {
+                            if selectedBookIds.contains(book.bookId) {
+                                selectedBookIds.remove(book.bookId)
+                            } else {
+                                selectedBookIds.insert(book.bookId)
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: selectedBookIds.contains(book.bookId) ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(selectedBookIds.contains(book.bookId) ? .accentColor : .secondary)
+                                BookListItemView(book: book)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    } else {
+                        NavigationLink(destination: BookReaderRouter(book: book)) {
+                            BookListItemView(book: book)
+                        }
+                    }
                 }
             }
             .onDelete { indexSet in
@@ -264,7 +369,66 @@ struct BookshelfView: View {
     }
 }
 
-// MARK: - 左抽屉：功能菜单
+// MARK: - 左抽屉：书架分组选择（对齐 LeftViewController.selectedBookShelfGroup:）
+
+struct ShelfGroupDrawer: View {
+    @ObservedObject var store: ShelfStore
+    let onSwitched: () -> Void
+    @State private var newShelfName = ""
+    @State private var showingNewShelf = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text("选择书架")
+                    .font(.headline)
+                Spacer()
+                Button {
+                    newShelfName = ""
+                    showingNewShelf = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
+            .padding(.bottom, 8)
+
+            ForEach(store.shelves) { shelf in
+                Button {
+                    store.currentShelfId = shelf.id
+                    onSwitched()
+                } label: {
+                    HStack {
+                        Image(systemName: "books.vertical")
+                            .foregroundColor(.secondary)
+                        Text(shelf.name)
+                            .foregroundColor(store.currentShelfId == shelf.id ? .accentColor : .primary)
+                        Spacer()
+                        if store.currentShelfId == shelf.id {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                    .padding(.vertical, 9)
+                }
+                .buttonStyle(.plain)
+            }
+
+            Spacer()
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .alert("新建书架", isPresented: $showingNewShelf) {
+            TextField("书架名称", text: $newShelfName)
+            Button("创建") {
+                let name = newShelfName.trimmingCharacters(in: .whitespaces)
+                if !name.isEmpty { store.createShelf(named: name) }
+            }
+            Button("取消", role: .cancel) {}
+        }
+    }
+}
+
+// MARK: - 右抽屉：功能菜单（原 ShelfSideMenu，含书架管理入口）
 
 struct ShelfSideMenu: View {
     let onSites: () -> Void
