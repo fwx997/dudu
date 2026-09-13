@@ -23,6 +23,7 @@ struct DiscoveryView: View {
     enum DiscoveryMode: String, CaseIterable {
         case bookWorld = "书世界"
         case shudan = "书单"
+        case shuping = "书评"
     }
     @State private var mode: DiscoveryMode
     @State private var shudanKeyword = ""
@@ -31,6 +32,9 @@ struct DiscoveryView: View {
     @State private var shudanError: String?
     @State private var selectedShudan: XBSEngine.XBSShudan?
     @State private var showingShudanDetail = false
+    @State private var shupingList: [XBSEngine.XBSShuping] = []
+    @State private var shupingLoading = false
+    @State private var shupingError: String?
 
     init(initialMode: DiscoveryMode = .bookWorld) {
         _mode = State(initialValue: initialMode)
@@ -94,8 +98,10 @@ struct DiscoveryView: View {
 
             if mode == .bookWorld {
                 bookWorldContent
-            } else {
+            } else if mode == .shudan {
                 shudanContent
+            } else {
+                shupingContent
             }
         }
     }
@@ -431,5 +437,63 @@ struct XBSShudanDetailView: View {
             errorMessage = error.localizedDescription
         }
         isLoading = false
+    }
+}
+
+
+// MARK: - 书评列表（shupingHome）
+
+extension DiscoveryView {
+    private var shupingContent: some View {
+        Group {
+            if shupingLoading {
+                ProgressView("加载中...").frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if shupingList.isEmpty {
+                VStack(spacing: 10) {
+                    Image(systemName: "text.bubble")
+                        .font(.system(size: 44))
+                        .foregroundColor(.secondary.opacity(0.5))
+                    Text(shupingError ?? "当前站点不支持书评")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                List(shupingList) { item in
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(item.title)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        if let desc = item.desc, !desc.isEmpty {
+                            Text(desc)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .lineLimit(4)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                .listStyle(.insetGrouped)
+                .refreshable { await loadShuping() }
+            }
+        }
+        .task {
+            if shupingList.isEmpty && !shupingLoading {
+                await loadShuping()
+            }
+        }
+    }
+
+    private func loadShuping() async {
+        guard let source = selectedSource else { return }
+        shupingLoading = true
+        shupingError = nil
+        defer { shupingLoading = false }
+        do {
+            shupingList = try await XBSEngine.shared.shupingList(source: source)
+        } catch {
+            shupingError = error.localizedDescription
+            shupingList = []
+        }
     }
 }

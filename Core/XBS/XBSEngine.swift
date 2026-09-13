@@ -106,6 +106,39 @@ final class XBSEngine {
         }
     }
 
+    // MARK: - 书评 (shuping)
+
+    struct XBSShuping: Identifiable {
+        let title: String
+        let desc: String?
+        let detailUrl: String
+        let sourceAlias: String
+        var id: String { detailUrl }
+    }
+
+    /// 书评首页 (shupingHome)
+    func shupingList(source: XBSSource, page: Int = 1) async throws -> [XBSShuping] {
+        guard let action = source.action("shupingHome"), action.string("requestInfo") != nil else {
+            throw XBSError.actionMissing("shupingHome")
+        }
+        let params: [String: Any] = ["pageIndex": page]
+        let response = try await fetch(action: action, source: source, params: params)
+        let items = try parseList(action: action, response: response, params: params)
+        var list: [XBSShuping] = []
+        for item in items {
+            let values = evaluateFields(action: action, item: item, response: response, params: params,
+                                        keys: ["title", "desc", "content", "detailUrl", "url"])
+            let title = values["title"] ?? ""
+            let link = values["detailUrl"] ?? values["url"] ?? ""
+            guard !title.isEmpty, !link.isEmpty else { continue }
+            list.append(XBSShuping(
+                title: title,
+                desc: values["desc"] ?? values["content"],
+                detailUrl: absoluteURL(link, base: response.url, host: source.host) ?? link,
+                sourceAlias: source.alias))
+        }
+        return list
+    }
     // MARK: - 相关词 (relatedWord)
 
     /// 搜索无结果时的站点联想词

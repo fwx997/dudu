@@ -14,6 +14,7 @@ struct XBSBookDetailView: View {
     @State private var shelfBook: Book?
     @State private var navigatingToReader = false
     @State private var actionMessage: String?
+    @State private var showingAddConfirm = false
     @State private var showingReader = false
 
     init(initialBook: XBSBook) {
@@ -72,7 +73,7 @@ struct XBSBookDetailView: View {
                 // 操作按钮
                 HStack(spacing: 12) {
                     Button {
-                        addToShelf()
+                        if shelfBook != nil { addToShelf() } else { showingAddConfirm = true }
                     } label: {
                         Text(shelfBook != nil ? "已在书架" : "加入书架")
                             .font(.subheadline)
@@ -154,6 +155,12 @@ struct XBSBookDetailView: View {
             if let shelfBook {
                 BookReaderRouter(book: shelfBook)
             }
+        }
+        .confirmationDialog("是否将本书加入书架", isPresented: $showingAddConfirm, titleVisibility: .visible) {
+            Button("加入书架") { addToShelf() }
+            Button("不加入", role: .cancel) {}
+        } message: {
+            Text("可在设置中选择不提示")
         }
         .alert("提示", isPresented: Binding(
             get: { actionMessage != nil },

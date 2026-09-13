@@ -14,6 +14,7 @@ struct BookReaderRouter: View {
         case text
         case image
         case audio
+        case video
     }
 
     var body: some View {
@@ -24,6 +25,8 @@ struct BookReaderRouter: View {
             MangaReaderView(book: book)
         case .audio:
             AudioPlayerView(book: book)
+        case .video:
+            VideoReadView(book: book)
         }
     }
 
@@ -34,12 +37,14 @@ struct BookReaderRouter: View {
             switch XBSSourceStore.shared.source(alias: alias)?.sourceType {
             case "image": return .image
             case "audio": return .audio
+            case "video": return .video
             default: return .text
             }
         }
         switch book.source?.bookSourceType ?? 0 {
         case 1: return .image
         case 2: return .audio
+        case 3: return .video
         default: return .text
         }
     }
