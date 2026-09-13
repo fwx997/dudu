@@ -55,27 +55,6 @@ class SearchViewModel: ObservableObject {
     func refreshSources() {
         loadDefaultSources()
     }
-
-    // MARK: - 历史 / 热词便捷搜索
-
-    func searchWithHistory(_ keyword: String) {
-        searchText = keyword
-        Task { await search(keyword: keyword, sources: selectedSources) }
-    }
-
-    func searchWithHotWord(_ word: String) {
-        searchWithHistory(word)
-    }
-
-    func clearHistory() {
-        historyManager.clearAll()
-        loadSearchHistory()
-    }
-
-    func removeHistory(_ keyword: String) {
-        historyManager.remove(keyword)
-        loadSearchHistory()
-    }
     
     // MARK: - 搜索结果
     struct SearchResult: Identifiable {
