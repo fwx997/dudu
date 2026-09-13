@@ -94,65 +94,17 @@ struct XBSSourceManageView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
-                    Button {
-                        editingSource = nil
-                        showingEditor = true
-                    } label: {
-                        Label("新建站点", systemImage: "square.and.pencil")
-                    }
-                    NavigationLink {
-                        XBSSourceCheckView()
-                    } label: {
-                        Label("检测站点", systemImage: "list.bullet.rectangle")
-                    }
-                    Button {
-                        importURLText = ""
-                        showingNetworkImport = true
-                    } label: {
-                        Label("网络导入", systemImage: "network")
-                    }
-
-                    // 香色闺阁主流程：复制书源链接/JSON 后一键粘贴导入
-                    Button {
-                        importFromClipboard()
-                    } label: {
-                        Label("剪贴板导入", systemImage: "doc.on.clipboard")
-                    }
-
-                    Button {
-                        // 用 UIKit 选择器（SwiftUI fileImporter 从 sheet 内弹出在部分系统上无响应）
-                        DocumentPickerHelper.shared.present(contentTypes: [.data]) { urls in
-                            guard let url = urls.first else { return }
-                            Task { await importFromFile(url: url) }
-                        }
-                    } label: {
-                        Label("本地文件导入", systemImage: "doc")
-                    }
-
-                    if !store.sources.isEmpty {
-                        Divider()
-                        Button {
-                            Task { await store.checkAll() }
-                        } label: {
-                            Label("检测全部站点", systemImage: "antenna.radiowaves.left.and.right")
-                        }
-                        ShareLink(item: exportURL(), preview: SharePreview("站点备份.xbs")) {
-                            Label("导出全部站点（.xbs）", systemImage: "square.and.arrow.up")
-                        }
-                    }
-
+                    newSiteButton
+                    checkPageLink
                     Divider()
-                    Section("搜索站点") {
-                        Link(destination: URL(string: "https://search.gitee.com/?q=%e9%a6%99%e8%89%b2%e9%97%ba%e9%98%81&skin=rec&type=none&sort=stars_count")!) {
-                            Label("gitee", systemImage: "safari")
-                        }
-                        Link(destination: URL(string: "https://github.com/search?q=%E9%A6%99%E8%89%B2%E9%97%BA%E9%98%81&s=stars")!) {
-                            Label("github", systemImage: "safari")
-                        }
-                        Link(destination: URL(string: "https://www.baidu.com/s?wd=%E9%A6%99%E8%89%B2%E9%97%BA%E9%98%81")!) {
-                            Label("baidu", systemImage: "safari")
-                        }
-                    }
+                    networkImportButton
+                    clipboardImportButton
+                    localFileImportButton
+                    Divider()
+                    checkAllButton
+                    exportButton
+                    Divider()
+                    searchSiteLinks
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -268,5 +220,86 @@ struct XBSSourceManageView: View {
 #Preview {
     NavigationStack {
         XBSSourceManageView()
+    }
+}
+
+
+extension XBSSourceManageView {
+
+    private var newSiteButton: some View {
+        Button {
+            editingSource = nil
+            showingEditor = true
+        } label: {
+            Label("新建站点", systemImage: "square.and.pencil")
+        }
+    }
+
+    private var checkPageLink: some View {
+        NavigationLink {
+            XBSSourceCheckView()
+        } label: {
+            Label("检测站点", systemImage: "list.bullet.rectangle")
+        }
+    }
+
+    private var networkImportButton: some View {
+        Button {
+            importURLText = ""
+            showingNetworkImport = true
+        } label: {
+            Label("网络导入", systemImage: "network")
+        }
+    }
+
+    private var clipboardImportButton: some View {
+        Button {
+            importFromClipboard()
+        } label: {
+            Label("剪贴板导入", systemImage: "doc.on.clipboard")
+        }
+    }
+
+    private var localFileImportButton: some View {
+        Button {
+            openXBSFilePicker()
+        } label: {
+            Label("本地文件导入", systemImage: "doc")
+        }
+    }
+
+    private var checkAllButton: some View {
+        Button {
+            Task { await store.checkAll() }
+        } label: {
+            Label("检测全部站点", systemImage: "antenna.radiowaves.left.and.right")
+        }
+    }
+
+    private var exportButton: some View {
+        ShareLink(item: exportURL(), preview: SharePreview("站点备份.xbs")) {
+            Label("导出全部站点（.xbs）", systemImage: "square.and.arrow.up")
+        }
+    }
+
+    private var searchSiteLinks: some View {
+        Section("搜索站点") {
+            Link(destination: URL(string: "https://search.gitee.com/?q=%e9%a6%99%e8%89%b2%e9%97%ba%e9%98%81&skin=rec&type=none&sort=stars_count")!) {
+                Label("gitee", systemImage: "safari")
+            }
+            Link(destination: URL(string: "https://github.com/search?q=%E9%A6%99%E8%89%B2%E9%97%BA%E9%98%81&s=stars")!) {
+                Label("github", systemImage: "safari")
+            }
+            Link(destination: URL(string: "https://www.baidu.com/s?wd=%E9%A6%99%E8%89%B2%E9%97%BA%E9%98%81")!) {
+                Label("baidu", systemImage: "safari")
+            }
+        }
+    }
+
+    private func openXBSFilePicker() {
+        DocumentPickerHelper.shared.present(contentTypes: [.data]) { urls in
+            guard let url = urls.first else { return }
+            Task { await importFromFile(url: url) }
+        }
     }
 }
