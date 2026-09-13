@@ -318,6 +318,19 @@ class ReaderViewModel: ObservableObject {
         }
     }
 
+    /// 分段缓存（对齐"后面50章/后面100章/后面全部"）
+    func cacheRange(count: Int) async {
+        guard let book = currentBook else { return }
+        let from = currentChapterIndex + 1
+        let to = min(from + count - 1, chapters.count - 1)
+        guard from <= to else { return }
+        await cacheManager.cacheChapters(from: from, to: to, chapters: chapters, book: book) { done, total in
+            Task { @MainActor in
+                self.cacheProgressText = "缓存中 \(done)/\(total)"
+            }
+        }
+        cacheProgressText = "缓存完成"
+    }
     /// 缓存全本（对齐香色闺阁的全本下载）
     func cacheEntireBook() async {
         guard let book = currentBook else { return }

@@ -26,6 +26,7 @@ struct ReaderView: View {
     @State private var showingSearchContent = false
     @State private var showingContentEdit = false
     @State private var showingPageTutorial = false
+    @State private var showingCacheRange = false
     @Environment(\.openURL) private var openURL
     
     let book: Book
@@ -95,9 +96,9 @@ struct ReaderView: View {
                                 Label("翻页区域", systemImage: "hand.tap")
                             }
                             Button {
-                                Task { await viewModel.cacheEntireBook() }
+                                showingCacheRange = true
                             } label: {
-                                Label("缓存全本", systemImage: "arrow.down.circle")
+                                Label("缓存", systemImage: "arrow.down.circle")
                             }
                             Button {
                                 if let url = URL(string: "https://www.baidu.com/s?word=\(book.name)") {
@@ -354,6 +355,12 @@ struct ReaderView: View {
                         Task { await viewModel.reloadCurrentChapter() }
                     })
                 }
+            }
+            .confirmationDialog("缓存", isPresented: $showingCacheRange, titleVisibility: .visible) {
+                Button("后面50章") { Task { await viewModel.cacheRange(count: 50) } }
+                Button("后面100章") { Task { await viewModel.cacheRange(count: 100) } }
+                Button("后面全部") { Task { await viewModel.cacheEntireBook() } }
+                Button("取消", role: .cancel) {}
             }
             .alert("翻页区域", isPresented: $showingPageTutorial) {
                 Button("知道了", role: .cancel) {}
