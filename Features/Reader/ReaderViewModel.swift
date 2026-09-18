@@ -125,19 +125,19 @@ class ReaderViewModel: ObservableObject {
         
         var backgroundColor: Color {
             switch self {
-            case .light: return Color.white
-            case .dark: return Color.black
+            case .light: return Color(red: 0.976, green: 0.937, blue: 0.867) // 真版默认米黄纸色
+            case .dark: return Color(white: 0.12)
             case .sepia: return Color(red: 0.96, green: 0.91, blue: 0.83)
-            case .eyeProtection: return Color(red: 0.75, green: 0.84, blue: 0.71)
+            case .eyeProtection: return Color(red: 0.78, green: 0.88, blue: 0.76) // 真版豆沙绿
             }
         }
-        
+
         var textColor: Color {
             switch self {
-            case .light: return Color.black
-            case .dark: return Color.white
+            case .light: return Color(red: 0.18, green: 0.15, blue: 0.12)
+            case .dark: return Color(white: 0.88)
             case .sepia: return Color(red: 0.33, green: 0.28, blue: 0.22)
-            case .eyeProtection: return Color.black
+            case .eyeProtection: return Color(red: 0.15, green: 0.18, blue: 0.13)
             }
         }
     }
@@ -873,73 +873,3 @@ struct ReaderSettingsView: View {
 }
 
 // MARK: - 目录列表
-struct ChapterListView: View {
-    @ObservedObject var viewModel: ReaderViewModel
-    let book: Book
-    @Environment(\.dismiss) var dismiss
-    @State private var searchText = ""
-    @State private var reversed = false
-
-    /// 搜索过滤 + 倒序后的展示列表（保留原始章节序号）
-    private var displayChapters: [(offset: Int, element: BookChapter)] {
-        var list = Array(viewModel.chapters.enumerated())
-        if !searchText.isEmpty {
-            list = list.filter { $0.element.title.localizedCaseInsensitiveContains(searchText) }
-        }
-        if reversed {
-            list.reverse()
-        }
-        return list
-    }
-
-    var body: some View {
-        NavigationView {
-            List {
-                ForEach(displayChapters, id: \.element.chapterId) { index, chapter in
-                    Button(action: {
-                        viewModel.jumpToChapter(index)
-                        dismiss()
-                    }) {
-                        HStack {
-                            Text("\(index + 1)")
-                                .frame(width: 40)
-
-                            Text(chapter.title)
-                                .lineLimit(2)
-                                .foregroundColor(index == viewModel.currentChapterIndex ? .accentColor : .primary)
-
-                            Spacer()
-
-                            if index == viewModel.currentChapterIndex {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.accentColor)
-                            }
-
-                            if chapter.isCached {
-                                Image(systemName: "arrow.down.circle.fill")
-                                    .foregroundColor(.green)
-                                    .font(.caption)
-                            }
-                        }
-                    }
-                }
-            }
-            .searchable(text: $searchText, prompt: "搜索章节标题")
-            .navigationTitle("目录 \(viewModel.chapters.count)章")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        reversed.toggle()
-                    } label: {
-                        Label(reversed ? "正序" : "倒序", systemImage: "arrow.up.arrow.down")
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("完成") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}

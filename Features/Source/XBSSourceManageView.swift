@@ -89,24 +89,32 @@ struct XBSSourceManageView: View {
                 .listStyle(.insetGrouped)
             }
         }
-        .navigationTitle("站点管理")
+        .navigationTitle("书源管理 (\(store.sources.count))")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    newSiteButton
-                    checkPageLink
-                    Divider()
-                    networkImportButton
-                    clipboardImportButton
-                    localFileImportButton
-                    Divider()
-                    checkAllButton
-                    exportButton
-                    Divider()
-                    searchSiteLinks
-                } label: {
-                    Image(systemName: "plus")
+                HStack(spacing: 14) {
+                    Button {
+                        Task { await store.checkAll() }
+                    } label: {
+                        Text("同步").font(.subheadline)
+                    }
+                    .disabled(store.isChecking || store.sources.isEmpty)
+                    Menu {
+                        newSiteButton
+                        checkPageLink
+                        Divider()
+                        networkImportButton
+                        clipboardImportButton
+                        localFileImportButton
+                        Divider()
+                        checkAllButton
+                        exportButton
+                        Divider()
+                        searchSiteLinks
+                    } label: {
+                        Text("更多").font(.subheadline)
+                    }
                 }
             }
         }

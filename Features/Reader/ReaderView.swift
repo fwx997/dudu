@@ -44,31 +44,35 @@ struct ReaderView: View {
                     withAnimation { showUI.toggle() }
                 }
                 
-                // MARK: - 顶部工具栏（精简版）
+                // MARK: 顶部工具栏（真版：返回+章节名+听书/目录/更多）
                 VStack {
-                    HStack {
+                    HStack(spacing: 4) {
                         Button(action: {
                             viewModel.saveProgress()
                             dismiss()
                         }) {
-                            Image(systemName: "chevron.left")
-                                .font(.title3)
-                                .frame(width: 44, height: 44)
+                            HStack(spacing: 2) {
+                                Image(systemName: "chevron.left")
+                                Text(book.name)
+                                    .lineLimit(1)
+                            }
+                            .font(.subheadline)
+                            .frame(height: 44)
+                            .padding(.horizontal, 6)
                         }
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(book.name)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .lineLimit(1)
-                            Text(viewModel.currentChapter?.title ?? "")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                        }
-                        
+
                         Spacer()
 
+                        Button(action: { showingTTSControls = true }) {
+                            Image(systemName: "headphones")
+                                .font(.body)
+                                .frame(width: 40, height: 44)
+                        }
+                        Button(action: { showingChapterList = true }) {
+                            Image(systemName: "book")
+                                .font(.body)
+                                .frame(width: 40, height: 44)
+                        }
                         Menu {
                             Button {
                                 showingBookDetail = true
@@ -96,9 +100,14 @@ struct ReaderView: View {
                                 Label("翻页区域", systemImage: "hand.tap")
                             }
                             Button {
-                                showingCacheRange = true
+                                showingAutoPageTurn = true
                             } label: {
-                                Label("缓存", systemImage: "arrow.down.circle")
+                                Label("自动翻页", systemImage: "timer")
+                            }
+                            Button {
+                                showingBookmarks = true
+                            } label: {
+                                Label("书签", systemImage: "bookmark")
                             }
                             Button {
                                 if let url = URL(string: "https://www.baidu.com/s?word=\(book.name)") {
@@ -107,130 +116,95 @@ struct ReaderView: View {
                             } label: {
                                 Label("百度搜索", systemImage: "safari")
                             }
-                            Button {
-                                if let url = URL(string: "https://github.com/fwx997/dudu/issues") {
-                                    openURL(url)
-                                }
-                            } label: {
-                                Label("报告错误", systemImage: "exclamationmark.bubble")
-                            }
                         } label: {
                             Image(systemName: "ellipsis.circle")
-                                .font(.title3)
-                                .frame(width: 44, height: 44)
-                        }
-
-                        Button(action: { showingChapterList = true }) {
-                            Image(systemName: "list.bullet")
-                                .font(.title3)
-                                .frame(width: 44, height: 44)
+                                .font(.body)
+                                .frame(width: 40, height: 44)
                         }
                     }
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                    .padding(.bottom, 12)
+                    .padding(.horizontal, 8)
                     .background(.ultraThinMaterial)
                     .opacity(showUI ? 1.0 : 0.0)
                     .animation(.easeInOut(duration: 0.25), value: showUI)
-                    
+
                     Spacer()
-                    
-                    // MARK: - 底部工具栏（分离式）
-                    VStack(spacing: 0) {
-                        // 进度区域
-                        VStack(spacing: 12) {
-                            // 章节进度
-                            HStack {
-                                Text("第\(viewModel.currentChapterIndex + 1)/\(viewModel.totalChapters)章")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                                Text(viewModel.currentChapter?.title ?? "")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(1)
+                }
+
+                // MARK: 右缘浮动圆形菜单钮（真版：UI隐藏时可点它呼出菜单）
+                if !showUI {
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Button {
+                                withAnimation { showUI = true }
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.black.opacity(0.35))
+                                        .frame(width: 42, height: 42)
+                                    Image(systemName: "ellipsis")
+                                        .font(.body)
+                                        .foregroundColor(.white)
+                                }
                             }
-                            
-                            // 进度滑块
-                            Slider(value: Binding(
-                                get: { Double(viewModel.currentChapterIndex) },
-                                set: { viewModel.jumpToChapter(Int($0)) }
-                            ), in: 0...Double(max(1, viewModel.totalChapters - 1)), step: 1)
-                            
-                            // 翻页控制
-                            HStack(spacing: 20) {
-                                Button(action: { Task { await viewModel.prevChapter() } }) {
-                                    VStack(spacing: 4) {
-                                        Image(systemName: "chevron.left")
-                                            .font(.title3)
-                                        Text("上一章")
-                                            .font(.caption2)
-                                    }
-                                    .frame(maxWidth: .infinity)
+                            .buttonStyle(.plain)
+                            .padding(.trailing, 10)
+                        }
+                        .padding(.top, 120)
+                        Spacer()
+                    }
+                    .transition(.opacity)
+                }
+
+                // MARK: 底部面板（真版深色：上一章/滑杆/下一章 + 目录 缓存 设置 换源）
+                VStack {
+                    Spacer()
+
+                    if showUI {
+                        VStack(spacing: 0) {
+                            HStack(spacing: 12) {
+                                Button {
+                                    Task { await viewModel.prevChapter() }
+                                } label: {
+                                    Text("上一章")
+                                        .font(.subheadline)
+                                        .foregroundColor(.white)
                                 }
                                 .disabled(viewModel.currentChapterIndex <= 0)
-                                .opacity(viewModel.currentChapterIndex <= 0 ? 0.5 : 1)
-                                
-                                Divider()
-                                    .frame(height: 30)
-                                
-                                Button(action: { Task { await viewModel.nextChapter() } }) {
-                                    VStack(spacing: 4) {
-                                        Image(systemName: "chevron.right")
-                                            .font(.title3)
-                                        Text("下一章")
-                                            .font(.caption2)
-                                    }
-                                    .frame(maxWidth: .infinity)
+                                .opacity(viewModel.currentChapterIndex <= 0 ? 0.4 : 1)
+
+                                Slider(value: Binding(
+                                    get: { Double(viewModel.currentChapterIndex) },
+                                    set: { viewModel.jumpToChapter(Int($0)) }
+                                ), in: 0...Double(max(1, viewModel.totalChapters - 1)), step: 1)
+                                .tint(XSGTheme.brandRed)
+
+                                Button {
+                                    Task { await viewModel.nextChapter() }
+                                } label: {
+                                    Text("下一章")
+                                        .font(.subheadline)
+                                        .foregroundColor(.white)
                                 }
                                 .disabled(viewModel.currentChapterIndex >= viewModel.totalChapters - 1)
-                                .opacity(viewModel.currentChapterIndex >= viewModel.totalChapters - 1 ? 0.5 : 1)
+                                .opacity(viewModel.currentChapterIndex >= viewModel.totalChapters - 1 ? 0.4 : 1)
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.top, 14)
+                            .padding(.bottom, 6)
+
+                            HStack(spacing: 0) {
+                                ReaderBottomPanelButton(icon: "list.bullet", title: "目录") { showingChapterList = true }
+                                ReaderBottomPanelButton(icon: "arrow.down.circle", title: "缓存") { showingCacheRange = true }
+                                ReaderBottomPanelButton(icon: "textformat.size", title: "设置") { showingSettings = true }
+                                ReaderBottomPanelButton(icon: "arrow.triangle.2.circlepath", title: "换源") { showingChangeSource = true }
+                            }
+                            .padding(.vertical, 10)
                         }
-                        .padding(.horizontal)
-                        .padding(.top, 16)
-                        .padding(.bottom, 12)
-                        
-                        Divider()
-                            .padding(.horizontal)
-                        
-                        // 工具栏
-                        HStack(spacing: 0) {
-                            ToolBarButton(
-                                icon: "a.square",
-                                title: "设置",
-                                action: { showingSettings = true }
-                            )
-                            
-                            ToolBarButton(
-                                icon: "speaker.wave.2",
-                                title: "朗读",
-                                action: { showingTTSControls = true }
-                            )
-                            
-                            ToolBarButton(
-                                icon: "timer",
-                                title: "自动",
-                                action: { showingAutoPageTurn = true }
-                            )
-                            
-                            ToolBarButton(
-                                icon: "bookmark",
-                                title: "书签",
-                                action: { showingBookmarks = true }
-                            )
-                            
-                            ToolBarButton(
-                                icon: "arrow.triangle.2.circlepath",
-                                title: "换源",
-                                action: { showingChangeSource = true }
-                            )
-                        }
-                        .padding(.vertical, 12)
+                        .background(Color(red: 0.13, green: 0.13, blue: 0.14).opacity(0.96))
+                        .opacity(showUI ? 1.0 : 0.0)
+                        .animation(.easeInOut(duration: 0.25), value: showUI)
                     }
-                    .background(.ultraThinMaterial)
-                    .opacity(showUI ? 1.0 : 0.0)
-                    .animation(.easeInOut(duration: 0.25), value: showUI)
                 }
                 
                 // 设置面板
@@ -370,6 +344,27 @@ struct ReaderView: View {
         }
         .navigationBarHidden(true)
         .statusBar(hidden: !showUI)
+    }
+}
+
+// MARK: - 底部面板按钮（真版深色面板：图标+文字白色）
+
+struct ReaderBottomPanelButton: View {
+    let icon: String
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 5) {
+                Image(systemName: icon)
+                    .font(.body)
+                Text(title)
+                    .font(.caption2)
+            }
+            .foregroundColor(.white.opacity(0.9))
+            .frame(maxWidth: .infinity)
+        }
     }
 }
 

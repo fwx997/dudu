@@ -24,6 +24,7 @@
 		'1A00000000000021' = {isa = PBXBuildFile; fileRef = 1A10000000000021; };
 		'1A00000000000022' = {isa = PBXBuildFile; fileRef = 1A10000000000022; };
 		'1A00000000000023' = {isa = PBXBuildFile; fileRef = 1A10000000000023; };
+		'DDC0AABB01A0' = {isa = PBXBuildFile; fileRef = DDC0AABB01A1; };
 		'1A00000000000024' = {isa = PBXBuildFile; fileRef = 1A10000000000024; };
 		'1A00000000000025' = {isa = PBXBuildFile; fileRef = 1A10000000000025; };
 		'1A00000000000026' = {isa = PBXBuildFile; fileRef = 1A10000000000026; };
@@ -73,6 +74,7 @@
 		'1A0000000000005A' = {isa = PBXBuildFile; fileRef = 1A1000000000005A; };
 		'1A0000000000005B' = {isa = PBXBuildFile; fileRef = 1A1000000000005B; };
 		'1A0000000000005C' = {isa = PBXBuildFile; fileRef = 1A1000000000005C; };
+		'DDC0AABB00A0' = {isa = PBXBuildFile; fileRef = DDC0AABB00A1; };
 		'1A0000000000005D' = {isa = PBXBuildFile; fileRef = 1A1000000000005D; };
 		'1A0000000000005E' = {isa = PBXBuildFile; fileRef = 1A1000000000005E; };
 		'1A0000000000005F' = {isa = PBXBuildFile; fileRef = 1A1000000000005F; };
@@ -162,7 +164,8 @@
 		'1A10000000000020' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookshelfView.swift; sourceTree = "<group>"; };
 		'1A10000000000021' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookshelfViewModel.swift; sourceTree = "<group>"; };
 		'1A10000000000022' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
-		'1A10000000000023' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderViewModel.swift; sourceTree = "<group>"; };
+		'1A10000000000023' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderViewModel.swift;
+		'DDC0AABB01A1' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterListView.swift; sourceTree = "<group>"; }; sourceTree = "<group>"; };
 		'1A10000000000025' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		'1A10000000000026' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManageView.swift; sourceTree = "<group>"; };
 		'1A10000000000027' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceViewModel.swift; sourceTree = "<group>"; };
@@ -208,6 +211,7 @@
 		'1A1000000000005A' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/PageViews/CoverPageView.swift; sourceTree = "<group>"; };
 		'1A1000000000005B' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/PageViews/SlidePageView.swift; sourceTree = "<group>"; };
 		'1A1000000000005C' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discovery/DiscoveryView.swift; sourceTree = "<group>"; };
+		'DDC0AABB00A1' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discovery/DiscoverTabView.swift; sourceTree = "<group>"; };
 		'1A1000000000005D' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics/ReadingStatisticsView.swift; sourceTree = "<group>"; };
 		'1A1000000000005E' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics/ReadingStatisticsManager.swift; sourceTree = "<group>"; };
 		'1A1000000000005F' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceDebugView.swift; sourceTree = "<group>"; };
@@ -458,6 +462,7 @@
 				1A30000000000028,
 				1A30000000000063,
 				1A1000000000005C,
+				DDC0AABB00A1,
 				1A1000000000005D,
 			);
 			path = Features;
@@ -479,6 +484,7 @@
 				1A10000000000039,
 				1A10000000000022,
 				1A10000000000023,
+				DDC0AABB01A1,
 				1A10000000000083,
 				1A10000000000084,
 			);
@@ -739,6 +745,7 @@
 				1A00000000000039,
 				1A00000000000022,
 				1A00000000000023,
+				DDC0AABB01A0,
 				1A00000000000058,
 				1A00000000000059,
 				1A0000000000005A,
@@ -749,6 +756,7 @@
 				1A00000000000066,
 				1A00000000000063,
 				1A0000000000005C,
+				DDC0AABB00A0,
 				1A0000000000005D,
 				1A0000000000005E,
 				1A0000000000005F,
@@ -964,7 +972,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODEGEN_SKIP_MODEL_CLASSES = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20260914;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -981,7 +989,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.9.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.legado.app;
 				OTHER_LDFLAGS = "-lxml2";
 				HEADER_SEARCH_PATHS = ("$(SDKROOT)/usr/include/libxml2", inherited);
@@ -999,7 +1007,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODEGEN_SKIP_MODEL_CLASSES = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20260914;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -1016,7 +1024,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.9.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.legado.app;
 				OTHER_LDFLAGS = "-lxml2";
 				HEADER_SEARCH_PATHS = ("$(SDKROOT)/usr/include/libxml2", inherited);

@@ -2,8 +2,9 @@
 //  BookshelfView.swift
 //  Legado-iOS
 //
-//  书架主界面（对齐香色闺阁 BookShelfController）
-//  结构：顶部导航（左菜单/书架名/搜索/分组/书单）+ 左右抽屉 + 宫格/列表
+//  书架主界面（对齐香色闺阁真版首页截图）
+//  顶部一行：[文件夹] 书架|发现分段控件 [搜索] [＋]，无底部TabBar、无大标题
+//  默认列表模式：封面/类型图标 + 书名 + 源名 · 最新章节
 //
 
 import SwiftUI
@@ -28,7 +29,10 @@ struct BookshelfView: View {
 
     var body: some View {
         ZStack {
-            mainContent
+            VStack(spacing: 0) {
+                headerBar
+                mainContent
+            }
 
             // 左抽屉：书架分组选择（对齐 LeftViewController.selectedBookShelfGroup:）
             DrawerOverlay(side: .left, isPresented: $showingLeftDrawer) {
@@ -61,6 +65,68 @@ struct BookshelfView: View {
                 )
             }
         }
+        .navigationBarHidden(true)
+    }
+
+    // MARK: - 顶栏（真版：文件夹 | 书架/发现分段 | 搜索 ＋）
+
+    @ViewBuilder
+    private var headerBar: some View {
+        if isEditing {
+            HStack(spacing: 12) {
+                Button {
+                    isEditing = false
+                    selectedBookIds.removeAll()
+                } label: {
+                    Text("取消")
+                        .foregroundColor(.accentColor)
+                }
+                Spacer()
+                Text("已选 \(selectedBookIds.count) 本")
+                    .fontWeight(.semibold)
+                Spacer()
+                // 黄色减号：移回默认书架；绿色：移到其他书架；红色：删除
+                Button {
+                    let books = viewModel.books.filter { selectedBookIds.contains($0.bookId) && $0.group != 0 }
+                    viewModel.moveBooks(books, to: 0)
+                    selectedBookIds.removeAll()
+                    isEditing = false
+                } label: {
+                    Image(systemName: "minus.circle.fill")
+                        .foregroundColor(.yellow)
+                        .font(.title3)
+                }
+                .disabled(!viewModel.books.contains { selectedBookIds.contains($0.bookId) && $0.group != 0 })
+                Button {
+                    guard !selectedBookIds.isEmpty else { return }
+                    showingMoveSheet = true
+                } label: {
+                    Image(systemName: "arrow.down.right.circle.fill")
+                        .foregroundColor(.green)
+                        .font(.title3)
+                }
+                .disabled(selectedBookIds.isEmpty)
+                Button(role: .destructive) {
+                    let books = viewModel.books.filter { selectedBookIds.contains($0.bookId) }
+                    viewModel.deleteBooks(books)
+                    selectedBookIds.removeAll()
+                    isEditing = false
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.red)
+                        .font(.title3)
+                }
+                .disabled(selectedBookIds.isEmpty)
+            }
+            .padding(.horizontal, 12)
+            .frame(height: 46)
+        } else {
+            XSGBTopTabs(
+                onFolder: { showingFolderMenu = true },
+                onSearch: { showingSearch = true },
+                onAdd: { showingAddBook = true }
+            )
+        }
     }
 
     // MARK: - 主内容
@@ -75,82 +141,6 @@ struct BookshelfView: View {
                 )
             } else {
                 bookshelfContent
-            }
-        }
-        .navigationTitle(isEditing ? "已选 \(selectedBookIds.count) 本" : shelfStore.currentName)
-        .toolbar {
-            if isEditing {
-                // 编辑模式工具栏（对齐 onSelectAllEvent/onMoveEvent/onDeleteEvent/onEndEditEvent）
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("全选") {
-                        if selectedBookIds.count == viewModel.books.count {
-                            selectedBookIds.removeAll()
-                        } else {
-                            selectedBookIds = Set(viewModel.books.map { $0.bookId })
-                        }
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 14) {
-                        Button("移动") {
-                            guard !selectedBookIds.isEmpty else { return }
-                            showingMoveSheet = true
-                        }
-                        .foregroundColor(selectedBookIds.isEmpty ? .secondary : .accentColor)
-
-                        Button("删除", role: .destructive) {
-                            let books = viewModel.books.filter { selectedBookIds.contains($0.bookId) }
-                            viewModel.deleteBooks(books)
-                            selectedBookIds.removeAll()
-                        }
-                        .foregroundColor(selectedBookIds.isEmpty ? .secondary : .red)
-
-                        Button("完成") {
-                            isEditing = false
-                            selectedBookIds.removeAll()
-                        }
-                    }
-                }
-            } else {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        showingFolderMenu = true
-                    } label: {
-                        Image(systemName: "folder")
-                    }
-                }
-
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 14) {
-                        Button(action: { showingSearch = true }) {
-                            Image(systemName: "magnifyingglass")
-                        }
-
-                        // 分组/多书架（对齐真版四圆图标）
-                        Button {
-                            showingLeftDrawer = true
-                        } label: {
-                            Image(systemName: "circle.grid.2x2.fill")
-                            .foregroundColor(.white)
-                            .padding(6)
-                            .background(RoundedRectangle(cornerRadius: 7).fill(Color(red: 0.28, green: 0.62, blue: 0.93)))
-                        }
-
-                        // 书单（对齐真版星标图标）
-                        Button {
-                            showingShudan = true
-                        } label: {
-                            Image(systemName: "star.fill")
-                            .foregroundColor(.white)
-                            .padding(6)
-                            .background(RoundedRectangle(cornerRadius: 7).fill(Color(red: 0.95, green: 0.45, blue: 0.25)))
-                        }
-
-                        Button(action: { showingAddBook = true }) {
-                            Image(systemName: "plus")
-                        }
-                    }
-                }
             }
         }
         .confirmationDialog("文件夹", isPresented: $showingFolderMenu, titleVisibility: .visible) {
@@ -287,9 +277,8 @@ struct BookshelfView: View {
         ScrollView {
             LazyVGrid(columns: [
                 GridItem(.flexible()),
-                GridItem(.flexible()),
                 GridItem(.flexible())
-            ], spacing: 16) {
+            ], spacing: 20) {
                 ForEach(viewModel.books, id: \.bookId) { book in
                     Group {
                         if isEditing {
@@ -673,52 +662,107 @@ struct BookGridItemView: View {
     }
 }
 
-// MARK: - 列表项
+// MARK: - 列表项（对齐真版：封面/彩色类型图标 + 书名 + 源名 + 最新章节）
 
 struct BookListItemView: View {
     let book: Book
 
     var body: some View {
         HStack(spacing: 12) {
-            BookCoverView(url: book.coverUrl)
-                .frame(width: 60, height: 80)
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(4)
+            BookshelfThumbView(book: book)
+                .frame(width: 52, height: 70)
+                .cornerRadius(5)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(book.name)
                     .font(.body)
-                    .fontWeight(.medium)
                     .lineLimit(1)
+                    .foregroundColor(.primary)
 
-                Text(book.author)
+                Text(book.originName.isEmpty ? (book.isLocal ? "本地书籍" : "未知来源") : book.originName)
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
 
-                if let chapter = book.latestChapterTitle {
+                if let chapter = book.latestChapterTitle, !chapter.isEmpty {
                     Text(chapter)
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.secondary.opacity(0.75))
                         .lineLimit(1)
-                }
-
-                Spacer()
-
-                HStack {
-                    ProgressView(value: book.readProgress)
-                        .progressViewStyle(.linear)
-                        .frame(width: 100)
-
-                    Text("\(Int(book.readProgress * 100))%")
+                } else if let dur = book.durChapterTitle, !dur.isEmpty {
+                    Text("读至：\(dur)")
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.secondary.opacity(0.75))
+                        .lineLimit(1)
                 }
             }
 
             Spacer()
         }
         .padding(.vertical, 4)
+    }
+}
+
+// MARK: - 书架缩略图（真版：无封面时显示彩色圆角方块+类型图标）
+
+struct BookshelfThumbView: View {
+    let book: Book
+    @State private var imageData: Data?
+
+    var body: some View {
+        Group {
+            if let data = imageData, let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else {
+                typeBadge
+            }
+        }
+        .frame(width: 52, height: 70)
+        .clipped()
+        .task {
+            if let urlString = book.displayCoverUrl, !urlString.isEmpty {
+                if let cached = await ImageCacheManager.shared.loadImage(from: urlString) {
+                    imageData = cached.pngData()
+                }
+            }
+        }
+    }
+
+    // 真版示例书架的四色文件图标：文本蓝T / 图片紫 / 视频橙播放 / 音频粉音符
+    private var typeBadge: some View {
+        ZStack {
+            let colors: (Color, Color) = badgeColors
+            RoundedRectangle(cornerRadius: 6)
+                .fill(LinearGradient(
+                    colors: [colors.0, colors.1],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ))
+            typeGlyph
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundColor(.white)
+        }
+    }
+
+    @ViewBuilder
+    private var typeGlyph: some View {
+        switch book.type {
+        case 2: Image(systemName: "photo.fill")
+        case 1: Image(systemName: "music.note")
+        case 3: Image(systemName: "play.circle.fill")
+        default: Text("T").font(.system(size: 24, weight: .bold, design: .rounded))
+        }
+    }
+
+    private var badgeColors: (Color, Color) {
+        switch book.type {
+        case 2: return (Color(red: 0.62, green: 0.40, blue: 0.85), Color(red: 0.45, green: 0.28, blue: 0.72))
+        case 1: return (Color(red: 0.95, green: 0.45, blue: 0.60), Color(red: 0.85, green: 0.30, blue: 0.48))
+        case 3: return (Color(red: 0.95, green: 0.55, blue: 0.25), Color(red: 0.85, green: 0.40, blue: 0.15))
+        default: return (Color(red: 0.30, green: 0.56, blue: 0.95), Color(red: 0.20, green: 0.42, blue: 0.82))
+        }
     }
 }
 

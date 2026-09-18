@@ -16,7 +16,7 @@ final class BookshelfViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var hasMore = true
     
-    @Published var viewMode: ViewMode = .grid
+    @Published var viewMode: ViewMode = .list
     @Published var groupFilter: Int32 = 0
     @Published var sortBy: SortBy = .lastRead
     

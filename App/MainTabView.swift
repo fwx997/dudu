@@ -2,42 +2,126 @@
 //  MainTabView.swift
 //  Legado-iOS
 //
-//  主 Tab 视图（完善版）
+//  主界面容器（对齐香色闺阁真版结构）
+//  真版没有底部 TabBar：顶部一行 [文件夹] 书架|发现 [+]，
+//  内容区随顶部双标签切换；「我的/设置」经菜单进入。
 //
 
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct MainTabView: View {
-    @State private var selectedTab = 0
-    
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            // 书架（含本地书籍入口）
-            NavigationStack { BookshelfView() }
-                .tabItem {
-                    Label("书架", systemImage: "books.vertical.fill")
-                }
-                .tag(0)
+// MARK: - 主题（对齐真版：浅色=香色红，深色=蓝色强调）
 
-            // 发现
-            NavigationStack { DiscoveryView() }
-                .tabItem {
-                    Label("发现", systemImage: "safari")
-                }
-                .tag(1)
+enum XSGTheme {
+    /// 香色闺阁品牌红（图标同款）
+    static let brandRed = Color(red: 0.85, green: 0.25, blue: 0.24)
+    /// 深色界面下的强调色（真版深色截图为蓝色系）
+    static let darkBlue = Color(red: 0.33, green: 0.55, blue: 0.95)
 
-            // 我的
-            SettingsView()
-                .tabItem {
-                    Label("我的", systemImage: "person.crop.circle")
-                }
-                .tag(2)
-        }
+    static func tint(for scheme: ColorScheme) -> Color {
+        scheme == .dark ? darkBlue : brandRed
     }
 }
 
-// MARK: - 设置视图（完善版）
+// MARK: - 顶部标签状态（书架/发现 共享）
+
+final class MainTabState: ObservableObject {
+    static let shared = MainTabState()
+    @Published var tab: Int = 0 // 0=书架 1=发现
+}
+
+// MARK: - 主容器
+
+struct MainTabView: View {
+    @ObservedObject private var tabState = MainTabState.shared
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        Group {
+            switch tabState.tab {
+            case 1:
+                NavigationStack { DiscoverTabView() }
+            default:
+                NavigationStack { BookshelfView() }
+            }
+        }
+        .tint(XSGTheme.tint(for: colorScheme))
+    }
+}
+
+// MARK: - 顶部双标签栏（对齐真版首页截图：文件夹 | 书架 发现 | ＋）
+
+struct XSGBTopTabs: View {
+    @ObservedObject private var tabState = MainTabState.shared
+    var onFolder: () -> Void
+    var onSearch: (() -> Void)? = nil
+    var onAdd: () -> Void
+
+    var body: some View {
+        HStack(spacing: 0) {
+            Button(action: onFolder) {
+                Image(systemName: "folder")
+                    .font(.system(size: 19, weight: .regular))
+                    .frame(width: 38, height: 40)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            // 真版样式：胶囊分段控件（书架|发现），选中段为凸起圆角块
+            HStack(spacing: 0) {
+                segmentButton("书架", tag: 0)
+                segmentButton("发现", tag: 1)
+            }
+            .background(
+                Capsule().fill(Color(.systemGray5).opacity(0.7))
+            )
+            .padding(.leading, 10)
+
+            Spacer()
+
+            if let onSearch {
+                Button(action: onSearch) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 18))
+                        .frame(width: 34, height: 40)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+
+            Button(action: onAdd) {
+                Image(systemName: "plus")
+                    .font(.system(size: 21, weight: .medium))
+                    .frame(width: 36, height: 40)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 8)
+        .frame(height: 46)
+    }
+
+    private func segmentButton(_ title: String, tag: Int) -> some View {
+        let selected = tabState.tab == tag
+        return Button {
+            withAnimation(.easeInOut(duration: 0.15)) { tabState.tab = tag }
+        } label: {
+            Text(title)
+                .font(.system(size: 14.5, weight: selected ? .semibold : .regular))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 5)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(selected ? Color(.systemGray4).opacity(0.9) : Color.clear)
+                )
+                .foregroundColor(selected ? .primary : .secondary)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - 设置视图（真版入口在加号菜单/抽屉内）
+
 struct SettingsView: View {
     @State private var showingAbout = false
     @State private var showingQRScanner = false
@@ -68,16 +152,16 @@ struct SettingsView: View {
                     NavigationLink("阅读设置") {
                         ReaderSettingsFullView()
                     }
-                    
+
                     NavigationLink("替换规则") {
                         ReplaceRuleView()
                     }
-                    
+
                     NavigationLink("主题") {
                         ThemeSettingsView()
                     }
                 }
-                
+
                 // 数据管理
                 Section(header: Label("数据", systemImage: "database")) {
                     NavigationLink("备份与恢复") {
@@ -91,16 +175,16 @@ struct SettingsView: View {
                     NavigationLink("数据迁移") {
                         DataMigrationView()
                     }
-                    
+
                     NavigationLink("词典规则") {
                         DictRuleView()
                     }
-                    
+
                     NavigationLink("清理缓存") {
                         CacheCleanView()
                     }
                 }
-                
+
                 // 书源管理
                 Section(header: Label("书源", systemImage: "square.grid.2x2")) {
                     NavigationLink("站点管理（香色闺阁源）") {
@@ -118,7 +202,7 @@ struct SettingsView: View {
                     NavigationLink("书源调试") {
                         SourceDebugView(viewModel: SourceDebugViewModel(source: nil))
                     }
-                    
+
                     Button(action: { showingQRScanner = true }) {
                         HStack {
                             Text("扫码导入书源")
@@ -128,28 +212,24 @@ struct SettingsView: View {
                         }
                     }
                 }
-                
+
                 // 关于
                 Section(header: Label("关于", systemImage: "info.circle")) {
                     HStack {
                         Text("版本")
                         Spacer()
-                        Text("1.0.0 (Alpha)")
+                        Text("0.9.1 (20260914)")
                             .foregroundColor(.secondary)
                     }
-                    
-                    Link("开源地址", destination: URL(string: "https://github.com/chrn11/legado-ios")!)
-                    
-                    Link("帮助文档", destination: URL(string: "https://www.legado.top/")!)
-                    
-                    Link("去评分", destination: URL(string: "itms-apps://itunes.apple.com/app/action=write-review")!)
+
+                    Link("开源地址", destination: URL(string: "https://github.com/fwx997/dudu")!)
+
                     Button("分享App") {
                         let share = UIActivityViewController(activityItems: ["https://github.com/fwx997/dudu"], applicationActivities: nil)
                         UIApplication.shared.connectedScenes.compactMap { ($0 as? UIWindowScene)?.keyWindow?.rootViewController }.first?.present(share, animated: true)
                     }
-                    Link("联系我们", destination: URL(string: "https://github.com/fwx997/dudu/issues")!)
 
-                                        Button("免责声明") {
+                    Button("免责声明") {
                         showingAbout = true
                     }
                 }
@@ -170,7 +250,7 @@ struct SettingsView: View {
 // MARK: - 关于视图
 struct AboutView: View {
     @Environment(\.dismiss) var dismiss
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -178,38 +258,38 @@ struct AboutView: View {
                     // 应用图标
                     Image(systemName: "books.vertical")
                         .font(.system(size: 80))
-                        .foregroundColor(.blue)
-                    
-                    Text("Legado iOS")
+                        .foregroundColor(XSGTheme.brandRed)
+
+                    Text("嘟嘟")
                         .font(.title)
                         .fontWeight(.bold)
-                    
-                    Text("嘆噅 v0.9.0 (20260914)")
+
+                    Text("版本 v0.9.1 (20260914)")
                         .font(.headline)
                         .foregroundColor(.secondary)
-                    
+
                     Divider()
-                    
+
                     // 简介
                     AboutSectionCard(title: "应用简介") {
                         Text("""
-                        Legado iOS 是基于 Android 版 Legado（开源阅读）开发的 iOS 原生阅读应用。
-                        
+                        嘟嘟是复刻香色闺阁的 iOS 原生阅读应用，支持 .xbs 站点书源。
+
                         本应用支持自定义书源规则，可以解析网页内容，为广大网络文学爱好者提供一种方便、快捷、舒适的阅读体验。
                         """)
                     }
-                    
+
                     // 特性
                     AboutSectionCard(title: "主要特性") {
                         VStack(alignment: .leading, spacing: 8) {
-                            FeatureRow(icon: "square.grid.2x2", text: "自定义书源规则")
-                            FeatureRow(icon: "magnifyingglass", text: "多书源聚合搜索")
+                            FeatureRow(icon: "square.grid.2x2", text: "香色闺阁 .xbs 站点书源")
+                            FeatureRow(icon: "magnifyingglass", text: "多源并发聚合搜索")
                             FeatureRow(icon: "books.vertical", text: "本地 TXT/EPUB 支持")
                             FeatureRow(icon: "text.badge.checkmark", text: "内容替换净化")
                             FeatureRow(icon: "gearshape", text: "高度定制化阅读")
                         }
                     }
-                    
+
                     // 技术栈
                     AboutSectionCard(title: "技术栈") {
                         VStack(alignment: .leading, spacing: 4) {
@@ -221,39 +301,33 @@ struct AboutView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                     }
-                    
+
                     // 链接
                     AboutSectionCard(title: "相关链接") {
                         VStack(alignment: .leading, spacing: 8) {
-                            Link("GitHub 仓库", destination: URL(string: "https://github.com/chrn11/legado-ios")!)
-                                .foregroundColor(.blue)
-                            
-                            Link("Android 原版", destination: URL(string: "https://github.com/gedoor/legado")!)
-                                .foregroundColor(.blue)
-                            
-                            Link("帮助文档", destination: URL(string: "https://www.legado.top/")!)
-                                .foregroundColor(.blue)
+                            Link("GitHub 仓库", destination: URL(string: "https://github.com/fwx997/dudu")!)
+                                .foregroundColor(.accentColor)
                         }
                     }
-                    
+
                     // 开源协议
                     AboutSectionCard(title: "开源协议") {
                         Text("本项目遵循 GPL-3.0 协议。")
                             .font(.caption)
                     }
-                    
+
                     // 免责声明
                     AboutSectionCard(title: "免责声明") {
                         Text("""
                         本应用仅供学习交流使用，请勿用于商业目的。
-                        
+
                         使用本应用时请遵守相关法律法规，尊重版权。
                         应用本身不提供任何内容，所有内容由书源提供。
                         """)
                         .font(.caption)
                         .foregroundColor(.secondary)
                     }
-                    
+
                     Spacer()
                 }
                 .padding()
@@ -275,13 +349,13 @@ struct AboutView: View {
 struct FeatureRow: View {
     let icon: String
     let text: String
-    
+
     var body: some View {
         HStack {
             Image(systemName: icon)
                 .frame(width: 24)
-                .foregroundColor(.blue)
-            
+                .foregroundColor(.accentColor)
+
             Text(text)
                 .font(.body)
         }
@@ -291,13 +365,13 @@ struct FeatureRow: View {
 struct AboutSectionCard<Content: View>: View {
     let title: String
     @ViewBuilder let content: Content
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.headline)
                 .foregroundColor(.primary)
-            
+
             content
         }
         .padding()
@@ -309,7 +383,7 @@ struct AboutSectionCard<Content: View>: View {
 // MARK: - 主题设置视图
 struct ThemeSettingsView: View {
     @AppStorage("app_theme") private var selectedTheme = "system"
-    
+
     var body: some View {
         List {
             Section("外观模式") {
@@ -322,19 +396,19 @@ struct ThemeSettingsView: View {
                         HStack {
                             Image(systemName: icon)
                                 .frame(width: 24)
-                                .foregroundColor(.blue)
+                                .foregroundColor(.accentColor)
                             Text(label)
                                 .foregroundColor(.primary)
                             Spacer()
                             if selectedTheme == value {
                                 Image(systemName: "checkmark")
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.accentColor)
                             }
                         }
                     }
                 }
             }
-            
+
             Section("阅读背景") {
                 ForEach([
                     ("白色", Color.white),
@@ -369,7 +443,7 @@ struct CacheCleanView: View {
     @State private var isClearing = false
     @State private var showingAlert = false
     @State private var alertMessage = ""
-    
+
     var body: some View {
         List {
             Section("缓存占用") {
@@ -386,7 +460,7 @@ struct CacheCleanView: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             Section {
                 Button(action: { clearImageCache() }) {
                     HStack {
@@ -394,14 +468,14 @@ struct CacheCleanView: View {
                         Text("清理图片缓存")
                     }
                 }
-                
+
                 Button(action: { clearChapterCache() }) {
                     HStack {
                         Image(systemName: "trash")
                         Text("清理章节缓存")
                     }
                 }
-                
+
                 Button(role: .destructive, action: clearAll) {
                     HStack {
                         Image(systemName: "trash")
@@ -420,7 +494,7 @@ struct CacheCleanView: View {
             Text(alertMessage)
         }
     }
-    
+
     private func calculateCacheSize() {
         imageCacheSize = folderSize(imageCacheDir())
         chapterCacheSize = folderSize(chapterCacheDir())
@@ -435,7 +509,7 @@ struct CacheCleanView: View {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
             .appendingPathComponent("chapters", isDirectory: true)
     }
-    
+
     private func folderSize(_ url: URL?) -> String {
         guard let url = url else { return "0 B" }
         let fm = FileManager.default
@@ -451,7 +525,7 @@ struct CacheCleanView: View {
         }
         return ByteCountFormatter.string(fromByteCount: total, countStyle: .file)
     }
-    
+
     private func clearImageCache(showMessage: Bool = true) {
         let dir = imageCacheDir()
         clearDir(dir)
@@ -463,7 +537,7 @@ struct CacheCleanView: View {
             showingAlert = true
         }
     }
-    
+
     private func clearChapterCache(showMessage: Bool = true) {
         let dir = chapterCacheDir()
         clearDir(dir)
@@ -474,7 +548,7 @@ struct CacheCleanView: View {
             showingAlert = true
         }
     }
-    
+
     private func clearAll() {
         isClearing = true
         defer { isClearing = false }
@@ -484,7 +558,7 @@ struct CacheCleanView: View {
         alertMessage = "全部缓存已清理"
         showingAlert = true
     }
-    
+
     private func clearDir(_ url: URL?) {
         guard let url = url else { return }
         try? FileManager.default.removeItem(at: url)

@@ -155,39 +155,28 @@ struct PagedReaderView: View {
     }
 
     private var pageIndicator: some View {
-        HStack(spacing: 4) {
+        // 真版页脚：左下时间，右下 页码/页数，直接印在纸面上
+        HStack(alignment: .bottom) {
             if showTime {
                 Text(timeText)
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }
+            Spacer()
             if showBattery {
                 Text(batteryText)
                     .font(.caption2)
                     .foregroundColor(.secondary)
+                    .padding(.trailing, 10)
             }
             if showProgress {
-                Text("\(min(viewModel.currentPageIndex + 1, pages.count)) / \(pages.count)")
+                Text("\(min(viewModel.currentPageIndex + 1, pages.count))/\(pages.count)")
                     .font(.caption2)
                     .foregroundColor(.secondary)
-            }
-
-            if showCpTitle, viewModel.totalChapters > 0, let title = viewModel.currentChapter?.title {
-                Text("·")
-                    .foregroundColor(.secondary.opacity(0.5))
-                Text(title)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 4)
-        .background(
-            Capsule()
-                .fill(.ultraThinMaterial)
-        )
-        .padding(.bottom, 8)
+        .padding(.horizontal, viewModel.pagePadding.leading + 6)
+        .padding(.bottom, 6)
     }
     
     // MARK: - 分页逻辑
