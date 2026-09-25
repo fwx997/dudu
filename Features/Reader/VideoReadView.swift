@@ -2,7 +2,7 @@
 //  VideoReadView.swift
 //  Legado-iOS
 //
-//  视频源阅读页（对齐 VideoReadVC）：章节列表 + AVPlayer 播放
+//  视频源阅读页（对齐 VideoReadVC）：内嵌播放器 + 倍速底栏 + 剧集列表 + 观看记录
 //
 
 import SwiftUI
@@ -16,10 +16,62 @@ struct VideoReadView: View {
     @State private var chapters: [(title: String, url: String)] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
-    @State private var playingURL: URL?
+    @State private var player: AVPlayer?
+    @State private var currentEpisode = 0
+    @State private var resolving = false
+    @State private var showingRate = false
+
+    static let rateOptions: [Float] = [0.75, 1.0, 1.25, 1.5, 2.0]
+    @State private var rate: Float = 1.0
 
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
+            // 顶部内嵌播放器（对齐 playerCon/playerVC）
+            ZStack {
+                Color.black
+                if let player {
+                    VideoPlayer(player: player)
+                } else if resolving {
+                    ProgressView("正在解析视频...")
+                        .foregroundColor(.white)
+                } else {
+                    Image(systemName: "film")
+                        .font(.system(size: 40))
+                        .foregroundColor(.gray)
+                }
+            }
+            .aspectRatio(16 / 9, contentMode: .fit)
+
+            // 倍速底栏（对齐 bottomBar/showRateList）
+            HStack {
+                Button {
+                    showingRate = true
+                } label: {
+                    Text(rate == 1.0 ? "倍速" : String(format: "%.2gx", rate))
+                        .font(.subheadline)
+                }
+                Spacer()
+                Button {
+                    play(index: currentEpisode - 1)
+                } label: {
+                    Image(systemName: "backward.end.fill")
+                }
+                .disabled(currentEpisode <= 0)
+                Text(chapters.isEmpty ? "" : "第 \(currentEpisode + 1)/\(chapters.count) 集")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                Button {
+                    play(index: currentEpisode + 1)
+                } label: {
+                    Image(systemName: "forward.end.fill")
+                }
+                .disabled(currentEpisode >= chapters.count - 1)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(.bar)
+
+            // 剧集列表（对齐 tableView）
             if isLoading {
                 ProgressView("加载中...")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -28,41 +80,36 @@ struct VideoReadView: View {
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                List(chapters, id: \.url) { chapter in
+                List(Array(chapters.enumerated()), id: \.offset) { index, chapter in
                     Button {
-                        Task {
-                            if book.origin.hasPrefix("xbs://") {
-                                let alias = String(book.origin.dropFirst("xbs://".count))
-                                if let source = XBSSourceStore.shared.source(alias: alias),
-                                   let media = try? await XBSEngine.shared.chapterAudioURL(source: source, url: chapter.url) {
-                                    playingURL = media
-                                }
-                            } else if let u = URL(string: chapter.url) {
-                                playingURL = u
+                        play(index: index)
+                    } label: {
+                        HStack {
+                            Text(chapter.title)
+                                .lineLimit(1)
+                                .foregroundColor(index == currentEpisode ? .red : .primary)
+                            Spacer()
+                            if index == currentEpisode {
+                                Image(systemName: "waveform")
+                                    .foregroundColor(.red)
                             }
                         }
-
-                    } label: {
-                        Label(chapter.title, systemImage: "play.circle")
                     }
                 }
-                .listStyle(.insetGrouped)
+                .listStyle(.plain)
             }
         }
         .navigationTitle(book.name)
         .navigationBarTitleDisplayMode(.inline)
         .task { await load() }
-        .sheet(item: Binding(
-            get: { playingURL.map { PlayItem(url: $0) } },
-            set: { playingURL = $0?.url }
-        )) { item in
-            VideoScreen(url: item.url)
+        .onDisappear { player?.pause() }
+        .confirmationDialog("播放倍速", isPresented: $showingRate, titleVisibility: .visible) {
+            ForEach(Self.rateOptions, id: \.self) { r in
+                Button(r == 1.0 ? "正常" : String(format: "%.2gx", r)) {
+                    setRate(r)
+                }
+            }
         }
-    }
-
-    struct PlayItem: Identifiable {
-        let url: URL
-        var id: String { url.absoluteString }
     }
 
     private func load() async {
@@ -83,43 +130,55 @@ struct VideoReadView: View {
                 url: book.tocUrl.isEmpty ? book.bookUrl : book.tocUrl
             )
             chapters = list.map { (title: $0.title, url: $0.url) }
-
-            // 选中章节的正文规则提取视频链接
             if chapters.isEmpty {
                 errorMessage = "无剧集"
+            } else {
+                // onOpenRecord/getReadRecord：恢复上次观看的剧集
+                play(index: min(Int(book.durChapterIndex), chapters.count - 1))
             }
         } catch {
             errorMessage = error.localizedDescription
         }
         isLoading = false
     }
-}
 
-/// 单集播放页：从章节内容规则提取视频地址后播放
-struct VideoScreen: View {
-    let url: URL
-    @State private var player: AVPlayer?
-    @State private var statusText = "正在解析视频..."
+    private func play(index: Int) {
+        guard chapters.indices.contains(index) else { return }
+        currentEpisode = index
+        saveRecord(index: index)
+        Task { await resolveAndPlay(index: index) }
+    }
 
-    var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            if let player {
-                VideoPlayer(player: player)
-                    .ignoresSafeArea()
+    private func resolveAndPlay(index: Int) async {
+        resolving = true
+        defer { resolving = false }
+        let chapter = chapters[index]
+        let mediaURL: URL?
+        if book.origin.hasPrefix("xbs://") {
+            let alias = String(book.origin.dropFirst("xbs://".count))
+            if let source = XBSSourceStore.shared.source(alias: alias) {
+                mediaURL = try? await XBSEngine.shared.chapterAudioURL(source: source, url: chapter.url)
             } else {
-                ProgressView(statusText)
-                    .foregroundColor(.white)
+                mediaURL = nil
             }
+        } else {
+            mediaURL = URL(string: chapter.url)
         }
-        .task {
-            // 直接把传入 url 当媒体地址播放（多数视频源章节 URL 即媒体流）
-            let player = AVPlayer(url: url)
-            self.player = player
-            player.play()
-        }
-        .onDisappear {
-            player?.pause()
-        }
+        guard let mediaURL else { return }
+        let newPlayer = AVPlayer(url: mediaURL)
+        newPlayer.defaultRate = rate
+        player = newPlayer
+        newPlayer.play()
+    }
+
+    private func setRate(_ newRate: Float) {
+        rate = newRate
+        player?.defaultRate = newRate
+        player?.rate = newRate
+    }
+
+    private func saveRecord(index: Int) {
+        book.durChapterIndex = Int64(index)
+        try? book.managedObjectContext?.save()
     }
 }

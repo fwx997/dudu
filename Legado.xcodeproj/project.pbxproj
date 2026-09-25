@@ -74,6 +74,7 @@
 		'1A0000000000005A' = {isa = PBXBuildFile; fileRef = 1A1000000000005A; };
 		'1A0000000000005B' = {isa = PBXBuildFile; fileRef = 1A1000000000005B; };
 		'1A0000000000005C' = {isa = PBXBuildFile; fileRef = 1A1000000000005C; };
+		'DDB00000000000002' = {isa = PBXBuildFile; fileRef = DDB00000000000001; };
 		'DDC0AABB00A0' = {isa = PBXBuildFile; fileRef = DDC0AABB00A1; };
 		'1A0000000000005D' = {isa = PBXBuildFile; fileRef = 1A1000000000005D; };
 		'1A0000000000005E' = {isa = PBXBuildFile; fileRef = 1A1000000000005E; };
@@ -212,6 +213,7 @@
 		'1A1000000000005B' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Reader/PageViews/SlidePageView.swift; sourceTree = "<group>"; };
 		'1A1000000000005C' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discovery/DiscoveryView.swift; sourceTree = "<group>"; };
 		'DDC0AABB00A1' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discovery/DiscoverTabView.swift; sourceTree = "<group>"; };
+		'DDB00000000000001' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discovery/ShupingDetailView.swift; sourceTree = "<group>"; };
 		'1A1000000000005D' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics/ReadingStatisticsView.swift; sourceTree = "<group>"; };
 		'1A1000000000005E' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics/ReadingStatisticsManager.swift; sourceTree = "<group>"; };
 		'1A1000000000005F' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceDebugView.swift; sourceTree = "<group>"; };
@@ -463,6 +465,7 @@
 				1A30000000000063,
 				1A1000000000005C,
 				DDC0AABB00A1,
+				DDB00000000000001,
 				1A1000000000005D,
 			);
 			path = Features;
@@ -756,6 +759,7 @@
 				1A00000000000066,
 				1A00000000000063,
 				1A0000000000005C,
+				DDB00000000000002,
 				DDC0AABB00A0,
 				1A0000000000005D,
 				1A0000000000005E,

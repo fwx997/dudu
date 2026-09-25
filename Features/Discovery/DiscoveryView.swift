@@ -35,6 +35,8 @@ struct DiscoveryView: View {
     @State private var shupingList: [XBSEngine.XBSShuping] = []
     @State private var shupingLoading = false
     @State private var shupingError: String?
+    @State private var selectedShuping: XBSEngine.XBSShuping?
+    @State private var showingShupingDetail = false
 
     init(initialMode: DiscoveryMode = .bookWorld) {
         _mode = State(initialValue: initialMode)
@@ -78,6 +80,11 @@ struct DiscoveryView: View {
         .sheet(isPresented: $showingShudanDetail) {
             if let shudan = selectedShudan {
                 NavigationStack { XBSShudanDetailView(shudan: shudan) }
+            }
+        }
+        .sheet(isPresented: $showingShupingDetail) {
+            if let shuping = selectedShuping {
+                NavigationStack { ShupingDetailView(shuping: shuping) }
             }
         }
     }
@@ -460,18 +467,27 @@ extension DiscoveryView {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(shupingList) { item in
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(item.title)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        if let desc = item.desc, !desc.isEmpty {
-                            Text(desc)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .lineLimit(4)
+                    Button {
+                        selectedShuping = item
+                        showingShupingDetail = true
+                    } label: {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(item.title)
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(.primary)
+                                .multilineTextAlignment(.leading)
+                            if let desc = item.desc, !desc.isEmpty {
+                                Text(desc)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(4)
+                                    .multilineTextAlignment(.leading)
+                            }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
                 }
                 .listStyle(.insetGrouped)
                 .refreshable { await loadShuping() }

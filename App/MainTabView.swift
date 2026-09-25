@@ -9,6 +9,7 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
+import StoreKit
 
 // MARK: - 主题（对齐真版：浅色=香色红，深色=蓝色强调）
 
@@ -150,7 +151,6 @@ struct XSGPaperBackground: View {
 // MARK: - 设置视图（真版入口在加号菜单/抽屉内）
 
 struct SettingsView: View {
-    @State private var showingAbout = false
     @State private var showingQRScanner = false
     @ObservedObject private var settings = AppSettings.shared
 
@@ -242,31 +242,14 @@ struct SettingsView: View {
 
                 // 关于
                 Section(header: Label("关于", systemImage: "info.circle")) {
-                    HStack {
-                        Text("版本")
-                        Spacer()
-                        Text("0.10.0 (20260925)")
-                            .foregroundColor(.secondary)
-                    }
-
-                    Link("开源地址", destination: URL(string: "https://github.com/fwx997/dudu")!)
-
-                    Button("分享App") {
-                        let share = UIActivityViewController(activityItems: ["https://github.com/fwx997/dudu"], applicationActivities: nil)
-                        UIApplication.shared.connectedScenes.compactMap { ($0 as? UIWindowScene)?.keyWindow?.rootViewController }.first?.present(share, animated: true)
-                    }
-
-                    Button("免责声明") {
-                        showingAbout = true
+                    NavigationLink("关于") {
+                        AboutView()
                     }
                 }
             }
             .listStyle(.insetGrouped)
             .navigationTitle("我的")
             .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $showingAbout) {
-                AboutView()
-            }
             .sheet(isPresented: $showingQRScanner) {
                 QRCodeScanView()
             }
@@ -274,136 +257,159 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - 关于视图
+// MARK: - 关于视图（对齐 AboutController：去评分/版本更新/联系我们/发送日志/分享App/免责声明）
+
 struct AboutView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.openURL) private var openURL
+
+    @State private var showingUpdateAlert = false
+    @State private var updateMessage = ""
+    @State private var updateURL: URL?
+
+    private var versionText: String {
+        let short = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
+        return "v\(short) (\(build))"
+    }
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    // 应用图标
-                    Image(systemName: "books.vertical")
-                        .font(.system(size: 80))
-                        .foregroundColor(XSGTheme.brandRed)
-
-                    Text("香色闺阁")
-                        .font(.title)
-                        .fontWeight(.bold)
-
-                    Text("版本 v0.10.0 (20260925)")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-
-                    Divider()
-
-                    // 简介
-                    AboutSectionCard(title: "应用简介") {
-                        Text("""
-                        香色闺阁 iOS 版，支持原版 .xbs 站点书源。
-
-                        本应用支持自定义书源规则，可以解析网页内容，为广大网络文学爱好者提供一种方便、快捷、舒适的阅读体验。
-                        """)
-                    }
-
-                    // 特性
-                    AboutSectionCard(title: "主要特性") {
-                        VStack(alignment: .leading, spacing: 8) {
-                            FeatureRow(icon: "square.grid.2x2", text: "香色闺阁 .xbs 站点书源")
-                            FeatureRow(icon: "magnifyingglass", text: "多源并发聚合搜索")
-                            FeatureRow(icon: "books.vertical", text: "本地 TXT/EPUB 支持")
-                            FeatureRow(icon: "text.badge.checkmark", text: "内容替换净化")
-                            FeatureRow(icon: "gearshape", text: "高度定制化阅读")
-                        }
-                    }
-
-                    // 技术栈
-                    AboutSectionCard(title: "技术栈") {
+            List {
+                Section {
+                    HStack(spacing: 14) {
+                        Image(systemName: "books.vertical")
+                            .font(.system(size: 44))
+                            .foregroundColor(XSGTheme.brandRed)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("• Swift 5.10+")
-                            Text("• SwiftUI")
-                            Text("• CoreData")
-                            Text("• MVVM 架构")
-                        }
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    }
-
-                    // 链接
-                    AboutSectionCard(title: "相关链接") {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Link("GitHub 仓库", destination: URL(string: "https://github.com/fwx997/dudu")!)
-                                .foregroundColor(.accentColor)
+                            Text("香色闺阁").font(.headline)
+                            Text("版本 \(versionText)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                     }
-
-                    // 开源协议
-                    AboutSectionCard(title: "开源协议") {
-                        Text("本项目遵循 GPL-3.0 协议。")
-                            .font(.caption)
-                    }
-
-                    // 免责声明
-                    AboutSectionCard(title: "免责声明") {
-                        Text("""
-                        本应用仅供学习交流使用，请勿用于商业目的。
-
-                        使用本应用时请遵守相关法律法规，尊重版权。
-                        应用本身不提供任何内容，所有内容由书源提供。
-                        """)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    }
-
-                    Spacer()
+                    .padding(.vertical, 6)
                 }
-                .padding()
+
+                Section {
+                    Button("去评分") { requestStoreReview() }
+                    Button("版本更新") { checkUpdate() }
+                    Button("联系我们") { contactUs() }
+                    Button("发送日志") { sendLog() }
+                    Button("分享App") { shareApp() }
+                    NavigationLink("免责声明") {
+                        DisclaimerView()
+                    }
+                }
+                .foregroundColor(.primary)
             }
+            .listStyle(.insetGrouped)
             .navigationTitle("关于")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("完成") {
-                        dismiss()
-                    }
+                    Button("完成") { dismiss() }
                 }
+            }
+            .alert("版本更新", isPresented: $showingUpdateAlert) {
+                Button("确定", role: .cancel) {}
+                if let url = updateURL {
+                    Button("前往更新") { openURL(url) }
+                }
+            } message: {
+                Text(updateMessage)
             }
         }
     }
-}
 
-// MARK: - 辅助视图
-struct FeatureRow: View {
-    let icon: String
-    let text: String
-
-    var body: some View {
-        HStack {
-            Image(systemName: icon)
-                .frame(width: 24)
-                .foregroundColor(.accentColor)
-
-            Text(text)
-                .font(.body)
+    private func requestStoreReview() {
+        if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+            SKStoreReviewController.requestReview(in: scene)
         }
+    }
+
+    private func checkUpdate() {
+        Task {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: URL(string: "https://api.github.com/repos/fwx997/dudu/releases/latest")!)
+                let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+                let tag = (obj?["tag_name"] as? String ?? "").trimmingCharacters(in: CharacterSet(charactersIn: "vV "))
+                let current = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
+                if Self.isVersion(tag, newerThan: current) {
+                    updateMessage = "发现新版本 \(tag)，请前往AppStore更新版本"
+                    updateURL = (obj?["html_url"] as? String).flatMap(URL.init(string:))
+                } else {
+                    updateMessage = "当前已是最新版本"
+                    updateURL = nil
+                }
+            } catch {
+                updateMessage = "检查更新失败，请稍后再试"
+                updateURL = nil
+            }
+            showingUpdateAlert = true
+        }
+    }
+
+    private static func isVersion(_ lhs: String, newerThan rhs: String) -> Bool {
+        let l = lhs.split(separator: ".").map { Int($0) ?? 0 }
+        let r = rhs.split(separator: ".").map { Int($0) ?? 0 }
+        for i in 0..<max(l.count, r.count) {
+            let a = i < l.count ? l[i] : 0
+            let b = i < r.count ? r[i] : 0
+            if a != b { return a > b }
+        }
+        return false
+    }
+
+    private func contactUs() {
+        openURL(URL(string: "https://github.com/fwx997/dudu/issues")!)
+    }
+
+    private func sendLog() {
+        // 对齐原版 sendLog：生成“香色闺阁书架日志xsabc”日志文件并分享
+        let device = UIDevice.current
+        let lines = [
+            "=== 香色闺阁书架日志 xsabc ===",
+            "时间: \(Date())",
+            "版本: \(versionText)",
+            "系统: \(device.systemName) \(device.systemVersion)",
+            "设备: \(device.model)",
+            "站点数: \(XBSSourceStore.shared.sources.count)",
+            "书架数: \(ShelfStore.shared.shelves.count)"
+        ]
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("香色闺阁书架日志xsabc.txt")
+        try? lines.joined(separator: "\n").write(to: url, atomically: true, encoding: .utf8)
+        presentShareSheet(items: [url])
+    }
+
+    private func shareApp() {
+        presentShareSheet(items: ["https://github.com/fwx997/dudu"])
+    }
+
+    private func presentShareSheet(items: [Any]) {
+        let share = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        UIApplication.shared.connectedScenes.compactMap { ($0 as? UIWindowScene)?.keyWindow?.rootViewController }.first?.present(share, animated: true)
     }
 }
 
-struct AboutSectionCard<Content: View>: View {
-    let title: String
-    @ViewBuilder let content: Content
-
+struct DisclaimerView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.primary)
+        ScrollView {
+            Text("""
+            本应用仅供学习交流使用，请勿用于商业目的。
 
-            content
+            使用本应用时请遵守相关法律法规，尊重版权。
+            应用本身不提供任何内容，所有内容由站点书源提供，站点及内容与开发者无关。
+
+            如确实有需要，请联系开发者获取权限。
+            """)
+            .font(.callout)
+            .lineSpacing(6)
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding()
-        .background(Color.gray.opacity(0.05))
-        .cornerRadius(8)
+        .navigationTitle("免责声明")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

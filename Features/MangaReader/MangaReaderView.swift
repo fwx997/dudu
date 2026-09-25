@@ -15,11 +15,18 @@ struct MangaReaderView: View {
     
     @State private var showUI = true
     @State private var currentImageIndex = 0
-    @AppStorage("cr_imgSpacing") private var imgSpacing: Double = 2
+    // 对齐 plist_settingComicRead：进度信息组
     @AppStorage("cr_showCpTitle") private var showChapterTitle = true
     @AppStorage("cr_showPProgress") private var showPageProgress = true
+    @AppStorage("cr_showFProgress") private var showFileProgress = false
+    // 对齐 plist_settingComicRead：滚动模式组
+    @AppStorage("cr_fastS") private var fastScroll = false
+    @AppStorage("cr_showS") private var showScrollBar = true
+    @AppStorage("cr_showSI") private var showScrollInfo = false
+    // 对齐 plist_settingComicRead：返回手势类型
+    @AppStorage("r_popGestureType") private var popGestureType = "边缘"
     @State private var showingSettings = false
-    
+
     let book: Book
     
     var body: some View {
@@ -42,16 +49,22 @@ struct MangaReaderView: View {
                 }
             } else {
                 // 图片列表（纵向长条模式）
-                ScrollView {
-                    LazyVStack(spacing: CGFloat(imgSpacing)) {
+                ScrollView(.vertical, showsIndicators: showScrollBar) {
+                    LazyVStack(spacing: 2) {
                         ForEach(Array(viewModel.images.enumerated()), id: \.offset) { index, imageURL in
                             ZoomableImageView(url: imageURL) {
                                 withAnimation { showUI.toggle() }
                             }
                             .id(imageURL)
-                            .onAppear { currentImageIndex = index }
+                            .onAppear {
+                                currentImageIndex = index
+                                // 快速滚动：提前预载下一章，而不是等到列表末尾
+                                if fastScroll, viewModel.hasMoreImages, index >= viewModel.images.count - 5 {
+                                    Task { await viewModel.loadMoreImages() }
+                                }
+                            }
                         }
-                        
+
                         // 加载更多
                         if viewModel.hasMoreImages {
                             ProgressView()
@@ -60,8 +73,23 @@ struct MangaReaderView: View {
                         }
                     }
                 }
+
+                if showScrollInfo {
+                    VStack {
+                        Spacer()
+                        Text("\(currentImageIndex + 1)/\(viewModel.images.count)")
+                            .font(.caption.monospacedDigit())
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(Color.black.opacity(0.55))
+                            .clipShape(Capsule())
+                            .padding(.bottom, 18)
+                    }
+                    .allowsHitTesting(false)
+                }
             }
-            
+
             // 顶部工具栏
             if showUI {
                 VStack {
@@ -69,10 +97,22 @@ struct MangaReaderView: View {
                         Button { dismiss() } label: {
                             Image(systemName: "chevron.left").foregroundColor(.white)
                         }
-                        Text(book.name).foregroundColor(.white).lineLimit(1)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(book.name).foregroundColor(.white).lineLimit(1)
+                            if showChapterTitle, !viewModel.currentChapterTitle.isEmpty {
+                                Text(viewModel.currentChapterTitle)
+                                    .font(.caption)
+                                    .foregroundColor(.white.opacity(0.75))
+                                    .lineLimit(1)
+                            }
+                        }
                         Spacer()
                         Button { showingSettings.toggle() } label: {
                             Image(systemName: "gearshape").foregroundColor(.white)
+                        }
+                        if showFileProgress, viewModel.totalChapters > 0 {
+                            Text("第\(viewModel.currentChapterIndex + 1)/\(viewModel.totalChapters)章")
+                                .font(.caption).foregroundColor(.white)
                         }
                         if showPageProgress {
                             Text("\(currentImageIndex + 1)/\(viewModel.images.count)")
@@ -88,8 +128,16 @@ struct MangaReaderView: View {
         }
         .statusBar(hidden: !showUI)
         .sheet(isPresented: $showingSettings) {
-            ComicSettingsSheet(spacing: $imgSpacing, showChapterTitle: $showChapterTitle, showPageProgress: $showPageProgress)
+            ComicSettingsSheet()
         }
+        // r_popGestureType：全屏模式下任意位置右滑返回
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 40).onEnded { v in
+                if popGestureType == "全屏", abs(v.translation.height) < 60, v.translation.width > 80 {
+                    dismiss()
+                }
+            }
+        )
         .onAppear { Task { await viewModel.loadBook(book) } }
     }
 }
@@ -103,27 +151,30 @@ class MangaReaderViewModel: ObservableObject {
     @Published var hasMoreImages = false
     @Published var errorMessage: String?
     @Published var currentChapterIndex = 0
-    
+    @Published var currentChapterTitle = ""
+    @Published var totalChapters = 0
+
     private var chapters: [BookChapter] = []
     private var currentBook: Book?
-    
+
     func loadBook(_ book: Book) async {
         currentBook = book
         isLoading = true
-        
+
         let context = CoreDataStack.shared.viewContext
         let request: NSFetchRequest<BookChapter> = BookChapter.fetchRequest()
         request.predicate = NSPredicate(format: "bookId == %@", book.bookId as CVarArg)
         request.sortDescriptors = [NSSortDescriptor(key: "index", ascending: true)]
-        
+
         if let result = try? context.fetch(request) {
             chapters = result
+            totalChapters = chapters.count
             currentChapterIndex = Int(book.durChapterIndex)
             if let chapter = chapters[safe: currentChapterIndex] {
                 await loadChapter(chapter)
             }
         }
-        
+
         isLoading = false
     }
     
@@ -147,6 +198,7 @@ class MangaReaderViewModel: ObservableObject {
 
     func loadChapter(_ chapter: BookChapter) async {
         guard let book = currentBook else { return }
+        currentChapterTitle = chapter.title
 
         // 香色闺阁漫画站点：走 XBS 引擎取图
         if book.origin.hasPrefix("xbs://") {
@@ -240,23 +292,37 @@ struct ZoomableImageView: View {
 
 // subscript(safe:) 已移至 BookReaderRouter.swift 全局实现
 
-// MARK: - 漫画设置面板（对齐 plist_settingComicRead）
+// MARK: - 漫画设置面板（对齐 plist_settingComicRead：滚动模式/进度信息/返回手势）
 
 struct ComicSettingsSheet: View {
-    @Binding var spacing: Double
-    @Binding var showChapterTitle: Bool
-    @Binding var showPageProgress: Bool
+    @AppStorage("cr_fastS") private var fastScroll = false
+    @AppStorage("cr_showS") private var showScrollBar = true
+    @AppStorage("cr_showSI") private var showScrollInfo = false
+    @AppStorage("cr_showCpTitle") private var showChapterTitle = true
+    @AppStorage("cr_showPProgress") private var showPageProgress = true
+    @AppStorage("cr_showFProgress") private var showFileProgress = false
+    @AppStorage("r_popGestureType") private var popGestureType = "边缘"
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationView {
             Form {
-                Section("图片间距") {
-                    Slider(value: $spacing, in: 0...20, step: 1)
+                Section("滚动模式") {
+                    Toggle("快速滚动", isOn: $fastScroll)
+                    Toggle("显示滚动条", isOn: $showScrollBar)
+                    Toggle("显示滚动信息", isOn: $showScrollInfo)
                 }
                 Section("进度信息") {
+                    Toggle("显示章节标题", isOn: $showChapterTitle)
                     Toggle("显示页码进度", isOn: $showPageProgress)
-                    Toggle("显示章节信息", isOn: $showChapterTitle)
+                    Toggle("显示章节进度", isOn: $showFileProgress)
+                }
+                Section("手势") {
+                    Picker("返回手势", selection: $popGestureType) {
+                        Text("禁用").tag("禁用")
+                        Text("边缘").tag("边缘")
+                        Text("全屏").tag("全屏")
+                    }
                 }
             }
             .navigationTitle("漫画设置")

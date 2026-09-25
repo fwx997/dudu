@@ -34,7 +34,8 @@
 
 - [x] B1 书籍详情对齐 BookDetailController：刷新详情(updateDetail)/刷新目录(updateCatalog)入 UI，换源面板已有
 - [x] B2 正文过滤：编辑内容面板内置正则净化（模式/替换/应用），对齐 TextReadFilterVC
-- [ ] B3 正文搜索 TextReadSearchVC：核对搜索范围含"已缓存内容"（缓存优先搜索）
+- [x] B3 正文搜索 TextReadSearchVC：核对搜索范围含"已缓存内容"（缓存优先搜索）
+  （修复：缓存路径按 ReaderViewModel 同规则解析（相对名→Documents/chapters），此前书内搜索实际搜不到缓存正文；每章列出全部命中；本地书整本切片兜底；扫描移入后台线程）
 - [x] B4 相关词 relatedWord：无结果时并发询问站点联想词，点击即搜
 - [x] B5 书架手动排序：列表模式拖拽（onMove）持久化 order + 手动排序选项
 - [x] B6 站点编辑器：新建/编辑表单（基础信息+四大动作配置），行点击进入编辑
@@ -43,10 +44,10 @@
 - [x] B9 RSS 订阅对齐：订阅源管理/文章列表/阅读/收藏（RssSource 实体已备）
 - [x] B10 云备份四件套（代码层就绪，需 iCloud 签名权限才能真机生效——待有开发者账号签名后启用）：CloudBookSourceVC/CloudBookShelfVC/CloudReadHistoryVC/CloudSettingVC（iCloud）
 - [x] B11 听书页对齐 AudioReadVC：播放列表/倍速/定时关闭（底座 AudioPlayerView 已有，核对项）
-- [ ] B12 漫画设置对齐 plist_settingComicRead：滚动模式/快速滚动/进度信息开关
-- [ ] B13 视频源 VideoReadVC（低优先级，书源 video 类型）
-- [ ] B14 书评 shupingHome/ShupingView（低优先级，社区书评）
-- [ ] B15 关于页 AboutController：去评分/版本更新/联系我们/发送日志/分享App/免责声明
+- [x] B12 漫画设置对齐 plist_settingComicRead：滚动模式（快速滚动预载/显示滚动条/滚动信息HUD）/进度信息（章节标题/页码/章节进度）/返回手势类型
+- [x] B13 视频源 VideoReadVC（低优先级，书源 video 类型）（对齐：内嵌播放器+倍速底栏+剧集列表+观看记录恢复）
+- [x] B14 书评 shupingHome/ShupingView（低优先级，社区书评）（发现页书评列表可点入 ShupingDetailView 站内渲染+可点链接）
+- [x] B15 关于页 AboutController：去评分/版本更新/联系我们/发送日志/分享App/免责声明（版本更新走 GitHub releases 对比；发送日志生成"香色闺阁书架日志xsabc"）
 - [x] B16 UI 文案
   (已对齐关键项：缓存分段指令，加书架确认弹窗，无可用站点等
    其余长尾提示语属未还原特性，随后续版本逐步对齐)（进行中：已对齐 无可用站点/请前往配置 等关键项） `_tools/xsg_ui_zh.txt`（580条）
