@@ -27,6 +27,8 @@ struct XBSSourceManageView: View {
     @State private var isEditing = false
     @State private var selectedAliases: Set<String> = []
     @State private var confirmingDelete = false
+    @State private var confirmingDisabledDelete = false
+    @State private var confirmingReset = false
 
     private var actionSources: [XBSSource] {
         isEditing ? store.sources.filter { selectedAliases.contains($0.alias) } : store.sources
@@ -46,6 +48,12 @@ struct XBSSourceManageView: View {
             .confirmationDialog("删除被选中站点", isPresented: $confirmingDelete, titleVisibility: .visible) {
                 Button("删除 \(selectedAliases.count) 个站点", role: .destructive) { deleteSelection() }
             } message: { Text("书架中的书籍会保留。") }
+            .confirmationDialog("删除禁用站点", isPresented: $confirmingDisabledDelete, titleVisibility: .visible) {
+                Button("删除禁用站点", role: .destructive) { store.removeDisabled() }
+            } message: { Text("书架中的书籍会保留。") }
+            .confirmationDialog("重置站点", isPresented: $confirmingReset, titleVisibility: .visible) {
+                Button("重置站点", role: .destructive) { store.reset() }
+            } message: { Text("站点和缓存会被清空，书架中的书籍不会删除。") }
             .alert("网络导入", isPresented: $showingNetworkImport) {
                 TextField("站点链接", text: $importURLText)
                     .textInputAutocapitalization(.never)
@@ -148,6 +156,10 @@ struct XBSSourceManageView: View {
         Button("反转可用性") { toggleAvailability() }.disabled(actionSources.isEmpty)
         Button("删除被选中站点", role: .destructive) { confirmingDelete = true }
             .disabled(selectedAliases.isEmpty)
+        Button("删除禁用站点", role: .destructive) { confirmingDisabledDelete = true }
+            .disabled(!store.sources.contains { !$0.enabled })
+        Button("重置站点", role: .destructive) { confirmingReset = true }
+            .disabled(store.sources.isEmpty)
         checkPageLink
         Divider()
         networkImportButton

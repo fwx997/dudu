@@ -229,6 +229,22 @@ final class XBSSourceStore: ObservableObject {
         objectWillChange.send()
     }
 
+    func removeDisabled() {
+        sources.removeAll { !$0.enabled }
+        save()
+        objectWillChange.send()
+    }
+
+    func reset() {
+        sources.removeAll()
+        checkStatus.removeAll()
+        save()
+        if let data = try? JSONSerialization.data(withJSONObject: checkStatus, options: [.sortedKeys]) {
+            try? data.write(to: checkFileURL, options: .atomic)
+        }
+        objectWillChange.send()
+    }
+
     var enabledSources: [XBSSource] {
         sources.filter { $0.enabled && $0.action("searchBook") != nil }
     }

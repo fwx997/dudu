@@ -95,6 +95,13 @@ struct ReaderView: View {
                                 Label("过滤内容", systemImage: "line.3.horizontal.decrease.circle")
                             }
                             Button {
+                                if let url = URL(string: "https://github.com/fwx997/dudu/issues/new?title=阅读错误：\(book.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? book.name)") {
+                                    openURL(url)
+                                }
+                            } label: {
+                                Label("报告错误", systemImage: "exclamationmark.bubble")
+                            }
+                            Button {
                                 showingPageTutorial = true
                             } label: {
                                 Label("翻页区域", systemImage: "hand.tap")
