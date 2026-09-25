@@ -140,6 +140,7 @@ struct PagedReaderView: View {
     
     @AppStorage("tr_showTime") private var showTime = false
     @AppStorage("tr_showBatView") private var showBattery = false
+    @AppStorage("tr_showFProgress") private var showFullProgress = false
     @AppStorage("tr_showCpTitle") private var showCpTitle = true
     @AppStorage("tr_showProgress") private var showProgress = true
 
@@ -173,6 +174,12 @@ struct PagedReaderView: View {
                 Text("\(min(viewModel.currentPageIndex + 1, pages.count))/\(pages.count)")
                     .font(.caption2)
                     .foregroundColor(.secondary)
+            }
+            if showFullProgress, viewModel.totalChapters > 0 {
+                Text("\(viewModel.currentChapterIndex + 1)/\(viewModel.totalChapters)")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .padding(.leading, 8)
             }
         }
         .padding(.horizontal, viewModel.pagePadding.leading + 6)

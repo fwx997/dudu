@@ -11,9 +11,11 @@ struct ReaderSettingsFullView: View {
 
     @AppStorage("tr_showTime") private var showTime = false
     @AppStorage("tr_showBatView") private var showBattery = false
+    @AppStorage("tr_showFProgress") private var showFullProgress = false
     @AppStorage("tr_showCpTitle") private var showCpTitle = true
     @AppStorage("tr_showProgress") private var showProgress = true
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var appSettings = AppSettings.shared
 
     @AppStorage("reader.fontSize") private var storedFontSize: Double = 20
     @AppStorage("reader.lineSpacing") private var storedLineSpacing: Double = 10
@@ -25,6 +27,12 @@ struct ReaderSettingsFullView: View {
     @AppStorage("reader.fontName") private var storedFontFamily: String = ""
     @AppStorage("reader.showStatusBar") private var storedShowStatusBar: Bool = false
     @AppStorage("reader.clickToFlip") private var storedClickToFlip: Bool = true
+    @AppStorage("tr_speakType") private var speakType = 0
+    @AppStorage("fanjianZi") private var textConversion = 0
+    @AppStorage("tr_autoDarkModel") private var autoDarkModel = false
+    @AppStorage("tr_autoHomeIndicator") private var autoHomeIndicator = true
+    @AppStorage("r_statusBarStatus") private var statusBarStatus = 0
+    @AppStorage("r_popGestureType") private var popGestureType = 2
     
     // 阅读配置
     @State private var fontSize: Double = 20
@@ -99,6 +107,34 @@ struct ReaderSettingsFullView: View {
                     
                     Toggle("点击翻页", isOn: $clickToFlip)
                 }
+
+                Section(header: Text("阅读行为")) {
+                    Picker("朗读模式", selection: $speakType) {
+                        Text("按页朗读").tag(0)
+                        Text("按章朗读").tag(1)
+                    }
+
+                    Picker("繁简转换", selection: $textConversion) {
+                        Text("保持原文").tag(0)
+                        Text("简体").tag(1)
+                        Text("繁体").tag(2)
+                    }
+
+                    Toggle("阅读时自动深色模式", isOn: $autoDarkModel)
+                    Toggle("阅读时自动隐藏小横条", isOn: $autoHomeIndicator)
+
+                    Picker("顶部状态栏", selection: $statusBarStatus) {
+                        Text("不显示").tag(0)
+                        Text("白色状态栏").tag(1)
+                        Text("黑色状态栏").tag(3)
+                    }
+
+                    Picker("侧滑返回", selection: $popGestureType) {
+                        Text("禁用").tag(0)
+                        Text("防误触").tag(1)
+                        Text("总是开启").tag(2)
+                    }
+                }
                 
                 Section(header: Text("显示")) {
                     Stepper("页边距：\(Int(pageMargin))", value: $pageMargin, in: 0...60, step: 4)
@@ -111,6 +147,7 @@ struct ReaderSettingsFullView: View {
 
                     Toggle("显示时间", isOn: $showTime)
                     Toggle("显示电量", isOn: $showBattery)
+                    Toggle("显示全书百分比进度", isOn: $showFullProgress)
                     Toggle("显示章节标题", isOn: $showCpTitle)
                     Toggle("显示页面进度", isOn: $showProgress)
                 }
@@ -174,6 +211,9 @@ struct ReaderSettingsFullView: View {
         storedFontFamily = fontFamily
         storedShowStatusBar = showStatusBar
         storedClickToFlip = clickToFlip
+
+        appSettings.readAloudMode = speakType == 0 ? .byPage : .byChapter
+        appSettings.textConversionMode = [TextConversionMode.noConversion, .toSimplified, .toTraditional][min(max(textConversion, 0), 2)]
     }
 
     private func loadSettings() {
@@ -187,6 +227,14 @@ struct ReaderSettingsFullView: View {
         fontFamily = storedFontFamily
         showStatusBar = storedShowStatusBar
         clickToFlip = storedClickToFlip
+        speakType = appSettings.readAloudMode == .byChapter ? 1 : 0
+        textConversion = {
+            switch appSettings.textConversionMode {
+            case .noConversion: return 0
+            case .toSimplified: return 1
+            case .toTraditional: return 2
+            }
+        }()
     }
 }
 

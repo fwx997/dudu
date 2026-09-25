@@ -27,6 +27,8 @@ struct ReaderView: View {
     @State private var showingContentEdit = false
     @State private var showingPageTutorial = false
     @State private var showingCacheRange = false
+    @AppStorage("r_statusBarStatus") private var statusBarStatus = 0
+    @AppStorage("tr_autoDarkModel") private var autoDarkModel = false
     @Environment(\.openURL) private var openURL
     
     let book: Book
@@ -268,7 +270,7 @@ struct ReaderView: View {
                     }
                 }
                 readingEnhancementManager.onNightModeChanged = { isNight in
-                    guard AppSettings.shared.autoNightMode else { return }
+                    guard AppSettings.shared.autoNightMode || autoDarkModel else { return }
                     viewModel.applyTheme(isNight ? .dark : .light)
                 }
                 readingEnhancementManager.startReadingSession()
@@ -340,7 +342,7 @@ struct ReaderView: View {
             }
         }
         .navigationBarHidden(true)
-        .statusBar(hidden: !showUI)
+        .statusBar(hidden: !showUI || statusBarStatus == 0)
     }
 }
 
