@@ -260,7 +260,6 @@ struct SettingsView: View {
 // MARK: - 关于视图（对齐 AboutController：去评分/版本更新/联系我们/发送日志/分享App/免责声明）
 
 struct AboutView: View {
-    @Environment(\.dismiss) var dismiss
     @Environment(\.openURL) private var openURL
 
     @State private var showingUpdateAlert = false
@@ -274,51 +273,44 @@ struct AboutView: View {
     }
 
     var body: some View {
-        NavigationView {
-            List {
-                Section {
-                    HStack(spacing: 14) {
-                        Image(systemName: "books.vertical")
-                            .font(.system(size: 44))
-                            .foregroundColor(XSGTheme.brandRed)
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("香色闺阁").font(.headline)
-                            Text("版本 \(versionText)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
+        List {
+            Section {
+                HStack(spacing: 14) {
+                    Image(systemName: "books.vertical")
+                        .font(.system(size: 44))
+                        .foregroundColor(XSGTheme.brandRed)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("香色闺阁").font(.headline)
+                        Text("版本 \(versionText)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
-                    .padding(.vertical, 6)
                 }
+                .padding(.vertical, 6)
+            }
 
-                Section {
-                    Button("去评分") { requestStoreReview() }
-                    Button("版本更新") { checkUpdate() }
-                    Button("联系我们") { contactUs() }
-                    Button("发送日志") { sendLog() }
-                    Button("分享App") { shareApp() }
-                    NavigationLink("免责声明") {
-                        DisclaimerView()
-                    }
-                }
-                .foregroundColor(.primary)
-            }
-            .listStyle(.insetGrouped)
-            .navigationTitle("关于")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("完成") { dismiss() }
+            Section {
+                Button("去评分") { requestStoreReview() }
+                Button("版本更新") { checkUpdate() }
+                Button("联系我们") { contactUs() }
+                Button("发送日志") { sendLog() }
+                Button("分享App") { shareApp() }
+                NavigationLink("免责声明") {
+                    DisclaimerView()
                 }
             }
-            .alert("版本更新", isPresented: $showingUpdateAlert) {
-                Button("确定", role: .cancel) {}
-                if let url = updateURL {
-                    Button("前往更新") { openURL(url) }
-                }
-            } message: {
-                Text(updateMessage)
+            .foregroundColor(.primary)
+        }
+        .listStyle(.insetGrouped)
+        .navigationTitle("关于")
+        .navigationBarTitleDisplayMode(.inline)
+        .alert("版本更新", isPresented: $showingUpdateAlert) {
+            Button("确定", role: .cancel) {}
+            if let url = updateURL {
+                Button("前往更新") { openURL(url) }
             }
+        } message: {
+            Text(updateMessage)
         }
     }
 
