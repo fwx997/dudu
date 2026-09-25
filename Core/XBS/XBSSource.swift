@@ -246,7 +246,10 @@ final class XBSSourceStore: ObservableObject {
     }
 
     var enabledSources: [XBSSource] {
-        sources.filter { $0.enabled && $0.action("searchBook") != nil }
+        sources.filter {
+            guard $0.enabled, let action = $0.action("searchBook") else { return false }
+            return action.string("requestInfo")?.isEmpty == false
+        }
     }
 
     func source(alias: String) -> XBSSource? {

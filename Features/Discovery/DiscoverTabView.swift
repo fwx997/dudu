@@ -20,7 +20,11 @@ struct DiscoverHomeView: View {
     @StateObject private var store = XBSSourceStore.shared
 
     private var enabledSources: [XBSSource] {
-        store.sources.filter { $0.enabled }
+        store.sources.filter { source in
+            guard source.enabled, let action = source.action("bookWorld") else { return false }
+            let hasDirectRequest = action.string("requestInfo")?.isEmpty == false
+            return hasDirectRequest || !XBSEngine.shared.bookWorldCategories(source: source).isEmpty
+        }
     }
 
     private var textSources: [XBSSource] { enabledSources.filter { $0.sourceType == "text" } }
@@ -203,7 +207,8 @@ struct SourceBrowsePage: View {
         errorMessage = nil
         categories = XBSEngine.shared.bookWorldCategories(source: source)
         selectedCategory = categories.first
-        showSearchField = source.action("bookWorld") == nil
+        let hasDirectRequest = source.action("bookWorld")?.string("requestInfo")?.isEmpty == false
+        showSearchField = categories.isEmpty && !hasDirectRequest
         configureFilters()
     }
 
