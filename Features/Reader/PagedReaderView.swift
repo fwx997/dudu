@@ -31,7 +31,7 @@ struct PagedReaderView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                viewModel.backgroundColor.ignoresSafeArea()
+                XSGPaperBackground(viewModel: viewModel).ignoresSafeArea()
                 
                 if pages.isEmpty {
                     if viewModel.isLoading {
@@ -131,7 +131,7 @@ struct PagedReaderView: View {
                     .textSelection(.enabled)
             }
         }
-        .background(viewModel.backgroundColor)
+        .background(XSGPaperBackground(viewModel: viewModel))
         .contentShape(Rectangle())
         .onTapGesture { onTap() }
     }
@@ -193,13 +193,15 @@ struct PagedReaderView: View {
         let config = PageConfig.from(
             fontSize: viewModel.fontSize,
             lineSpacing: viewModel.lineSpacing,
+            paragraphSpacing: viewModel.paragraphSpacing,
             padding: UIEdgeInsets(
                 top: padding.top,
                 left: padding.leading,
                 bottom: padding.bottom,
                 right: padding.trailing
             ),
-            containerSize: containerSize
+            containerSize: containerSize,
+            fontFamily: viewModel.fontName
         )
         
         // 使用缓存分页
@@ -246,7 +248,7 @@ struct InstantPageView: View {
             let width = geometry.size.width
             
             ZStack {
-                viewModel.backgroundColor
+                XSGPaperBackground(viewModel: viewModel)
                 
                 if currentPage >= 0 && currentPage < pages.count {
                     ScrollView(.vertical, showsIndicators: false) {

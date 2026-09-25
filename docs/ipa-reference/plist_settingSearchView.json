@@ -1,0 +1,16 @@
+[
+  {
+    "items": [
+      "search_showHis",
+      "search_showRel"
+    ]
+  },
+  {
+    "titlesub": "重要提示：书太多或找不到书时请尝试更改过滤方式",
+    "items": [
+      "search_filterSourceT",
+      "search_filterResultT",
+      "search_showFilterTip"
+    ]
+  }
+]

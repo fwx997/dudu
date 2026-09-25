@@ -1,0 +1,18 @@
+{
+  "images": [
+    {
+      "filename": "xsg-reader-mulu@2x.png",
+      "idiom": "universal",
+      "scale": "2x"
+    },
+    {
+      "filename": "xsg-reader-mulu@3x.png",
+      "idiom": "universal",
+      "scale": "3x"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}

@@ -1,0 +1,28 @@
+[
+  {
+    "items": [
+      "tr_speakType",
+      "fanjianZi",
+      "tr_iPadDoubleCol"
+    ]
+  },
+  {
+    "items": [
+      "changLiang",
+      "tr_autoDarkModel",
+      "tr_autoHomeIndicator",
+      "r_statusBarStatus",
+      "r_popGestureType"
+    ]
+  },
+  {
+    "items": [
+      "tr_showTime",
+      "tr_showBatView",
+      "tr_showBatLabel",
+      "tr_showCpTitle",
+      "tr_showProgress",
+      "tr_showFProgress"
+    ]
+  }
+]

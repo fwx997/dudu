@@ -1,0 +1,42 @@
+[
+  {
+    "titlesub": "增加备份是指云端数据只增不减，如果关闭，备份时将用本地数据完整地覆盖云端数据。",
+    "items": [
+      "autoCloud",
+      "incCloud"
+    ]
+  },
+  {
+    "title": "手动同步",
+    "titlesub": "云数据保存在iCloud中，并且只有你才能访问。",
+    "items": [
+      {
+        "backupTimeKey": "iCloudTime_bookSource",
+        "cf_title": "云端站点",
+        "cf_controller_class": "CloudBookSourceVC",
+        "cf_controller_param": {
+          "listTitle": "云端站点"
+        },
+        "UITableViewCellAccessoryType": 1
+      },
+      {
+        "backupTimeKey": "iCloudTime_bookShelf",
+        "cf_title": "云端书架",
+        "cf_controller_class": "CloudBookShelfVC",
+        "cf_controller_param": {
+          "listTitle": "云端书架"
+        },
+        "UITableViewCellAccessoryType": 1
+      },
+      {
+        "backupTimeKey": "iCloudTime_readHistory",
+        "cf_title": "云端足迹",
+        "cf_controller_class": "CloudReadHistoryVC",
+        "cf_controller_param": {
+          "listTitle": "云端足迹"
+        },
+        "UITableViewCellAccessoryType": 1
+      }
+    ]
+  }
+]

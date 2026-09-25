@@ -36,17 +36,17 @@ class ReaderViewModel: ObservableObject {
     @Published var totalPages: Int = 0
     
     // MARK: - 阅读设置
-    @Published var fontSize: CGFloat = 18 {
+    @Published var fontSize: CGFloat = 20 {
         didSet {
             UserDefaults.standard.set(Double(fontSize), forKey: "reader.fontSize")
         }
     }
-    @Published var lineSpacing: CGFloat = 8 {
+    @Published var lineSpacing: CGFloat = 10 {
         didSet {
             UserDefaults.standard.set(Double(lineSpacing), forKey: "reader.lineSpacing")
         }
     }
-    @Published var pagePadding: EdgeInsets = EdgeInsets(top: 20, leading: 16, bottom: 20, trailing: 16) {
+    @Published var pagePadding: EdgeInsets = EdgeInsets(top: 50, leading: 20, bottom: 30, trailing: 20) {
         didSet {
             UserDefaults.standard.set(Double(pagePadding.leading), forKey: "reader.pageMargin")
         }
@@ -55,7 +55,7 @@ class ReaderViewModel: ObservableObject {
     @Published var textColor: Color = .black
     
     // MARK: - 新增阅读设置
-    @Published var paragraphSpacing: CGFloat = 12
+    @Published var paragraphSpacing: CGFloat = 14
     @Published var letterSpacing: CGFloat = 0
     @Published var fontName: String = "" {
         didSet {
@@ -93,7 +93,7 @@ class ReaderViewModel: ObservableObject {
         let storedMargin = defaults.double(forKey: "reader.pageMargin")
         if storedMargin > 0 {
             let margin = CGFloat(storedMargin)
-            pagePadding = EdgeInsets(top: 20, leading: margin, bottom: 20, trailing: margin)
+            pagePadding = EdgeInsets(top: 50, leading: margin, bottom: 30, trailing: margin)
         }
 
         fontName = defaults.string(forKey: "reader.fontName") ?? ""

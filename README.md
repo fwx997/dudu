@@ -1,6 +1,6 @@
-# Legado iOS
+# 香色闺阁 iOS
 
-📚 基于 Legado 的 iOS 原生阅读应用  纯vibe coding玩具
+📚 基于香色闺阁 2.56.1 行为与资源还原的 iOS 原生阅读应用
 
 [![iOS CI](https://github.com/chrn11/legado-ios/actions/workflows/ios-ci.yml/badge.svg)](https://github.com/chrn11/legado-ios/actions/workflows/ios-ci.yml)
 ![Platform](https://img.shields.io/badge/platform-iOS%2016.0+-blue)
@@ -8,6 +8,8 @@
 ![License](https://img.shields.io/badge/license-GPL--3.0-green)
 
 ## ✨ 特性
+
+本项目的首页、站点浏览和阅读器以仓库根目录提供的 `香色闺阁_2.56.1.ipa` 为布局与资源依据。解包后的配置证据保存在 `docs/ipa-reference/`，提取脚本为 `tools/extract_ipa_ui.py`。
 
 ### 核心功能
 - 📖 **书源管理** - 支持自定义书源规则，导入/导出书源，批量操作

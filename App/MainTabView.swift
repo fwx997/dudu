@@ -19,7 +19,7 @@ enum XSGTheme {
     static let darkBlue = Color(red: 0.33, green: 0.55, blue: 0.95)
 
     static func tint(for scheme: ColorScheme) -> Color {
-        scheme == .dark ? darkBlue : brandRed
+        Color(.systemBlue)
     }
 }
 
@@ -37,14 +37,7 @@ struct MainTabView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        Group {
-            switch tabState.tab {
-            case 1:
-                NavigationStack { DiscoverTabView() }
-            default:
-                NavigationStack { BookshelfView() }
-            }
-        }
+        NavigationStack { BookshelfView() }
         .tint(XSGTheme.tint(for: colorScheme))
     }
 }
@@ -58,7 +51,15 @@ struct XSGBTopTabs: View {
     var onAdd: () -> Void
 
     var body: some View {
-        HStack(spacing: 0) {
+        ZStack {
+            Picker("首页", selection: $tabState.tab) {
+                Text("书架").tag(0)
+                Text("发现").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 116)
+
+            HStack(spacing: 0) {
             Button(action: onFolder) {
                 Image(systemName: "folder")
                     .font(.system(size: 19, weight: .regular))
@@ -66,16 +67,7 @@ struct XSGBTopTabs: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-
-            // 真版样式：胶囊分段控件（书架|发现），选中段为凸起圆角块
-            HStack(spacing: 0) {
-                segmentButton("书架", tag: 0)
-                segmentButton("发现", tag: 1)
-            }
-            .background(
-                Capsule().fill(Color(.systemGray5).opacity(0.7))
-            )
-            .padding(.leading, 10)
+            .accessibilityLabel("书架与配置")
 
             Spacer()
 
@@ -87,6 +79,7 @@ struct XSGBTopTabs: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("搜索书籍")
             }
 
             Button(action: onAdd) {
@@ -96,9 +89,12 @@ struct XSGBTopTabs: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("添加")
+            }
         }
         .padding(.horizontal, 8)
-        .frame(height: 46)
+        .frame(height: 44)
+        .background(Color(.systemBackground))
     }
 
     private func segmentButton(_ title: String, tag: Int) -> some View {
@@ -117,6 +113,37 @@ struct XSGBTopTabs: View {
                 .foregroundColor(selected ? .primary : .secondary)
         }
         .buttonStyle(.plain)
+    }
+}
+
+/// Original PNG artwork extracted from the user-supplied IPA (see docs/ipa-reference).
+struct XSGReaderIcon: View {
+    let name: String
+    var size: CGFloat = 24
+
+    var body: some View {
+        Image("xsg-reader-" + name)
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .frame(width: size, height: size)
+            .accessibilityHidden(true)
+    }
+}
+
+struct XSGPaperBackground: View {
+    let viewModel: ReaderViewModel
+
+    var body: some View {
+        ZStack {
+            viewModel.backgroundColor
+            if case .light = viewModel.theme {
+                Image("xsg-paper-7")
+                    .resizable(resizingMode: .tile)
+                    .opacity(0.18)
+                    .allowsHitTesting(false)
+            }
+        }
     }
 }
 
@@ -218,7 +245,7 @@ struct SettingsView: View {
                     HStack {
                         Text("版本")
                         Spacer()
-                        Text("0.9.1 (20260914)")
+                        Text("0.10.0 (20260925)")
                             .foregroundColor(.secondary)
                     }
 
@@ -260,11 +287,11 @@ struct AboutView: View {
                         .font(.system(size: 80))
                         .foregroundColor(XSGTheme.brandRed)
 
-                    Text("嘟嘟")
+                    Text("香色闺阁")
                         .font(.title)
                         .fontWeight(.bold)
 
-                    Text("版本 v0.9.1 (20260914)")
+                    Text("版本 v0.10.0 (20260925)")
                         .font(.headline)
                         .foregroundColor(.secondary)
 
@@ -273,7 +300,7 @@ struct AboutView: View {
                     // 简介
                     AboutSectionCard(title: "应用简介") {
                         Text("""
-                        嘟嘟是复刻香色闺阁的 iOS 原生阅读应用，支持 .xbs 站点书源。
+                        香色闺阁 iOS 版，支持原版 .xbs 站点书源。
 
                         本应用支持自定义书源规则，可以解析网页内容，为广大网络文学爱好者提供一种方便、快捷、舒适的阅读体验。
                         """)

@@ -327,42 +327,56 @@ final class XBSEngine {
     struct XBSCategory: Identifiable, Equatable {
         let name: String
         let value: String
-        var id: String { name }
+        var id: String { value }
     }
 
-    /// 解析站点分类：优先 moreKeys.requestFilters（"名称::值" 行式），其次命名子字典
+    struct XBSFilterGroup: Identifiable {
+        let key: String
+        let options: [XBSCategory]
+        var id: String { key }
+    }
+
+    /// Named bookWorld actions are tabs; requestFilters are rows within a tab.
+    /// The first line of each filter is a parameter key, never a visible category.
     func bookWorldCategories(source: XBSSource) -> [XBSCategory] {
         guard let action = source.action("bookWorld") else { return [] }
+        let children = action.compactMap { key, value -> (String, Int)? in
+            guard let config = value as? [String: Any], config["requestInfo"] != nil else { return nil }
+            return (key, Int(config.string("_sIndex") ?? "0") ?? 0)
+        }
+        return children.sorted { $0.1 == $1.1 ? $0.0 < $1.0 : $0.1 < $1.1 }
+            .map { XBSCategory(name: $0.0, value: $0.0) }
+    }
 
-        // 形态一：requestFilters 行式 "玄幻::xuanhuan"
-        let filterText = action.dict("moreKeys")?.string("requestFilters")
-            ?? action.string("requestFilters") ?? ""
-        var categories: [XBSCategory] = []
-        for line in filterText.components(separatedBy: .newlines) {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            guard !trimmed.isEmpty else { continue }
-            let parts = trimmed.components(separatedBy: "::")
-            if parts.count >= 2 {
-                categories.append(XBSCategory(name: parts[0].trimmingCharacters(in: .whitespaces),
-                                              value: parts[1].trimmingCharacters(in: .whitespaces)))
-            } else {
-                categories.append(XBSCategory(name: trimmed, value: trimmed))
+    func bookWorldFilters(source: XBSSource, category: XBSCategory?) -> [XBSFilterGroup] {
+        guard let root = source.action("bookWorld") else { return [] }
+        let action = category.flatMap { root[$0.value] as? [String: Any] } ?? root
+        let text = action.dict("moreKeys")?.string("requestFilters") ?? action.string("requestFilters") ?? ""
+        return Self.parseRequestFilters(text)
+    }
+
+    static func parseRequestFilters(_ text: String) -> [XBSFilterGroup] {
+        let lines = text.replacingOccurrences(of: "\r", with: "").components(separatedBy: "\n")
+        var groups: [XBSFilterGroup] = []
+        var key = "category"
+        var options: [XBSCategory] = []
+        for line in lines {
+            let parts = line.trimmingCharacters(in: .whitespaces).components(separatedBy: "::")
+            guard let first = parts.first, !first.isEmpty else { continue }
+            if parts.count == 1 {
+                if !options.isEmpty { groups.append(XBSFilterGroup(key: key, options: options)) }
+                key = first
+                options = []
+                continue
             }
+            options.append(XBSCategory(name: first, value: parts.dropFirst().joined(separator: "::")))
         }
-        if !categories.isEmpty { return categories }
-
-        // 形态二：命名子字典 { "玄幻": {requestInfo...}, "都市": {...} }
-        let reserved = ["actionID", "parserID", "requestInfo", "list", "moreKeys", "validConfig",
-                        "responseFormatType", "httpHeaders", "host"]
-        for (key, value) in action {
-            guard !reserved.contains(key), let sub = value as? [String: Any], sub["requestInfo"] != nil else { continue }
-            categories.append(XBSCategory(name: key, value: key))
-        }
-        return categories
+        if !options.isEmpty { groups.append(XBSFilterGroup(key: key, options: options)) }
+        return groups
     }
 
     /// 分类页书籍列表（分页）
-    func bookWorld(source: XBSSource, category: XBSCategory?, page: Int) async throws -> [XBSBook] {
+    func bookWorld(source: XBSSource, category: XBSCategory?, page: Int, filters: [String: String] = [:]) async throws -> [XBSBook] {
         guard var action = source.action("bookWorld") else {
             throw XBSError.actionMissing("bookWorld")
         }
@@ -376,7 +390,12 @@ final class XBSEngine {
         }
 
         var params: [String: Any] = ["pageIndex": page]
-        if let category { params["filter"] = category.value }
+        let groups = bookWorldFilters(source: source, category: category)
+        var values = Dictionary(uniqueKeysWithValues: groups.map { ($0.key, $0.options.first?.value ?? "") })
+        values.merge(filters) { _, selected in selected }
+        params["filters"] = values
+        if let key = groups.first?.key { params["filter"] = values[key] ?? "" }
+        else if let category { params["filter"] = category.value }
 
         let response = try await fetch(action: action, source: source, params: params)
         let items = try parseList(action: action, response: response, params: params)

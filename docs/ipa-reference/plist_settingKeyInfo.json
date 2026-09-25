@@ -1,0 +1,295 @@
+{
+  "autoRead": {
+    "kv_title": "启动后继续上次阅读",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "incCloud": {
+    "kv_title": "增量备份",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": true
+  },
+  "autoCloud": {
+    "kv_title": "自动备份",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": true
+  },
+  "changLiang": {
+    "kv_title": "阅读时屏幕常亮",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "fanjianZi": {
+    "kv_title": "繁简转换",
+    "kv_valueList": [
+      {
+        "kv_title": "保持原文",
+        "kv_value": 0
+      },
+      {
+        "kv_title": "简体",
+        "kv_value": 1
+      },
+      {
+        "kv_title": "繁体",
+        "kv_value": 2
+      }
+    ],
+    "kv_defaultValue": 0
+  },
+  "r_popGestureType": {
+    "kv_help": "防误触是指左右翻页(包括平移和仿真)，工具栏隐藏时不使用侧滑返回。",
+    "kv_title": "阅读时侧滑返回方式",
+    "kv_valueList": [
+      {
+        "kv_title": "禁用",
+        "kv_value": 0
+      },
+      {
+        "kv_title": "防误触",
+        "kv_value": 1
+      },
+      {
+        "kv_title": "总是开启",
+        "kv_value": 2
+      }
+    ],
+    "kv_defaultValue": 2
+  },
+  "r_statusBarStatus": {
+    "kv_title": "阅读时顶部状态栏样式",
+    "kv_valueList": [
+      {
+        "kv_title": "不显示",
+        "kv_value": 0
+      },
+      {
+        "kv_title": "白色状态栏",
+        "kv_value": 1
+      },
+      {
+        "kv_title": "黑色状态栏",
+        "kv_value": 3
+      }
+    ],
+    "kv_defaultValue": 0
+  },
+  "tr_speakType": {
+    "kv_help": "按页朗读可高亮显示当前朗读内容，并跟随朗读进度自动翻页，但翻页时会有一些停顿，适合边看边听的用户使用。\n按章朗读不会高亮显示当前朗读内容，也不会跟随朗读进度自动翻页，但可以流畅的朗读，适合仅听书的用户使用。",
+    "kv_title": "朗读模式",
+    "kv_valueList": [
+      {
+        "kv_title": "按页朗读",
+        "kv_value": 0
+      },
+      {
+        "kv_title": "按章朗读",
+        "kv_value": 1
+      }
+    ],
+    "kv_defaultValue": 0
+  },
+  "tr_fontSize": {
+    "kv_defaultValue": "20",
+    "kv_valueMin": "8",
+    "kv_valueMax": "50"
+  },
+  "tr_showCpTitle": {
+    "kv_title": "显示章节标题",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": true
+  },
+  "tr_showProgress": {
+    "kv_title": "显示章节页进度",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": true
+  },
+  "tr_showFProgress": {
+    "kv_title": "显示全书百分比进度",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "tr_showBatLabel": {
+    "kv_title": "　电池电量",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "tr_showBatView": {
+    "kv_title": "显示电池",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "tr_showTime": {
+    "kv_title": "显示时间",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "tr_autoDarkModel": {
+    "kv_title": "阅读时自动深色模式",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "tr_iPadDoubleCol": {
+    "kv_title": "iPad横屏显示2列",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "tr_autoHomeIndicator": {
+    "kv_title": "阅读时自动隐藏小横条",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": true
+  },
+  "tr_useLongPress": {
+    "kv_title": "文本阅读界面长按选择文字",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": true
+  },
+  "cr_fastS": {
+    "kv_title": "快速滚动",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "cr_showS": {
+    "kv_title": "显示分割线",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "cr_showSI": {
+    "kv_title": "显示滚动条",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "cr_showPProgress": {
+    "kv_title": "显示章节页进度",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": true
+  },
+  "cr_showFProgress": {
+    "kv_title": "显示全书百分比进度",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "cr_showCpTitle": {
+    "kv_title": "显示章节标题",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": true
+  },
+  "bs_updateType": {
+    "kv_title": "书架更新策略",
+    "kv_help": "可在书本详情中单独停用对应书本的更新，仅适用于书架，阅读该书时仍会检测更新",
+    "kv_valueList": [
+      {
+        "kv_title": "不自动更新",
+        "kv_value": "0"
+      },
+      {
+        "kv_title": "启动App时更新",
+        "kv_value": "-1"
+      },
+      {
+        "kv_title": "十分钟更新一次",
+        "kv_value": "600"
+      },
+      {
+        "kv_title": "半小时更新一次",
+        "kv_value": "1800"
+      },
+      {
+        "kv_title": "一个小时更新一次",
+        "kv_value": "3600"
+      },
+      {
+        "kv_title": "二十四小时更新一次",
+        "kv_value": "86400"
+      }
+    ],
+    "kv_defaultValue": "1800"
+  },
+  "bs_sortType": {
+    "kv_title": "书架排序方式",
+    "kv_help": "列表模式书架可左滑置顶以达到手动排序功能\n‘按更新排’需站点规则中的‘最后一章节更新时间’配合",
+    "kv_valueList": [
+      {
+        "kv_title": "按阅读时间排",
+        "kv_value": "0"
+      },
+      {
+        "kv_title": "按添加时间排",
+        "kv_value": "1"
+      },
+      {
+        "kv_title": "按更新排",
+        "kv_value": "2"
+      },
+      {
+        "kv_title": "综合排序",
+        "kv_value": "3"
+      }
+    ],
+    "kv_defaultValue": "3"
+  },
+  "bs_shiDu": {
+    "kv_title": "试读提示",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": false
+  },
+  "search_showRel": {
+    "kv_title": "显示搜索热词",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": true
+  },
+  "search_showHis": {
+    "kv_title": "显示搜索历史",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": true
+  },
+  "search_showFilterTip": {
+    "kv_title": "过滤提示",
+    "kv_valueType": "BOOL",
+    "kv_defaultValue": true
+  },
+  "search_filterResultT": {
+    "kv_title": "搜索结果过滤方式",
+    "kv_valueList": [
+      {
+        "kv_title": "不过滤",
+        "kv_value": "0"
+      },
+      {
+        "kv_title": "匹配关键字",
+        "kv_value": "2"
+      },
+      {
+        "kv_title": "包含关键字(推荐)",
+        "kv_value": "1"
+      }
+    ],
+    "kv_defaultValue": "1"
+  },
+  "search_filterSourceT": {
+    "kv_title": "搜索指定站点类型",
+    "kv_valueList": [
+      {
+        "kv_title": "全部(不推荐)",
+        "help": "该item无value，在有defaultValue时将不能用，不用修改，正好告诉用户该item不推荐使用"
+      },
+      {
+        "kv_title": "文本/小说",
+        "kv_value": "text"
+      },
+      {
+        "kv_title": "图片/漫画/壁纸",
+        "kv_value": "comic"
+      },
+      {
+        "kv_title": "音频/音乐/听书",
+        "kv_value": "audio"
+      },
+      {
+        "kv_title": "视频/电影/电视剧",
+        "kv_value": "video"
+      }
+    ],
+    "kv_defaultValue": "text"
+  }
+}

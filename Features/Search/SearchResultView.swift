@@ -15,6 +15,8 @@ struct SearchResultView: View {
     @State private var showingFilterSheet = false
     @State private var navigatingToBookDetail = false
     @State private var selectedBook: Book?
+    @State private var selectedXBSBook: XBSBook?
+    @Environment(\.dismiss) private var dismiss
     @State private var openingResultId: UUID?
     @State private var relatedWords: [String] = []
 
@@ -32,7 +34,10 @@ struct SearchResultView: View {
                 resultsList
             }
         }
-        .searchable(text: $viewModel.searchText, prompt: "搜索书籍")
+        .navigationTitle("搜索")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.visible, for: .navigationBar)
+        .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "书名 / 作者")
         .onSubmit(of: .search) {
             performSearch()
         }
@@ -43,6 +48,7 @@ struct SearchResultView: View {
             viewModel.reapplyFilter()
         }
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) { Button("返回") { dismiss() } }
             ToolbarItem {
                 Button(action: { showingFilterSheet = true }) {
                     Label("搜索设置", systemImage: "line.3.horizontal.decrease.circle")
@@ -55,13 +61,15 @@ struct SearchResultView: View {
             }
         }
         .sheet(isPresented: $showingSourcePicker) {
-            SourcePickerView(selectedSources: $viewModel.selectedSources)
+            SourcePickerView(selectedSources: $viewModel.selectedSources, selectedXBSAliases: $viewModel.selectedXBSAliases)
         }
         .sheet(isPresented: $showingFilterSheet) {
             SearchFilterSheet()
         }
         .navigationDestination(isPresented: $navigatingToBookDetail) {
-            if let book = selectedBook {
+            if let selectedXBSBook {
+                XBSBookDetailView(initialBook: selectedXBSBook)
+            } else if let book = selectedBook {
                 BookDetailView(book: book)
             } else {
                 Text("未找到书籍")
@@ -264,7 +272,17 @@ struct SearchResultView: View {
             Section {
                 ForEach(viewModel.filteredResults) { result in
                     Button {
+                        if let alias = result.xbsAlias {
+                            selectedBook = nil
+                            selectedXBSBook = XBSBook(name: result.name, author: result.author,
+                                cover: result.coverUrl, desc: result.intro, cat: nil, status: nil,
+                                lastChapterTitle: nil, updateTime: nil, detailUrl: result.bookUrl,
+                                sourceAlias: alias, sourceName: result.sourceName)
+                            navigatingToBookDetail = true
+                            return
+                        }
                         guard openingResultId == nil else { return }
+                        selectedXBSBook = nil
                         openingResultId = result.id
                         Task {
                             defer { openingResultId = nil }
@@ -289,7 +307,7 @@ struct SearchResultView: View {
                 }
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
     }
 }
 
@@ -342,12 +360,18 @@ struct SearchResultItemView: View {
 
 struct SourcePickerView: View {
     @Binding var selectedSources: [BookSource]
+    @Binding var selectedXBSAliases: Set<String>?
+    @ObservedObject private var xbsStore = XBSSourceStore.shared
     @Environment(\.dismiss) var dismiss
     @State private var sources: [BookSource] = []
 
     var body: some View {
         NavigationView {
             List {
+                Section("站点") {
+                    Button("全部启用站点") { selectedXBSAliases = nil }
+                    ForEach(xbsStore.enabledSources) { source in xbsSourceRow(source) }
+                }
                 ForEach(sources, id: \.sourceId) { source in
                     HStack {
                         Text(source.displayName)
@@ -377,6 +401,25 @@ struct SourcePickerView: View {
                 await loadSources()
             }
         }
+    }
+
+    private func xbsSourceRow(_ source: XBSSource) -> some View {
+        Button { toggleXBS(source) } label: {
+            HStack {
+                Text(source.sourceName).foregroundColor(.primary)
+                Spacer()
+                if selectedXBSAliases == nil || selectedXBSAliases!.contains(source.alias) {
+                    Image(systemName: "checkmark")
+                }
+            }
+        }
+    }
+
+    private func toggleXBS(_ source: XBSSource) {
+        var aliases = selectedXBSAliases ?? Set(xbsStore.enabledSources.map(\.alias))
+        if aliases.contains(source.alias) { aliases.remove(source.alias) }
+        else { aliases.insert(source.alias) }
+        selectedXBSAliases = aliases
     }
 
     private func loadSources() async {

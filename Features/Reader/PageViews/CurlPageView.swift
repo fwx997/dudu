@@ -196,7 +196,7 @@ private struct PageContent: View {
         GeometryReader { geometry in
             ZStack {
                 // 背景
-                viewModel.backgroundColor.ignoresSafeArea()
+                XSGPaperBackground(viewModel: viewModel).ignoresSafeArea()
                 
                 // 文本内容
                 ScrollView(.vertical, showsIndicators: false) {

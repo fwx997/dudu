@@ -1,0 +1,116 @@
+{
+  "lMargin": {
+    "kv_title": "左边距",
+    "kv_offset": 1,
+    "kv_valueMin": 0,
+    "kv_valueMax": 200
+  },
+  "rMargin": {
+    "kv_title": "右边距",
+    "kv_offset": 1,
+    "kv_valueMin": 0,
+    "kv_valueMax": 200
+  },
+  "tMargin": {
+    "kv_title": "上边距",
+    "kv_offset": 1,
+    "kv_valueMin": 0,
+    "kv_valueMax": 200
+  },
+  "bMargin": {
+    "kv_title": "下边距",
+    "kv_offset": 1,
+    "kv_valueMin": 0,
+    "kv_valueMax": 120
+  },
+  "headIndent": {
+    "kv_title": "首行缩进",
+    "kv_offset": 1,
+    "kv_valueMin": 0,
+    "kv_valueMax": 5
+  },
+  "fontWeight": {
+    "kv_title": "字体粗细",
+    "kv_offset": 1,
+    "kv_valueMin": -10,
+    "kv_valueMax": 10
+  },
+  "wordSpacing": {
+    "kv_title": "字间距",
+    "kv_offset": 0.5,
+    "kv_valueMin": -10,
+    "kv_valueMax": 20
+  },
+  "lineSpacing": {
+    "kv_title": "行间距",
+    "kv_offset": 1,
+    "kv_valueMin": -10,
+    "kv_valueMax": 100
+  },
+  "paraSpacing": {
+    "kv_title": "段间距",
+    "kv_offset": 1,
+    "kv_valueMin": -10,
+    "kv_valueMax": 100
+  },
+  "titleWordSpacing": {
+    "kv_title": "字间距",
+    "kv_offset": 0.5,
+    "kv_valueMin": -10,
+    "kv_valueMax": 20
+  },
+  "titleLineSpacing": {
+    "kv_title": "行间距",
+    "kv_offset": 1,
+    "kv_valueMin": -10,
+    "kv_valueMax": 100
+  },
+  "titleParaSpacing": {
+    "kv_title": "段间距",
+    "kv_offset": 1,
+    "kv_valueMin": -10,
+    "kv_valueMax": 200
+  },
+  "titleFontWeight": {
+    "kv_title": "字体粗细",
+    "kv_offset": 1,
+    "kv_valueMin": -10,
+    "kv_valueMax": 10
+  },
+  "titleFontSizeOffset": {
+    "kv_title": "字体大小(相对正文)",
+    "kv_offset": 1,
+    "kv_valueMin": 0,
+    "kv_valueMax": 10
+  },
+  "widgetLeft": {
+    "kv_title": "左边距",
+    "kv_offset": 1,
+    "kv_valueMin": 0,
+    "kv_valueMax": 200
+  },
+  "widgetRight": {
+    "kv_title": "右边距",
+    "kv_offset": 1,
+    "kv_valueMin": 0,
+    "kv_valueMax": 200
+  },
+  "widgetBottom": {
+    "kv_title": "下边距",
+    "kv_offset": 1,
+    "kv_valueMin": 0,
+    "kv_valueMax": 90
+  },
+  "widgetTitleTop": {
+    "kv_title": "标题上边距",
+    "kv_offset": 1,
+    "kv_valueMin": 0,
+    "kv_valueMax": 100
+  },
+  "widgetTitleLeft": {
+    "kv_title": "标题左边距",
+    "kv_offset": 1,
+    "kv_valueMin": 0,
+    "kv_valueMax": 200
+  }
+}

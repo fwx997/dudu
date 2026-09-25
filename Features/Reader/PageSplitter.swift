@@ -38,6 +38,7 @@ struct PageConfig {
     static func from(
         fontSize: CGFloat,
         lineSpacing: CGFloat,
+        paragraphSpacing: CGFloat = 14,
         padding: UIEdgeInsets,
         containerSize: CGSize,
         fontFamily: String? = nil
@@ -51,6 +52,7 @@ struct PageConfig {
         return PageConfig(
             fontSize: fontSize,
             lineSpacing: lineSpacing,
+            paragraphSpacing: paragraphSpacing,
             margins: padding,
             containerSize: containerSize,
             font: font

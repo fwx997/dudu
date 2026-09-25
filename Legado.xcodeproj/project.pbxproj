@@ -972,7 +972,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODEGEN_SKIP_MODEL_CLASSES = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20260914;
+				CURRENT_PROJECT_VERSION = 20260925;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -989,7 +989,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.1;
+				MARKETING_VERSION = 0.10.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.legado.app;
 				OTHER_LDFLAGS = "-lxml2";
 				HEADER_SEARCH_PATHS = ("$(SDKROOT)/usr/include/libxml2", inherited);
@@ -1007,7 +1007,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODEGEN_SKIP_MODEL_CLASSES = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20260914;
+				CURRENT_PROJECT_VERSION = 20260925;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -1024,7 +1024,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.9.1;
+				MARKETING_VERSION = 0.10.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.legado.app;
 				OTHER_LDFLAGS = "-lxml2";
 				HEADER_SEARCH_PATHS = ("$(SDKROOT)/usr/include/libxml2", inherited);

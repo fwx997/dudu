@@ -1,0 +1,224 @@
+[
+  {
+    "title": "系统默认",
+    "items": [
+      {
+        "name": "",
+        "detail": "常规"
+      },
+      {
+        "name": "bold",
+        "detail": "粗体"
+      }
+    ]
+  },
+  {
+    "title": "华康苹方",
+    "items": [
+      {
+        "title": "华康苹方",
+        "name": "PingFangSC-Regular",
+        "detail": "常规"
+      },
+      {
+        "title": "华康苹方",
+        "name": "PingFangSC-Light",
+        "detail": "细体"
+      },
+      {
+        "title": "华康苹方",
+        "name": "PingFangSC-Medium",
+        "detail": "粗体"
+      }
+    ]
+  },
+  {
+    "title": "华文宋体🔥",
+    "items": [
+      {
+        "title": "华文宋体",
+        "name": "STSong",
+        "detail": "常规"
+      }
+    ]
+  },
+  {
+    "title": "华文黑体🔥",
+    "items": [
+      {
+        "title": "华文黑体",
+        "name": "STXihei",
+        "detail": "常规"
+      }
+    ]
+  },
+  {
+    "cover": "FZLTXHK--GBK1-0",
+    "title": "方正兰亭",
+    "items": [
+      {
+        "title": "方正兰亭",
+        "name": "FZLTXHK--GBK1-0",
+        "detail": "常规"
+      },
+      {
+        "title": "方正兰亭",
+        "name": "FZLTZHK--GBK1-0",
+        "detail": "中粗"
+      },
+      {
+        "title": "方正兰亭",
+        "name": "FZLTTHK--GBK1-0",
+        "detail": "特粗"
+      }
+    ]
+  },
+  {
+    "cover": "STYuanti-SC-Regular",
+    "title": "华文圆体",
+    "items": [
+      {
+        "title": "华文圆体",
+        "name": "STYuanti-SC-Regular",
+        "detail": "常规"
+      },
+      {
+        "title": "华文圆体",
+        "name": "STYuanti-SC-Light",
+        "detail": "细体"
+      },
+      {
+        "title": "华文圆体",
+        "name": "STYuanti-SC-Bold",
+        "detail": "粗体"
+      }
+    ]
+  },
+  {
+    "cover": "STKaiti",
+    "title": "华文楷体",
+    "items": [
+      {
+        "title": "华文楷体",
+        "name": "STKaiti",
+        "detail": "常规"
+      }
+    ]
+  },
+  {
+    "cover": "STLibianSC-Regular",
+    "title": "华文隶变",
+    "items": [
+      {
+        "title": "华文隶变",
+        "name": "STLibianSC-Regular",
+        "detail": "常规"
+      }
+    ]
+  },
+  {
+    "cover": "HanziPenSC-W3",
+    "title": "华康翩翩体",
+    "items": [
+      {
+        "title": "华康翩翩体",
+        "name": "HanziPenSC-W3",
+        "detail": "常规"
+      },
+      {
+        "title": "华康翩翩体",
+        "name": "HanziPenSC-W5",
+        "detail": "粗体"
+      }
+    ]
+  },
+  {
+    "cover": "DFWaWaSC-W5",
+    "title": "华康娃娃体",
+    "items": [
+      {
+        "title": "华康娃娃体",
+        "name": "DFWaWaSC-W5",
+        "detail": "常规"
+      }
+    ]
+  },
+  {
+    "cover": "HannotateSC-W5",
+    "title": "华康手札体",
+    "items": [
+      {
+        "title": "华康手札体",
+        "name": "HannotateSC-W5",
+        "detail": "常规"
+      },
+      {
+        "title": "华康手札体",
+        "name": "HannotateSC-W7",
+        "detail": "粗体"
+      }
+    ]
+  },
+  {
+    "cover": "YuppySC-Regular",
+    "title": "蒙纳雅痞体",
+    "items": [
+      {
+        "title": "蒙纳雅痞体",
+        "name": "YuppySC-Regular",
+        "detail": "常规"
+      }
+    ]
+  },
+  {
+    "cover": "MLingWaiMedium-SC",
+    "title": "蒙纳凌慧体",
+    "items": [
+      {
+        "title": "蒙纳凌慧体",
+        "name": "MLingWaiMedium-SC",
+        "detail": "常规"
+      }
+    ]
+  },
+  {
+    "title": "Avenir",
+    "items": [
+      {
+        "title": "Avenir",
+        "name": "Avenir-Book",
+        "detail": "常规"
+      },
+      {
+        "title": "Avenir",
+        "name": "Avenir-Light",
+        "detail": "细体"
+      },
+      {
+        "title": "Avenir",
+        "name": "Avenir-Medium",
+        "detail": "粗体"
+      }
+    ]
+  },
+  {
+    "title": "HelveticaNeue",
+    "items": [
+      {
+        "title": "HelveticaNeue",
+        "name": "HelveticaNeue",
+        "detail": "常规"
+      },
+      {
+        "title": "HelveticaNeue",
+        "name": "HelveticaNeue-Thin",
+        "detail": "细体"
+      },
+      {
+        "title": "HelveticaNeue",
+        "name": "HelveticaNeue-Medium",
+        "detail": "粗体"
+      }
+    ]
+  }
+]

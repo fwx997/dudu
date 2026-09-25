@@ -17,7 +17,10 @@ struct XBSSource: Identifiable, Equatable {
     var sourceName: String { config.string("sourceName") ?? alias }
     var sourceUrl: String { config.string("sourceUrl") ?? "" }
     var host: String { config.string("host") ?? sourceUrl }
-    var sourceType: String { config.string("sourceType") ?? "text" }
+    var sourceType: String {
+        let value = config.string("sourceType") ?? "text"
+        return value == "comic" ? "image" : value
+    }
     var weight: Int { Int(config.string("weight") ?? "") ?? 0 }
     var enabled: Bool {
         let v = config["enable"]

@@ -36,10 +36,10 @@ enum SourceType: String, CaseIterable {
     var displayName: String {
         switch self {
         case .all: return "全部"
-        case .text: return "文本"
-        case .image: return "图片"
-        case .audio: return "音频"
-        case .video: return "视频"
+        case .text: return "文本/小说"
+        case .image: return "图片/漫画/壁纸"
+        case .audio: return "音频/音乐/听书"
+        case .video: return "视频/电影/电视剧"
         }
     }
 }
@@ -53,9 +53,9 @@ enum TextConversionMode: String, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .noConversion: return "不转换"
-        case .toSimplified: return "转简体"
-        case .toTraditional: return "转繁体"
+        case .noConversion: return "保持原文"
+        case .toSimplified: return "简体"
+        case .toTraditional: return "繁体"
         }
     }
 }
@@ -118,13 +118,13 @@ class AppSettings: ObservableObject {
     }
 
     private init() {
-        searchFilterType = SearchFilterType(rawValue: defaults.string(forKey: "dudu.searchFilterType") ?? "") ?? .noFilter
+        searchFilterType = SearchFilterType(rawValue: defaults.string(forKey: "dudu.searchFilterType") ?? "") ?? .containsKeyword
         searchSourceType = SourceType(rawValue: defaults.string(forKey: "dudu.searchSourceType") ?? "") ?? .text
         textConversionMode = TextConversionMode(rawValue: defaults.string(forKey: "dudu.textConversionMode") ?? "") ?? .noConversion
         readAloudMode = ReadAloudMode(rawValue: defaults.string(forKey: "dudu.readAloudMode") ?? "") ?? .byPage
         keepScreenOn = defaults.bool(forKey: "dudu.keepScreenOn")
         autoRead = defaults.bool(forKey: "dudu.autoRead")
-        autoNightMode = defaults.object(forKey: "dudu.autoNightMode") == nil ? true : defaults.bool(forKey: "dudu.autoNightMode")
+        autoNightMode = defaults.bool(forKey: "dudu.autoNightMode")
         checkUpdateOnOpen = defaults.bool(forKey: "dudu.checkUpdateOnOpen")
     }
 }

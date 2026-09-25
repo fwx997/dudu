@@ -1,0 +1,548 @@
+{
+  "inSynchronize": {
+    "cf_localConfigValue": "",
+    "cfControl_atLeastSchemes": [
+      "mqq://"
+    ]
+  },
+  "readView_headerMoreBtns_comic": [
+    {
+      "cf_selectorname": "openDetailCon",
+      "cf_title": "书籍详情"
+    },
+    {
+      "cf_selectorname": "openFeedBackCon",
+      "cf_title": "报告错误"
+    },
+    {
+      "cf_needreplacekeys": "cf_targeturl",
+      "cf_opentype": "2",
+      "cf_targeturl": "https://www.baidu.com/s?word=^cf_rpkeyY^",
+      "cf_title": "百度搜索"
+    }
+  ],
+  "readView_headerMoreBtns_audio": [
+    {
+      "cf_selectorname": "openSourceCon",
+      "cf_title": "换源"
+    },
+    {
+      "cf_selectorname": "openDetailCon",
+      "cf_title": "书籍详情"
+    },
+    {
+      "cf_selectorname": "openFeedBackCon",
+      "cf_title": "报告错误"
+    },
+    {
+      "cf_needreplacekeys": "cf_targeturl",
+      "cf_opentype": "2",
+      "cf_targeturl": "https://www.baidu.com/s?word=^cf_rpkeyY^",
+      "cf_title": "百度搜索"
+    }
+  ],
+  "readView_headerMoreBtns_text": [
+    {
+      "cf_selectorname": "openDetailCon",
+      "cf_title": "书籍详情"
+    },
+    {
+      "cf_selectorname": "onReloadContentEvent",
+      "cf_title": "刷新内容"
+    },
+    {
+      "cf_selectorname": "onSearchContentNotify:",
+      "cf_title": "搜索内容"
+    },
+    {
+      "cf_selectorname": "onFilterContentNotify:",
+      "cf_title": "过滤内容"
+    },
+    {
+      "cf_selectorname": "openFeedBackCon",
+      "cf_title": "报告错误"
+    },
+    {
+      "cf_selectorname": "showTutorialView:",
+      "cf_title": "翻页区域"
+    },
+    {
+      "cf_needreplacekeys": "cf_targeturl",
+      "cf_opentype": "2",
+      "cf_targeturl": "https://www.baidu.com/s?word=^cf_rpkeyY^",
+      "cf_title": "百度搜索"
+    }
+  ],
+  "LocalBookListVC_sectionFooterTitle": {
+    "0": "请从第三方App导入txt文件，例如通过浏览器下载txt后再使用香色闺阁打开"
+  },
+  "ConfigSourceModelSyncCon_sectionHeaderTitle": {
+    "0": "历史记录"
+  },
+  "rmd_ConfigSourceModelListCon_NoneSourceModel": {
+    "cf_openallitems": true,
+    "cf_title": "请选择",
+    "cf_items": [
+      {
+        "cf_title": "请选择",
+        "cf_items": [
+          {
+            "cf_title": "从iCloud中恢复",
+            "cf_controller_class": "CloudBookSourceVC",
+            "cf_controller_param": {
+              "listTitle": "云端站点"
+            }
+          },
+          {
+            "cf_title": "新建站点",
+            "cf_selectorname": "newModel:",
+            "cf_object": [
+              "DOM"
+            ],
+            "cf_params": [
+              "DOM"
+            ]
+          },
+          {
+            "cf_title": "导入站点",
+            "cf_controller_class": "ConfigSourceModelSyncCon"
+          },
+          {
+            "cf_title": "搜索站点",
+            "cf_items": [
+              {
+                "cf_controller_class": "ConfigSourceModelSyncCon"
+              },
+              {
+                "cf_opentype": "0",
+                "cf_targeturl": "https://search.gitee.com/?q=%e9%a6%99%e8%89%b2%e9%97%ba%e9%98%81&skin=rec&type=none&sort=stars_count"
+              }
+            ],
+            "cf_openallitems": true
+          },
+          {
+            "cf_title": "取消",
+            "UIAlertActionStyle": "1"
+          }
+        ],
+        "cfControl_bitControl": "2"
+      },
+      {
+        "cf_title": "请选择",
+        "cf_items": [
+          {
+            "cf_title": "从iCloud中恢复",
+            "cf_controller_class": "CloudBookSourceVC",
+            "cf_controller_param": {
+              "listTitle": "iCloud备份"
+            }
+          },
+          {
+            "cf_title": "新建项目",
+            "cf_selectorname": "newModel:",
+            "cf_object": [
+              "DOM"
+            ],
+            "cf_params": [
+              "DOM"
+            ]
+          },
+          {
+            "cf_title": "导入项目",
+            "cf_controller_class": "ConfigSourceModelSyncCon"
+          },
+          {
+            "cf_title": "取消",
+            "UIAlertActionStyle": "1"
+          }
+        ],
+        "cfControl_bitControl": "1"
+      }
+    ]
+  },
+  "rmd_rt_BookDetailController": {
+    "cf_needreplacekeys": "cf_targeturl",
+    "cf_opentype": "2",
+    "cf_targeturl": "https://www.baidu.com/s?word=^cf_rpkeyY^",
+    "cf_title": "百度"
+  },
+  "rmd_rt_ConfigSourceModelSyncCon": {
+    "cfControl_bitControl": "2",
+    "cf_titlesub": "从互联网中搜索站点，所有站点都是网友分享，和开发者无关，也不保证可用",
+    "cf_title": "搜索站点",
+    "cf_items": [
+      {
+        "cf_title": "gitee",
+        "cf_opentype": "0",
+        "cf_targeturl": "https://search.gitee.com/?q=%e9%a6%99%e8%89%b2%e9%97%ba%e9%98%81&skin=rec&type=none&sort=stars_count"
+      },
+      {
+        "cf_title": "github",
+        "cf_opentype": "0",
+        "cf_targeturl": "https://github.com/search?q=%e9%a6%99%e8%89%b2%e9%97%ba%e9%98%81&s=stars"
+      },
+      {
+        "cf_title": "baidu",
+        "cf_opentype": "0",
+        "cf_targeturl": "https://www.baidu.com/s?wd=%E9%A6%99%E8%89%B2%E9%97%BA%E9%98%81"
+      },
+      {
+        "cf_title": "取消",
+        "UIAlertActionStyle": "1"
+      }
+    ]
+  },
+  "rmd_rt_ConfigSourceModelListCon": {
+    "cf_openallitems": true,
+    "cf_title": "更多",
+    "cf_items": [
+      {
+        "cf_title": "更多",
+        "cf_titlesub": "长按列表切换编辑状态\n编辑状态时，导出/反转/删除/检测站点等操作仅对被选中的站点有效",
+        "cf_items": [
+          {
+            "cf_title": "新建站点",
+            "cf_selectorname": "newModel:",
+            "cf_object": [
+              "DOM"
+            ],
+            "cf_params": [
+              "DOM"
+            ]
+          },
+          {
+            "cf_title": "导出站点",
+            "cf_selectorname": "onExportEvent"
+          },
+          {
+            "cf_title": "反转可用性",
+            "cf_selectorname": "onFanzhuanEvent"
+          },
+          {
+            "cf_title": "删除被选中站点",
+            "cf_selectorname": "onDeleteSelectEvent",
+            "UIAlertActionStyle": "2"
+          },
+          {
+            "cf_title": "删除被禁用站点",
+            "cf_selectorname": "onDeleteDisableEvent",
+            "UIAlertActionStyle": "2"
+          },
+          {
+            "cf_title": "重置站点",
+            "cf_titlesub": "相当于重装操作系统，书架中的书本不会被删除，但站点与书本缓存被清空",
+            "cf_items": [
+              {
+                "cf_title": "重置站点",
+                "cf_selectorname": "onResetEvent",
+                "UIAlertActionStyle": "2"
+              },
+              {
+                "cf_title": "取消",
+                "UIAlertActionStyle": "1"
+              }
+            ],
+            "UIAlertActionStyle": "2"
+          },
+          {
+            "cf_title": "检测站点",
+            "cf_selectorname": "onSourceCheckEvent"
+          },
+          {
+            "cf_title": "取消",
+            "UIAlertActionStyle": "1"
+          }
+        ],
+        "cfControl_bitControl": "2"
+      },
+      {
+        "cf_title": "更多",
+        "cf_items": [
+          {
+            "cf_title": "iCloud备份",
+            "cf_controller_class": "CloudBookSourceVC",
+            "cf_controller_param": {
+              "listTitle": "iCloud备份"
+            }
+          },
+          {
+            "cf_title": "新建项目",
+            "cf_selectorname": "newModel:",
+            "cf_object": [
+              "DOM"
+            ],
+            "cf_params": [
+              "DOM"
+            ]
+          },
+          {
+            "cf_title": "导入项目",
+            "cf_controller_class": "ConfigSourceModelSyncCon"
+          },
+          {
+            "cf_title": "导出项目",
+            "cf_selectorname": "onExportEvent"
+          },
+          {
+            "cf_title": "取消",
+            "UIAlertActionStyle": "1"
+          }
+        ],
+        "cfControl_bitControl": "1"
+      }
+    ]
+  },
+  "rmd_rt_VideoReadVC": {
+    "UIAlertControllerStyle": "0",
+    "cf_items": [
+      {
+        "cf_selectorname": "openDetailCon",
+        "cf_title": "书籍详情"
+      },
+      {
+        "cf_selectorname": "openFeedBackCon",
+        "cf_title": "报告错误"
+      },
+      {
+        "cf_needreplacekeys": "cf_targeturl",
+        "cf_opentype": "2",
+        "cf_targeturl": "https://www.baidu.com/s?word=^cf_rpkeyY^",
+        "cf_title": "百度搜索"
+      },
+      {
+        "UIAlertActionStyle": "1",
+        "cf_title": "取消"
+      }
+    ],
+    "cf_needreplacekeys": "cf_items",
+    "cf_title": "更多"
+  },
+  "rmd_paibanListV2": [
+    {
+      "bMargin": 30,
+      "fontWeight": 0,
+      "headIndent": 2,
+      "lineSpacing": 10,
+      "lrMargin": 20,
+      "paibanId": "default1",
+      "paraSpacing": 14,
+      "tMargin": 50,
+      "title": "默认排版",
+      "titleFontSizeOffset": 1,
+      "titleFontWeight": 3,
+      "titleLineSpacing": 10,
+      "titleParaSpacing": 14,
+      "titleWordSpacing": 0,
+      "widgetBottom": 13,
+      "widgetLeft": 20,
+      "widgetRight": 20,
+      "widgetTitleLeft": 20,
+      "widgetTitleTop": 20,
+      "wordSpacing": 0
+    },
+    {
+      "bMargin": 30,
+      "fontWeight": 0,
+      "headIndent": 2,
+      "lineSpacing": 6,
+      "lrMargin": 20,
+      "paibanId": "default2",
+      "paraSpacing": 10,
+      "tMargin": 50,
+      "title": "默认排版紧凑",
+      "titleFontSizeOffset": 1,
+      "titleFontWeight": 3,
+      "titleLineSpacing": 6,
+      "titleParaSpacing": 10,
+      "titleWordSpacing": 0,
+      "widgetBottom": 13,
+      "widgetLeft": 20,
+      "widgetRight": 20,
+      "widgetTitleLeft": 20,
+      "widgetTitleTop": 20,
+      "wordSpacing": 0
+    },
+    {
+      "bMargin": 30,
+      "fontWeight": 0,
+      "headIndent": 2,
+      "lineSpacing": 14,
+      "lrMargin": 20,
+      "paibanId": "default3",
+      "paraSpacing": 18,
+      "tMargin": 50,
+      "title": "默认排版宽松",
+      "titleFontSizeOffset": 1,
+      "titleFontWeight": 3,
+      "titleLineSpacing": 14,
+      "titleParaSpacing": 18,
+      "titleWordSpacing": 0,
+      "widgetBottom": 13,
+      "widgetLeft": 20,
+      "widgetRight": 20,
+      "widgetTitleLeft": 20,
+      "widgetTitleTop": 20,
+      "wordSpacing": 0
+    },
+    {
+      "cf_controller_class": "TextReadSettingVC",
+      "title": "显示/隐藏小部件"
+    },
+    {
+      "cf_selectorname": "createNew",
+      "title": "新建排版"
+    }
+  ],
+  "rmd_paibanListV2_Pad": [
+    {
+      "bMargin": 60,
+      "fontWeight": 0,
+      "headIndent": 2,
+      "lineSpacing": 10,
+      "lrMargin": 44,
+      "paibanId": "default1",
+      "paraSpacing": 14,
+      "tMargin": 87,
+      "title": "默认排版",
+      "titleFontSizeOffset": 1,
+      "titleFontWeight": 3,
+      "titleLineSpacing": 10,
+      "titleParaSpacing": 14,
+      "titleWordSpacing": 0,
+      "widgetBottom": 16,
+      "widgetLeft": 44,
+      "widgetRight": 44,
+      "widgetTitleLeft": 44,
+      "widgetTitleTop": 23,
+      "wordSpacing": 0
+    },
+    {
+      "bMargin": 60,
+      "fontWeight": 0,
+      "headIndent": 2,
+      "lineSpacing": 6,
+      "lrMargin": 44,
+      "paibanId": "default2",
+      "paraSpacing": 10,
+      "tMargin": 87,
+      "title": "默认排版紧凑",
+      "titleFontSizeOffset": 1,
+      "titleFontWeight": 3,
+      "titleLineSpacing": 6,
+      "titleParaSpacing": 10,
+      "titleWordSpacing": 0,
+      "widgetBottom": 16,
+      "widgetLeft": 44,
+      "widgetRight": 44,
+      "widgetTitleLeft": 44,
+      "widgetTitleTop": 23,
+      "wordSpacing": 0
+    },
+    {
+      "bMargin": 60,
+      "fontWeight": 0,
+      "headIndent": 2,
+      "lineSpacing": 14,
+      "lrMargin": 44,
+      "paibanId": "default3",
+      "paraSpacing": 18,
+      "tMargin": 87,
+      "title": "默认排版宽松",
+      "titleFontSizeOffset": 1,
+      "titleFontWeight": 3,
+      "titleLineSpacing": 14,
+      "titleParaSpacing": 18,
+      "titleWordSpacing": 0,
+      "widgetBottom": 16,
+      "widgetLeft": 44,
+      "widgetRight": 44,
+      "widgetTitleLeft": 44,
+      "widgetTitleTop": 23,
+      "wordSpacing": 0
+    },
+    {
+      "cf_controller_class": "TextReadSettingVC",
+      "title": "显示/隐藏小部件"
+    },
+    {
+      "cf_selectorname": "createNew",
+      "title": "新建排版"
+    }
+  ],
+  "rmd_paibanListV2_Notch": [
+    {
+      "bMargin": 46,
+      "fontWeight": 0,
+      "headIndent": 2,
+      "lineSpacing": 10,
+      "lrMargin": 20,
+      "paibanId": "default1",
+      "paraSpacing": 14,
+      "tMargin": 72,
+      "title": "默认排版",
+      "titleFontSizeOffset": 1,
+      "titleFontWeight": 3,
+      "titleLineSpacing": 10,
+      "titleParaSpacing": 14,
+      "titleWordSpacing": 0,
+      "widgetBottom": 27,
+      "widgetLeft": 20,
+      "widgetRight": 20,
+      "widgetTitleLeft": 20,
+      "widgetTitleTop": 43,
+      "wordSpacing": 0
+    },
+    {
+      "bMargin": 46,
+      "fontWeight": 0,
+      "headIndent": 2,
+      "lineSpacing": 6,
+      "lrMargin": 20,
+      "paibanId": "default2",
+      "paraSpacing": 10,
+      "tMargin": 72,
+      "title": "默认排版紧凑",
+      "titleFontSizeOffset": 1,
+      "titleFontWeight": 3,
+      "titleLineSpacing": 6,
+      "titleParaSpacing": 10,
+      "titleWordSpacing": 0,
+      "widgetBottom": 27,
+      "widgetLeft": 20,
+      "widgetRight": 20,
+      "widgetTitleLeft": 20,
+      "widgetTitleTop": 43,
+      "wordSpacing": 0
+    },
+    {
+      "bMargin": 46,
+      "fontWeight": 0,
+      "headIndent": 2,
+      "lineSpacing": 14,
+      "lrMargin": 20,
+      "paibanId": "default3",
+      "paraSpacing": 18,
+      "tMargin": 72,
+      "title": "默认排版宽松",
+      "titleFontSizeOffset": 1,
+      "titleFontWeight": 3,
+      "titleLineSpacing": 14,
+      "titleParaSpacing": 18,
+      "titleWordSpacing": 0,
+      "widgetBottom": 27,
+      "widgetLeft": 20,
+      "widgetRight": 20,
+      "widgetTitleLeft": 20,
+      "widgetTitleTop": 43,
+      "wordSpacing": 0
+    },
+    {
+      "cf_controller_class": "TextReadSettingVC",
+      "title": "显示/隐藏小部件"
+    },
+    {
+      "cf_selectorname": "createNew",
+      "title": "新建排版"
+    }
+  ]
+}

@@ -16,6 +16,8 @@ class SearchViewModel: ObservableObject {
     @Published var isSearching = false
     @Published var errorMessage: String?
     @Published var selectedSources: [BookSource] = []
+    @Published var selectedXBSAliases: Set<String>?
+    private var searchGeneration = UUID()
     @Published var searchHistory: [String] = []
     @Published var hotWords: [String] = []
     @Published var searchedSourceCount = 0
@@ -104,6 +106,8 @@ class SearchViewModel: ObservableObject {
             return
         }
 
+        let generation = UUID()
+        searchGeneration = generation
         historyManager.add(keyword)
         loadSearchHistory()
 
@@ -121,7 +125,10 @@ class SearchViewModel: ObservableObject {
 
         let typeFiltered = SearchFilter.shared.filterBySourceType(sources, sourceType: settings.searchSourceType)
         let legadoSources = typeFiltered.filter { $0.enabled && $0.searchUrl != nil }
-        let xbsSources = XBSSourceStore.shared.enabledSources
+        let xbsSources = XBSSourceStore.shared.enabledSources.filter {
+            (settings.searchSourceType == .all || $0.sourceType == settings.searchSourceType.rawValue)
+                && (selectedXBSAliases == nil || selectedXBSAliases!.contains($0.alias))
+        }
         let jobs: [SearchJob] = legadoSources.map { .legado($0) } + xbsSources.map { .xbs($0) }
         totalSourceCount = jobs.count
 
@@ -151,6 +158,7 @@ class SearchViewModel: ObservableObject {
 
             // 流式回填：哪个源先出结果就先显示哪个，不等全部搜完
             while let partial = await group.next() {
+                guard generation == searchGeneration, !Task.isCancelled else { group.cancelAll(); break }
                 searchedSourceCount += 1
                 for result in partial {
                     let key = result.displayName + "|" + result.displayAuthor
@@ -165,6 +173,7 @@ class SearchViewModel: ObservableObject {
             }
         }
 
+        guard generation == searchGeneration else { return }
         if Task.isCancelled {
             errorMessage = "搜索已取消"
         }

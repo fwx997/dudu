@@ -1,0 +1,23 @@
+[
+  {
+    "items": [
+      "r_popGestureType"
+    ]
+  },
+  {
+    "title": "进度信息",
+    "items": [
+      "cr_showCpTitle",
+      "cr_showPProgress",
+      "cr_showFProgress"
+    ]
+  },
+  {
+    "title": "滚动模式",
+    "items": [
+      "cr_fastS",
+      "cr_showS",
+      "cr_showSI"
+    ]
+  }
+]

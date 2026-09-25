@@ -5,7 +5,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>zh_CN</string>
     <key>CFBundleDisplayName</key>
-    <string>嘟嘟</string>
+    <string>香色闺阁</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -17,9 +17,9 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.9.1</string>
+    <string>0.10.0</string>
     <key>CFBundleVersion</key>
-    <string>20260914</string>
+    <string>20260925</string>
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
@@ -53,6 +53,11 @@
     <!-- 文件关联 - Phase 7 -->
     <key>CFBundleDocumentTypes</key>
     <array>
+        <dict>
+            <key>CFBundleTypeName</key><string>香色闺阁站点</string>
+            <key>LSHandlerRank</key><string>Alternate</string>
+            <key>LSItemContentTypes</key><array><string>app.dudu.xbs</string></array>
+        </dict>
         <dict>
             <key>CFBundleTypeName</key>
             <string>EPUB Document</string>
@@ -109,6 +114,13 @@
     <!-- 支持的 UTType -->
     <key>UTImportedTypeDeclarations</key>
     <array>
+        <dict>
+            <key>UTTypeIdentifier</key><string>app.dudu.xbs</string>
+            <key>UTTypeDescription</key><string>香色闺阁站点</string>
+            <key>UTTypeConformsTo</key><array><string>public.data</string></array>
+            <key>UTTypeTagSpecification</key>
+            <dict><key>public.filename-extension</key><array><string>xbs</string></array></dict>
+        </dict>
         <dict>
             <key>UTTypeDescription</key>
             <string>EPUB Document</string>

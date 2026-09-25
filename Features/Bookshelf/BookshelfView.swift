@@ -11,6 +11,7 @@ import SwiftUI
 import CoreData
 
 struct BookshelfView: View {
+    @ObservedObject private var tabState = MainTabState.shared
     @StateObject private var viewModel = BookshelfViewModel()
     @StateObject private var shelfStore = ShelfStore.shared
     @StateObject private var localBookViewModel = LocalBookViewModel()
@@ -26,17 +27,31 @@ struct BookshelfView: View {
     @State private var showingMoveSheet = false
     @State private var showingFolderMenu = false
     @State private var showingLocalBooks = false
+    @State private var showingSettings = false
+    @State private var sourceAction: XBSSourceManageView.InitialAction = .none
+    @State private var selectedBook: Book?
+    @State private var showingReader = false
+    @State private var showingBookDetails = false
 
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
                 headerBar
-                mainContent
+                ZStack {
+                    mainContent
+                        .opacity(tabState.tab == 0 ? 1 : 0)
+                        .allowsHitTesting(tabState.tab == 0)
+                        .accessibilityHidden(tabState.tab != 0)
+                    DiscoverHomeView()
+                        .opacity(tabState.tab == 1 ? 1 : 0)
+                        .allowsHitTesting(tabState.tab == 1)
+                        .accessibilityHidden(tabState.tab != 1)
+                }
             }
 
             // 左抽屉：书架分组选择（对齐 LeftViewController.selectedBookShelfGroup:）
             DrawerOverlay(side: .left, isPresented: $showingLeftDrawer) {
-                ShelfGroupDrawer(store: shelfStore) {
+                ShelfListDrawer(store: shelfStore) {
                     showingLeftDrawer = false
                     Task { await viewModel.loadBooks() }
                 }
@@ -63,9 +78,26 @@ struct BookshelfView: View {
                     },
                     currentViewMode: viewModel.viewMode
                 )
+                .safeAreaInset(edge: .bottom) { drawerActions }
             }
         }
         .navigationBarHidden(true)
+        .background(Color(.systemBackground))
+        .navigationDestination(isPresented: $showingReader) {
+            if let selectedBook { BookReaderRouter(book: selectedBook) }
+        }
+        .sheet(isPresented: $showingBookDetails) {
+            NavigationStack {
+                if let selectedBook { BookDetailView(book: selectedBook) }
+            }
+        }
+        .onChange(of: viewModel.sortBy) { _ in
+            Task { await viewModel.loadBooks() }
+        }
+        .onChange(of: tabState.tab) { _ in
+            isEditing = false
+            selectedBookIds.removeAll()
+        }
     }
 
     // MARK: - 顶栏（真版：文件夹 | 书架/发现分段 | 搜索 ＋）
@@ -122,9 +154,9 @@ struct BookshelfView: View {
             .frame(height: 46)
         } else {
             XSGBTopTabs(
-                onFolder: { showingFolderMenu = true },
+                onFolder: { showingLeftDrawer = true },
                 onSearch: { showingSearch = true },
-                onAdd: { showingAddBook = true }
+                onAdd: { showingFolderMenu = true }
             )
         }
     }
@@ -135,20 +167,26 @@ struct BookshelfView: View {
         Group {
             if viewModel.books.isEmpty && !viewModel.isLoading {
                 EmptyStateView(
-                    title: "书架空空如也",
-                    subtitle: "点击右上角添加书籍或导入书源",
-                    imageName: "books.vertical"
+                    title: "暂无书籍",
+                    subtitle: "点右上角 ＋ 导入站点，或打开本地书籍",
+                    imageName: "book.closed"
                 )
             } else {
                 bookshelfContent
             }
         }
-        .confirmationDialog("文件夹", isPresented: $showingFolderMenu, titleVisibility: .visible) {
-            Button("站点管理") { showingXBSManage = true }
-            Button("书源管理") { showingSourceManage = true }
-            Button("导入本地书籍") { showingAddBook = true }
-            Button("本地书籍列表") { showingLocalBooks = true }
-            Button("打开 txt / epub 文件") { openTextFile() }
+        .confirmationDialog("添加", isPresented: $showingFolderMenu, titleVisibility: .visible) {
+            Button("站点管理") { openSources() }
+            Button("网络导入") { openSources(.network) }
+            Button("剪贴板导入") { openSources(.clipboard) }
+            Button("本地文件导入") { openSources(.file) }
+            Button("新建站点") { openSources(.newSource) }
+            Button("本地书籍") { showingLocalBooks = true }
+            Button("打开文本 / EPUB") { openTextFile() }
+            Button("书单") { showingShudan = true }
+            Button("书架管理") { showingLeftDrawer = true }
+            Button("排序与显示") { showingRightDrawer = true }
+            Button("配置") { showingSettings = true }
             Button("进入编辑模式") {
                 isEditing = true
                 selectedBookIds.removeAll()
@@ -169,8 +207,9 @@ struct BookshelfView: View {
             NavigationStack { SourceManageView() }
         }
         .sheet(isPresented: $showingXBSManage) {
-            NavigationStack { XBSSourceManageView() }
+            NavigationStack { XBSSourceManageView(initialAction: sourceAction, canDismiss: true) }
         }
+        .sheet(isPresented: $showingSettings) { SettingsView() }
         .sheet(isPresented: $showingAddBook) {
             AddBookView { url, completion in
                 Task {
@@ -186,7 +225,7 @@ struct BookshelfView: View {
                 }
             }
         }
-        .sheet(isPresented: $showingSearch) {
+        .sheet(isPresented: $showingSearch, onDismiss: { Task { await viewModel.loadBooks() } }) {
             NavigationStack { SearchResultView() }
         }
         .sheet(isPresented: $showingLocalBooks) {
@@ -223,6 +262,10 @@ struct BookshelfView: View {
             viewModel.groupFilter = Int32(truncatingIfNeeded: newValue)
             Task { await viewModel.loadBooks() }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .importLocalBookNotification)) { notification in
+            guard let url = notification.object as? URL else { return }
+            Task { await importBook(url) }
+        }
         .refreshable {
             await viewModel.loadBooks()
             await viewModel.checkUpdates()
@@ -241,6 +284,29 @@ struct BookshelfView: View {
                 .background(Capsule().fill(Color(.systemBackground)).shadow(color: .black.opacity(0.1), radius: 4))
                 .padding(.top, 4)
             }
+        }
+    }
+
+    private var drawerActions: some View {
+        HStack(spacing: 24) {
+            Button("配置") { showingRightDrawer = false; showingSettings = true }
+            Button("站点") { showingRightDrawer = false; openSources() }
+        }
+        .font(.subheadline)
+        .padding()
+    }
+
+    private func openSources(_ action: XBSSourceManageView.InitialAction = .none) {
+        sourceAction = action
+        showingXBSManage = true
+    }
+
+    private func importBook(_ url: URL) async {
+        do {
+            try await localBookViewModel.importBook(url: url)
+            await viewModel.forceReload()
+        } catch {
+            localBookViewModel.errorMessage = "导入失败：\(error.localizedDescription)"
         }
     }
 
@@ -275,101 +341,86 @@ struct BookshelfView: View {
 
     private var bookGridView: some View {
         ScrollView {
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: 20) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 22) {
                 ForEach(viewModel.books, id: \.bookId) { book in
-                    Group {
-                        if isEditing {
-                            Button {
-                                if selectedBookIds.contains(book.bookId) {
-                                    selectedBookIds.remove(book.bookId)
-                                } else {
-                                    selectedBookIds.insert(book.bookId)
-                                }
-                            } label: {
-                                BookGridItemView(book: book)
-                                    .overlay(alignment: .topTrailing) {
-                                        Image(systemName: selectedBookIds.contains(book.bookId) ? "checkmark.circle.fill" : "circle")
-                                            .font(.title3)
-                                            .foregroundColor(selectedBookIds.contains(book.bookId) ? .accentColor : .white)
-                                            .shadow(radius: 2)
-                                            .padding(4)
-                                    }
-                                    .opacity(selectedBookIds.isEmpty || selectedBookIds.contains(book.bookId) ? 1 : 0.5)
-                            }
-                            .buttonStyle(.plain)
-                        } else {
-                            NavigationLink(destination: BookReaderRouter(book: book)) {
-                                BookGridItemView(book: book)
-                            }
-                            .buttonStyle(.plain)
-                            .simultaneousGesture(LongPressGesture().onEnded { _ in
-                                isEditing = true
-                                selectedBookIds.insert(book.bookId)
-                            })
-                        }
-                    }
+                    shelfBookButton(book, grid: true)
                 }
-
-                if viewModel.isLoading {
-                    ProgressView()
-                        .padding()
-                } else if viewModel.hasMore {
-                    Color.clear
-                        .frame(height: 1)
-                        .onAppear {
-                            Task {
-                                await viewModel.loadMoreBooks()
-                            }
-                        }
-                }
+                loadMoreRow
             }
-            .padding()
+            .padding(14)
         }
-        .refreshable {
-            await viewModel.refreshBooks()
-        }
+        .refreshable { await viewModel.checkUpdates() }
     }
 
     private var bookListView: some View {
         List {
             ForEach(viewModel.books, id: \.bookId) { book in
-                Group {
-                    if isEditing {
-                        Button {
-                            if selectedBookIds.contains(book.bookId) {
-                                selectedBookIds.remove(book.bookId)
-                            } else {
-                                selectedBookIds.insert(book.bookId)
-                            }
-                        } label: {
-                            HStack {
-                                Image(systemName: selectedBookIds.contains(book.bookId) ? "checkmark.circle.fill" : "circle")
-                                    .foregroundColor(selectedBookIds.contains(book.bookId) ? .accentColor : .secondary)
-                                BookListItemView(book: book)
-                            }
-                        }
-                        .buttonStyle(.plain)
-                    } else {
-                        NavigationLink(destination: BookReaderRouter(book: book)) {
-                            BookListItemView(book: book)
-                        }
-                    }
-                }
+                shelfBookButton(book, grid: false)
+                    .listRowInsets(EdgeInsets(top: 9, leading: 14, bottom: 9, trailing: 14))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
             }
-            .onMove { from, to in
-                viewModel.moveBookAt(from: from, to: to)
-            }
-            .onDelete { indexSet in
-                if let index = indexSet.first {
-                    viewModel.removeBook(viewModel.books[index])
-                }
-            }
+            .onMove { viewModel.moveBookAt(from: $0, to: $1) }
+            loadMoreRow.listRowSeparator(.hidden)
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
         .environment(\.editMode, .constant(isEditing ? .active : .inactive))
+        .refreshable { await viewModel.checkUpdates() }
+    }
+
+    @ViewBuilder
+    private var loadMoreRow: some View {
+        if viewModel.isLoading {
+            ProgressView().frame(maxWidth: .infinity)
+        } else if viewModel.hasMore {
+            Color.clear.frame(height: 1)
+                .onAppear { Task { await viewModel.loadMoreBooks() } }
+        }
+    }
+
+    private func shelfBookButton(_ book: Book, grid: Bool) -> some View {
+        Button { selectBook(book) } label: {
+            shelfBookLabel(book, grid: grid)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .onLongPressGesture {
+            isEditing = true
+            selectedBookIds.insert(book.bookId)
+        }
+        .contextMenu { bookActions(book) }
+    }
+
+    private func shelfBookLabel(_ book: Book, grid: Bool) -> some View {
+        HStack(spacing: 10) {
+            if isEditing {
+                Image(systemName: selectedBookIds.contains(book.bookId) ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(.accentColor)
+            }
+            if grid { BookGridItemView(book: book) }
+            else { BookListItemView(book: book) }
+        }
+    }
+
+    @ViewBuilder
+    private func bookActions(_ book: Book) -> some View {
+        Button("书籍详情") { selectedBook = book; showingBookDetails = true }
+        Button("移动到书架") {
+            selectedBookIds = [book.bookId]
+            showingMoveSheet = true
+        }
+        Button("删除书籍", role: .destructive) { viewModel.removeBook(book) }
+    }
+
+    private func selectBook(_ book: Book) {
+        if isEditing {
+            if selectedBookIds.contains(book.bookId) { selectedBookIds.remove(book.bookId) }
+            else { selectedBookIds.insert(book.bookId) }
+            return
+        }
+        selectedBook = book
+        showingReader = true
     }
 }
 
@@ -641,8 +692,7 @@ struct BookGridItemView: View {
                 .frame(maxWidth: .infinity)
                 .aspectRatio(3/4, contentMode: .fill)
                 .background(Color.gray.opacity(0.1))
-                .cornerRadius(8)
-                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                .cornerRadius(2)
 
             Text(book.name)
                 .font(.caption)
@@ -655,9 +705,6 @@ struct BookGridItemView: View {
                 .lineLimit(1)
                 .foregroundColor(.secondary)
 
-            ProgressView(value: book.readProgress)
-                .progressViewStyle(.linear)
-                .tint(.blue)
         }
     }
 }
@@ -685,7 +732,7 @@ struct BookListItemView: View {
                     .lineLimit(1)
 
                 if let chapter = book.latestChapterTitle, !chapter.isEmpty {
-                    Text(chapter)
+                    Text("新 · " + chapter)
                         .font(.caption2)
                         .foregroundColor(.secondary.opacity(0.75))
                         .lineLimit(1)
@@ -730,38 +777,18 @@ struct BookshelfThumbView: View {
         }
     }
 
-    // 真版示例书架的四色文件图标：文本蓝T / 图片紫 / 视频橙播放 / 音频粉音符
     private var typeBadge: some View {
-        ZStack {
-            let colors: (Color, Color) = badgeColors
-            RoundedRectangle(cornerRadius: 6)
-                .fill(LinearGradient(
-                    colors: [colors.0, colors.1],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ))
-            typeGlyph
-                .font(.system(size: 22, weight: .semibold))
-                .foregroundColor(.white)
-        }
+        Image("xsg-file-" + fileType)
+            .resizable()
+            .scaledToFit()
     }
 
-    @ViewBuilder
-    private var typeGlyph: some View {
+    private var fileType: String {
         switch book.type {
-        case 2: Image(systemName: "photo.fill")
-        case 1: Image(systemName: "music.note")
-        case 3: Image(systemName: "play.circle.fill")
-        default: Text("T").font(.system(size: 24, weight: .bold, design: .rounded))
-        }
-    }
-
-    private var badgeColors: (Color, Color) {
-        switch book.type {
-        case 2: return (Color(red: 0.62, green: 0.40, blue: 0.85), Color(red: 0.45, green: 0.28, blue: 0.72))
-        case 1: return (Color(red: 0.95, green: 0.45, blue: 0.60), Color(red: 0.85, green: 0.30, blue: 0.48))
-        case 3: return (Color(red: 0.95, green: 0.55, blue: 0.25), Color(red: 0.85, green: 0.40, blue: 0.15))
-        default: return (Color(red: 0.30, green: 0.56, blue: 0.95), Color(red: 0.20, green: 0.42, blue: 0.82))
+        case 2: return "image"
+        case 1: return "audio"
+        case 3: return "video"
+        default: return "text"
         }
     }
 }

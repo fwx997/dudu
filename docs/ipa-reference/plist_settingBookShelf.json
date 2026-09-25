@@ -1,0 +1,53 @@
+[
+  {
+    "items": [
+      "bs_shiDu",
+      "changLiang"
+    ]
+  },
+  {
+    "title": "书架界面",
+    "items": [
+      "bs_sortType",
+      "bs_updateType",
+      "autoRead"
+    ]
+  },
+  {
+    "title": "其他界面",
+    "items": [
+      {
+        "cf_title": "书本搜索界面设置",
+        "cf_controller_class": "LCSettingVCBase",
+        "cf_controller_param": {
+          "fileName": "dir_res/plist_settingSearchView.plist"
+        },
+        "UITableViewCellAccessoryType": 1
+      },
+      {
+        "cf_title": "漫画阅读界面设置",
+        "cf_controller_class": "LCSettingVCBase",
+        "cf_controller_param": {
+          "fileName": "dir_res/plist_settingComicRead.plist"
+        },
+        "UITableViewCellAccessoryType": 1
+      },
+      {
+        "cf_title": "文本阅读界面设置",
+        "cf_controller_class": "TextReadSettingVC",
+        "UITableViewCellAccessoryType": 1
+      },
+      "tr_useLongPress"
+    ]
+  },
+  {
+    "title": "缓存管理",
+    "titlesub": "经常使用的用户可以偶尔清理一下，虽然功能简单，但实用，等完成主要功能后再回来做好用的缓存管理...",
+    "items": [
+      {
+        "cf_title": "清理缓存",
+        "cf_selectorname": "clearImageAndAudio"
+      }
+    ]
+  }
+]

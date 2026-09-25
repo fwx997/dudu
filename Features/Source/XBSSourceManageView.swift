@@ -18,132 +18,180 @@ struct XBSSourceManageView: View {
     @State private var showingEditor = false
     @State private var editingSource: XBSSource?
 
+    enum InitialAction { case none, network, clipboard, file, newSource }
+    var initialAction: InitialAction = .none
+    var canDismiss = false
+    @Environment(\.dismiss) private var dismiss
+    @State private var didRunInitialAction = false
+    @State private var showingImportMenu = false
+    @State private var isEditing = false
+    @State private var selectedAliases: Set<String> = []
+    @State private var confirmingDelete = false
+
+    private var actionSources: [XBSSource] {
+        isEditing ? store.sources.filter { selectedAliases.contains($0.alias) } : store.sources
+    }
+
     var body: some View {
-        Group {
-            if store.sources.isEmpty {
-                VStack(spacing: 16) {
-                    Image(systemName: "square.grid.2x2")
-                        .font(.system(size: 56))
-                        .foregroundColor(.secondary.opacity(0.5))
-                    Text("还没有站点")
-                        .font(.headline)
-                    Text("点击右上角 + 导入 .xbs / .json 书源\n支持粘贴书源链接或导入本地文件")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                List {
-                    ForEach(store.sources) { source in
-                        HStack(spacing: 12) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(spacing: 6) {
-                                    Text(source.sourceName)
-                                        .font(.body)
-                                        .fontWeight(.medium)
-                                    Text(source.typeName)
-                                        .font(.caption2)
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal, 6)
-                                        .padding(.vertical, 2)
-                                        .background(source.typeName == "文本" ? Color.blue : Color.orange)
-                                        .cornerRadius(4)
+        sourceList
+            .navigationTitle("书源管理 (\(store.sources.count))")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.visible, for: .navigationBar)
+            .toolbar { navigationTools }
+            .confirmationDialog("导入站点", isPresented: $showingImportMenu, titleVisibility: .visible) {
+                networkImportButton
+                clipboardImportButton
+                localFileImportButton
+            }
+            .confirmationDialog("删除被选中站点", isPresented: $confirmingDelete, titleVisibility: .visible) {
+                Button("删除 \(selectedAliases.count) 个站点", role: .destructive) { deleteSelection() }
+            } message: { Text("书架中的书籍会保留。") }
+            .alert("网络导入", isPresented: $showingNetworkImport) {
+                TextField("站点链接", text: $importURLText)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                Button("导入") { Task { await importFromNetwork() } }
+                Button("取消", role: .cancel) {}
+            }
+            .sheet(isPresented: $showingEditor) {
+                NavigationStack { XBSSourceEditView(store: store, source: editingSource) }
+            }
+            .alert("导入结果", isPresented: Binding(
+                get: { statusMessage != nil }, set: { if !$0 { statusMessage = nil } }
+            )) {
+                Button("确定", role: .cancel) { statusMessage = nil }
+            } message: { Text(statusMessage ?? "") }
+            .overlay { if importing { ProgressView("正在导入…").padding().background(.regularMaterial) } }
+            .task { runInitialAction() }
+    }
 
-                                    if let status = store.checkStatus[source.alias] {
-                                        Text(status == "ok" ? "可用" : "失败")
-                                            .font(.caption2)
-                                            .foregroundColor(.white)
-                                            .padding(.horizontal, 6)
-                                            .padding(.vertical, 2)
-                                            .background(status == "ok" ? Color.green : Color.red)
-                                            .cornerRadius(4)
-                                    }
-                                }
-                                Text(source.host)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(1)
-                            }
+    private var sourceList: some View {
+        List {
+            ForEach([SourceType.text, .image, .audio, .video], id: \.rawValue) { type in
+                sourceSection(type)
+            }
+        }
+        .listStyle(.plain)
+        .environment(\.defaultMinListRowHeight, 44)
+        .overlay { if store.sources.isEmpty { emptySources } }
+        .safeAreaInset(edge: .bottom) { if isEditing { selectionBar } }
+    }
 
-                            Spacer()
+    private var emptySources: some View {
+        VStack(spacing: 12) {
+            Text("无可用站点").foregroundColor(.secondary)
+            Button("导入站点") { showingImportMenu = true }
+        }
+    }
 
-                            Toggle("", isOn: Binding(
-                                get: { source.enabled },
-                                set: { store.setEnabled(source.alias, enabled: $0) }
-                            ))
-                            .labelsHidden()
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            editingSource = source
-                            showingEditor = true
-                        }
-                    }
-                    .onDelete { indexSet in
-                        for index in indexSet {
-                            store.remove(store.sources[index].alias)
-                        }
-                    }
-                }
-                .listStyle(.insetGrouped)
+    @ViewBuilder
+    private func sourceSection(_ type: SourceType) -> some View {
+        let sources = store.sources.filter { $0.sourceType == type.rawValue }
+        if !sources.isEmpty {
+            Section(type.displayName) {
+                ForEach(sources) { source in sourceRow(source) }
             }
         }
-        .navigationTitle("书源管理 (\(store.sources.count))")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 14) {
-                    Button {
-                        Task { await store.checkAll() }
-                    } label: {
-                        Text("同步").font(.subheadline)
-                    }
-                    .disabled(store.isChecking || store.sources.isEmpty)
-                    Menu {
-                        newSiteButton
-                        checkPageLink
-                        Divider()
-                        networkImportButton
-                        clipboardImportButton
-                        localFileImportButton
-                        Divider()
-                        checkAllButton
-                        exportButton
-                        Divider()
-                        searchSiteLinks
-                    } label: {
-                        Text("更多").font(.subheadline)
-                    }
-                }
+    }
+
+    private func sourceRow(_ source: XBSSource) -> some View {
+        Button { selectSource(source) } label: {
+            sourceLabel(source)
+        }
+        .buttonStyle(.plain)
+        .listRowInsets(EdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 14))
+        .onLongPressGesture { isEditing = true; selectedAliases.insert(source.alias) }
+        .swipeActions {
+            Button(source.enabled ? "禁用" : "启用") { store.setEnabled(source.alias, enabled: !source.enabled) }
+                .tint(.orange)
+        }
+    }
+
+    private func sourceLabel(_ source: XBSSource) -> some View {
+        HStack(spacing: 10) {
+            if isEditing {
+                Image(systemName: selectedAliases.contains(source.alias) ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(.accentColor)
             }
-        }
-        .overlay {
-            if importing {
-                ProgressView("正在导入...")
-            } else if store.isChecking {
-                ProgressView("检测中 \(store.checkDone)/\(store.checkTotal)...")
+            Text(source.sourceName).foregroundColor(source.enabled ? .primary : .secondary)
+            Spacer()
+            if let status = store.checkStatus[source.alias] {
+                Image(systemName: status == "ok" ? "checkmark.circle" : "exclamationmark.circle")
+                    .font(.caption).foregroundColor(status == "ok" ? .secondary : .red)
             }
+            Image(systemName: "chevron.right").font(.caption).foregroundColor(.secondary)
         }
-        .alert("网络导入", isPresented: $showingNetworkImport) {
-            TextField("粘贴书源链接（.xbs / .json）", text: $importURLText)
-            Button("导入") {
-                Task { await importFromNetwork() }
+        .font(.system(size: 16))
+        .frame(minHeight: 44)
+        .contentShape(Rectangle())
+    }
+
+    @ToolbarContentBuilder
+    private var navigationTools: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            if canDismiss { Button("返回") { dismiss() } }
+        }
+        ToolbarItem(placement: .navigationBarTrailing) {
+            HStack(spacing: 16) {
+                Button("同步") { showingImportMenu = true }
+                Menu("更多") { moreActions }
             }
-            Button("取消", role: .cancel) {}
-        } message: {
-            Text("支持 .xbs 加密书源与明文 JSON 书源")
+            .font(.system(size: 16))
         }
-        .sheet(isPresented: $showingEditor) {
-            NavigationStack { XBSSourceEditView(store: store, source: editingSource) }
+    }
+
+    @ViewBuilder
+    private var moreActions: some View {
+        newSiteButton
+        Button(isEditing ? "完成编辑" : "选择站点") { isEditing.toggle(); selectedAliases.removeAll() }
+        exportButton.disabled(actionSources.isEmpty)
+        Button("反转可用性") { toggleAvailability() }.disabled(actionSources.isEmpty)
+        Button("删除被选中站点", role: .destructive) { confirmingDelete = true }
+            .disabled(selectedAliases.isEmpty)
+        checkPageLink
+        Divider()
+        networkImportButton
+        clipboardImportButton
+        localFileImportButton
+        searchSiteLinks
+    }
+
+    private var selectionBar: some View {
+        HStack {
+            Button("全选") { selectedAliases = Set(store.sources.map(\.alias)) }
+            Spacer()
+            Text("已选 \(selectedAliases.count) 个").foregroundColor(.secondary)
+            Spacer()
+            Button("完成") { isEditing = false; selectedAliases.removeAll() }
         }
-        .alert("导入结果", isPresented: Binding(
-            get: { statusMessage != nil },
-            set: { if !$0 { statusMessage = nil } }
-        )) {
-            Button("确定", role: .cancel) { statusMessage = nil }
-        } message: {
-            Text(statusMessage ?? "")
+        .font(.subheadline).padding(14).background(.bar)
+    }
+
+    private func selectSource(_ source: XBSSource) {
+        guard isEditing else { editingSource = source; showingEditor = true; return }
+        if selectedAliases.contains(source.alias) { selectedAliases.remove(source.alias) }
+        else { selectedAliases.insert(source.alias) }
+    }
+
+    private func deleteSelection() {
+        for alias in selectedAliases { store.remove(alias) }
+        selectedAliases.removeAll()
+        isEditing = false
+    }
+
+    private func toggleAvailability() {
+        for source in actionSources { store.setEnabled(source.alias, enabled: !source.enabled) }
+    }
+
+    private func runInitialAction() {
+        guard !didRunInitialAction else { return }
+        didRunInitialAction = true
+        switch initialAction {
+        case .none: break
+        case .network: showingNetworkImport = true
+        case .clipboard: importFromClipboard()
+        case .file: openXBSFilePicker()
+        case .newSource: editingSource = nil; showingEditor = true
         }
     }
 
@@ -153,7 +201,7 @@ struct XBSSourceManageView: View {
 
     /// 导出全部站点为临时 .xbs 文件（与香色闺阁格式互通）
     private func exportURL() -> URL {
-        let data = XBSSourceFile.exportXBS(sources: store.sources)
+        let data = XBSSourceFile.exportXBS(sources: actionSources)
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("dudu_站点备份.xbs")
         try? data.write(to: url, options: .atomic)
         return url
@@ -286,7 +334,7 @@ extension XBSSourceManageView {
 
     private var exportButton: some View {
         ShareLink(item: exportURL(), preview: SharePreview("站点备份.xbs")) {
-            Label("导出全部站点（.xbs）", systemImage: "square.and.arrow.up")
+            Label("导出站点", systemImage: "square.and.arrow.up")
         }
     }
 

@@ -11,23 +11,11 @@ import Combine
 
 @MainActor
 final class BookshelfViewModel: ObservableObject {
-    @Published var books: [Book] = []
-    @Published var isLoading = false
-    @Published var errorMessage: String?
-    @Published var hasMore = true
-    
-    @Published var viewMode: ViewMode = .list
-    @Published var groupFilter: Int32 = 0
-    @Published var sortBy: SortBy = .lastRead
-    
-    private let pageSize = 50
-    private var currentPage = 0
-    
     enum ViewMode: Int, CaseIterable {
         case grid = 0
         case list = 1
     }
-    
+
     enum SortBy: Int, CaseIterable {
         case lastRead = 0
         case name = 1
@@ -35,8 +23,30 @@ final class BookshelfViewModel: ObservableObject {
         case update = 3
         case manual = 4
     }
+
+    @Published var books: [Book] = []
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    @Published var hasMore = true
+    
+    @Published var viewMode: ViewMode = .list {
+        didSet { UserDefaults.standard.set(viewMode.rawValue, forKey: "shelf.viewMode") }
+    }
+    @Published var groupFilter: Int32 = 0
+    @Published var sortBy: SortBy = .lastRead {
+        didSet { UserDefaults.standard.set(sortBy.rawValue, forKey: "shelf.sortBy") }
+    }
+    
+    private let pageSize = 50
+    private var currentPage = 0
     
     private var loadTask: Task<Void, Never>?
+
+    init() {
+        let defaults = UserDefaults.standard
+        viewMode = ViewMode(rawValue: (defaults.object(forKey: "shelf.viewMode") as? Int) ?? 1) ?? .list
+        sortBy = SortBy(rawValue: (defaults.object(forKey: "shelf.sortBy") as? Int) ?? 0) ?? .lastRead
+    }
     
     deinit {
         loadTask?.cancel()
@@ -94,9 +104,7 @@ final class BookshelfViewModel: ObservableObject {
         request.fetchLimit = size
         request.fetchOffset = page * size
 
-        if groupFilter != 0 {
-            request.predicate = NSPredicate(format: "group == %d", groupFilter)
-        }
+        request.predicate = NSPredicate(format: "group == %d", groupFilter)
 
         switch sortBy {
         case .lastRead:

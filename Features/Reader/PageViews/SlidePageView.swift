@@ -40,7 +40,7 @@ private struct SinglePageContent: View {
     
     var body: some View {
         ZStack {
-            viewModel.backgroundColor
+            XSGPaperBackground(viewModel: viewModel)
             
             ScrollView(.vertical, showsIndicators: false) {
                 Text(text)

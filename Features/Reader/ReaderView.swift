@@ -35,7 +35,7 @@ struct ReaderView: View {
         GeometryReader { geometry in
             ZStack {
                 // 背景色
-                viewModel.backgroundColor
+                XSGPaperBackground(viewModel: viewModel)
                     .ignoresSafeArea()
                 
                 // 内容区域
@@ -64,13 +64,11 @@ struct ReaderView: View {
                         Spacer()
 
                         Button(action: { showingTTSControls = true }) {
-                            Image(systemName: "headphones")
-                                .font(.body)
+                            XSGReaderIcon(name: "yuyin", size: 22)
                                 .frame(width: 40, height: 44)
                         }
                         Button(action: { showingChapterList = true }) {
-                            Image(systemName: "book")
-                                .font(.body)
+                            XSGReaderIcon(name: "mulu", size: 22)
                                 .frame(width: 40, height: 44)
                         }
                         Menu {
@@ -117,8 +115,7 @@ struct ReaderView: View {
                                 Label("百度搜索", systemImage: "safari")
                             }
                         } label: {
-                            Image(systemName: "ellipsis.circle")
-                                .font(.body)
+                            XSGReaderIcon(name: "more", size: 22)
                                 .frame(width: 40, height: 44)
                         }
                     }
@@ -194,10 +191,10 @@ struct ReaderView: View {
                             .padding(.bottom, 6)
 
                             HStack(spacing: 0) {
-                                ReaderBottomPanelButton(icon: "list.bullet", title: "目录") { showingChapterList = true }
-                                ReaderBottomPanelButton(icon: "arrow.down.circle", title: "缓存") { showingCacheRange = true }
-                                ReaderBottomPanelButton(icon: "textformat.size", title: "设置") { showingSettings = true }
-                                ReaderBottomPanelButton(icon: "arrow.triangle.2.circlepath", title: "换源") { showingChangeSource = true }
+                                ReaderBottomPanelButton(image: "mulu", title: "目录") { showingChapterList = true }
+                                ReaderBottomPanelButton(image: "yudu", title: "缓存") { showingCacheRange = true }
+                                ReaderBottomPanelButton(image: "zihao", title: "设置") { showingSettings = true }
+                                ReaderBottomPanelButton(image: "shuaxin", title: "换源") { showingChangeSource = true }
                             }
                             .padding(.vertical, 10)
                         }
@@ -350,15 +347,14 @@ struct ReaderView: View {
 // MARK: - 底部面板按钮（真版深色面板：图标+文字白色）
 
 struct ReaderBottomPanelButton: View {
-    let icon: String
+    let image: String
     let title: String
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             VStack(spacing: 5) {
-                Image(systemName: icon)
-                    .font(.body)
+                XSGReaderIcon(name: image, size: 23)
                 Text(title)
                     .font(.caption2)
             }

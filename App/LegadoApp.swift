@@ -48,32 +48,40 @@ struct LegadoApp: App {
         let ext = url.pathExtension.lowercased()
         
         switch ext {
-        case "json":
-            importMessage = "正在导入书源..."
-            showingImportAlert = true
-            Task {
-                do {
-                    let data = try Data(contentsOf: url)
-                    if let jsonString = String(data: data, encoding: .utf8) {
-                        var result: Result<String, Error>?
-                        URLSchemeHandler.importBookSourceJSON(jsonString) { r in result = r }
-                        if case .success(let msg) = result {
-                            await MainActor.run { importMessage = msg }
-                        }
-                    }
-                } catch {
-                    await MainActor.run { importMessage = "导入失败：\(error.localizedDescription)" }
-                }
-            }
+        case "xbs", "json":
+            Task { await importSourceFile(url) }
         case "txt", "epub":
             NotificationCenter.default.post(name: .importLocalBookNotification, object: url)
-            importMessage = "正在导入本地书籍..."
-            showingImportAlert = true
         default:
             importMessage = "不支持的文件格式：.\(ext)"
             showingImportAlert = true
         }
     }
+    @MainActor
+    private func importSourceFile(_ url: URL) async {
+        let accessing = url.startAccessingSecurityScopedResource()
+        defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+        do {
+            let data = try Data(contentsOf: url)
+            if let sources = try? XBSSourceFile.parse(data: data) {
+                let added = XBSSourceStore.shared.importSources(sources)
+                importMessage = "导入成功：共 \(sources.count) 个站点，新增 \(added) 个"
+            } else if url.pathExtension.lowercased() == "json", let text = String(data: data, encoding: .utf8) {
+                URLSchemeHandler.importBookSourceJSON(text) { result in
+                    switch result {
+                    case .success(let message): importMessage = message
+                    case .failure(let error): importMessage = "导入失败：\(error.localizedDescription)"
+                    }
+                }
+            } else {
+                importMessage = "无法识别此站点文件"
+            }
+        } catch {
+            importMessage = "导入失败：\(error.localizedDescription)"
+        }
+        showingImportAlert = true
+    }
+
 }
 
 // MARK: - App Delegate

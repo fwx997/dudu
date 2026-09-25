@@ -11,33 +11,7 @@ import SwiftUI
 // MARK: - 发现tab（顶栏与书架一致，内容区为站点浏览）
 
 struct DiscoverTabView: View {
-    @State private var showingSearch = false
-    @State private var showingAddMenu = false
-    @StateObject private var store = XBSSourceStore.shared
-
-    var body: some View {
-        VStack(spacing: 0) {
-            XSGBTopTabs(
-                onFolder: {},
-                onSearch: { showingSearch = true },
-                onAdd: { showingAddMenu = true }
-            )
-            .disabled(false)
-
-            DiscoverHomeView()
-        }
-        .navigationBarHidden(true)
-        .sheet(isPresented: $showingSearch) {
-            NavigationStack { SearchResultView() }
-        }
-        .confirmationDialog("添加", isPresented: $showingAddMenu, titleVisibility: .visible) {
-            Button("新建站点") {}
-            Button("网络导入书源") {}
-            Button("剪贴板导入书源") {}
-            Button("取消", role: .cancel) {}
-        }
-        .task { store.load() }
-    }
+    var body: some View { DiscoverHomeView() }
 }
 
 // MARK: - 发现主页：按内容类型分组的站点列表
@@ -76,7 +50,7 @@ struct DiscoverHomeView: View {
                     sourceSection("音频/听书", audioSources)
                     sourceSection("视频/电影/电视剧", videoSources)
                 }
-                .listStyle(.insetGrouped)
+                .listStyle(.plain)
             }
         }
     }
@@ -109,7 +83,7 @@ struct DiscoverHomeView: View {
 // MARK: - 源内浏览页（真版：返回 | 源名 | 搜索 切换 + 分类筛选 + 书籍列表）
 
 struct SourceBrowsePage: View {
-    let source: XBSSource
+    @State var source: XBSSource
     @State private var categories: [XBSEngine.XBSCategory] = []
     @State private var selectedCategory: XBSEngine.XBSCategory?
     @State private var books: [XBSBook] = []
@@ -121,6 +95,14 @@ struct SourceBrowsePage: View {
     @State private var searchKeyword = ""
     @State private var searchResults: [XBSBook] = []
     @State private var showSearchField = false
+    @State private var showingSourcePicker = false
+    @State private var loadGeneration = UUID()
+    @State private var filterGroups: [XBSEngine.XBSFilterGroup] = []
+    @State private var filters: [String: String] = [:]
+
+    private var browseKey: String {
+        source.alias + "|" + (selectedCategory?.id ?? "") + "|" + filters.keys.sorted().map { $0 + "=" + (filters[$0] ?? "") }.joined(separator: "&")
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -132,6 +114,7 @@ struct SourceBrowsePage: View {
         }
         .navigationTitle(source.sourceName)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.visible, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: 14) {
@@ -141,7 +124,7 @@ struct SourceBrowsePage: View {
                         Text(showSearchField ? "浏览" : "搜索")
                     }
                     Button {
-                        // 切换：回到站点列表
+                        showingSourcePicker = true
                     } label: {
                         Text("切换")
                     }
@@ -149,11 +132,10 @@ struct SourceBrowsePage: View {
                 .font(.subheadline)
             }
         }
-        .task {
-            categories = XBSEngine.shared.bookWorldCategories(source: source)
-            selectedCategory = categories.first
-            await reload()
-        }
+        .task(id: source.alias) { configureSource() }
+        .task(id: browseKey) { if source.action("bookWorld") != nil { await reload() } }
+        .sheet(isPresented: $showingSourcePicker) { sourcePicker }
+        .onChange(of: selectedCategory) { _ in configureFilters() }
     }
 
     // MARK: 搜索栏
@@ -199,35 +181,63 @@ struct SourceBrowsePage: View {
         .padding(.vertical, 8)
     }
 
-    // MARK: 分类筛选（真版：顿号/间隔点分隔，选中红色）
+    private var sourcePicker: some View {
+        NavigationStack {
+            List(XBSSourceStore.shared.sources.filter { $0.enabled }) { item in
+                Button(item.sourceName) { source = item; showingSourcePicker = false }
+                    .foregroundColor(item.alias == source.alias ? .accentColor : .primary)
+            }
+            .listStyle(.plain)
+            .navigationTitle("切换站点")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { Button("取消") { showingSourcePicker = false } }
+        }
+    }
+
+    private func configureSource() {
+        searchResults = []
+        errorMessage = nil
+        categories = XBSEngine.shared.bookWorldCategories(source: source)
+        selectedCategory = categories.first
+        showSearchField = source.action("bookWorld") == nil
+        configureFilters()
+    }
+
+    private func configureFilters() {
+        filterGroups = XBSEngine.shared.bookWorldFilters(source: source, category: selectedCategory)
+        filters = Dictionary(uniqueKeysWithValues: filterGroups.map { ($0.key, $0.options.first?.value ?? "") })
+    }
 
     @ViewBuilder
     private var filterChips: some View {
-        if !showSearchField && !categories.isEmpty {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 0) {
-                    ForEach(categories) { category in
-                        let selected = category == selectedCategory
-                        Button {
-                            selectedCategory = category
-                            Task { await reload() }
-                        } label: {
-                            Text(category.name)
-                                .font(.subheadline)
-                                .foregroundColor(selected ? .accentColor : .primary)
-                        }
-                        .buttonStyle(.plain)
-                        .padding(.horizontal, 6)
-                        if category != categories.last {
-                            Text("·")
-                                .foregroundColor(.secondary.opacity(0.5))
-                                .font(.caption)
-                        }
-                    }
-                }
-                .padding(.horizontal, 8)
+        if !showSearchField {
+            VStack(alignment: .leading, spacing: 12) {
+                categoryOptions
+                ForEach(filterGroups) { group in filterOptions(group) }
             }
-            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+        }
+    }
+
+    private var categoryOptions: some View {
+        FlowLayout(spacing: 14) {
+            ForEach(categories) { category in
+                Button(category.name) { selectedCategory = category }
+                    .font(.system(size: 14))
+                    .foregroundColor(category == selectedCategory ? XSGTheme.brandRed : .primary)
+            }
+        }
+    }
+
+    private func filterOptions(_ group: XBSEngine.XBSFilterGroup) -> some View {
+        FlowLayout(spacing: 12) {
+            ForEach(group.options) { option in
+                Button(option.name) { filters[group.key] = option.value }
+                    .font(.system(size: 13))
+                    .foregroundColor(filters[group.key] == option.value ? XSGTheme.brandRed : .secondary)
+            }
         }
     }
 
@@ -246,12 +256,16 @@ struct SourceBrowsePage: View {
                         Image(systemName: "book.closed")
                             .font(.system(size: 44))
                             .foregroundColor(.secondary.opacity(0.4))
-                        Text(showSearchField ? "没有找到相关书籍" : "该分类下暂无书籍")
+                        Text(errorMessage ?? (showSearchField ? "输入书名或作者搜索" : "该分类下暂无书籍"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.top, 60)
+                    if errorMessage != nil {
+                        Button("重试") { Task { if showSearchField { await search() } else { await reload() } } }
+                            .frame(maxWidth: .infinity)
+                    }
                 } else {
                     ForEach(list, id: \.detailUrl) { book in
                         NavigationLink {
@@ -284,6 +298,9 @@ struct SourceBrowsePage: View {
     // MARK: 数据
 
     private func reload() async {
+        loadGeneration = UUID()
+        isLoading = false
+        errorMessage = nil
         page = 1
         books.removeAll()
         hasMore = true
@@ -292,20 +309,24 @@ struct SourceBrowsePage: View {
 
     private func loadMore() async {
         guard !isLoading, hasMore else { return }
+        let generation = loadGeneration
         isLoading = true
-        defer { isLoading = false }
+        defer { if generation == loadGeneration { isLoading = false } }
         do {
             let newBooks = try await XBSEngine.shared.bookWorld(
                 source: source,
                 category: selectedCategory,
-                page: page
+                page: page,
+                filters: filters
             )
+            guard generation == loadGeneration, !Task.isCancelled else { return }
             let existing = Set(books.map { $0.detailUrl })
             books.append(contentsOf: newBooks.filter { !existing.contains($0.detailUrl) })
             page += 1
             hasMore = !newBooks.isEmpty
             errorMessage = nil
         } catch {
+            guard generation == loadGeneration, !Task.isCancelled else { return }
             errorMessage = "加载失败：\(error.localizedDescription)"
             hasMore = false
         }
@@ -314,12 +335,18 @@ struct SourceBrowsePage: View {
     private func search() async {
         let keyword = searchKeyword.trimmingCharacters(in: .whitespaces)
         guard !keyword.isEmpty else { return }
+        let alias = source.alias
         isSearching = true
+        errorMessage = nil
         defer { isSearching = false }
         do {
-            searchResults = try await XBSEngine.shared.search(source: source, keyword: keyword)
+            let results = try await XBSEngine.shared.search(source: source, keyword: keyword)
+            guard alias == source.alias, keyword == searchKeyword.trimmingCharacters(in: .whitespaces) else { return }
+            searchResults = results
+            if results.isEmpty { errorMessage = "没有找到相关书籍" }
         } catch {
-            searchResults = []
+            guard alias == source.alias else { return }
+            errorMessage = "搜索失败：\(error.localizedDescription)"
         }
     }
 }
@@ -333,14 +360,14 @@ struct SourceBookRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             BookCoverView(url: book.cover)
-                .frame(width: 62, height: 84)
+                .frame(width: 60, height: 82)
                 .background(Color.gray.opacity(0.08))
-                .cornerRadius(5)
+                .cornerRadius(2)
 
             VStack(alignment: .leading, spacing: 5) {
                 Text(book.name)
                     .font(.body)
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.primary)
                     .lineLimit(1)
 
                 HStack(spacing: 0) {

@@ -115,7 +115,7 @@ struct CoverPageView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(viewModel.pagePadding)
             }
-            .background(viewModel.backgroundColor)
+            .background(XSGPaperBackground(viewModel: viewModel))
         } else {
             Color.clear
         }
