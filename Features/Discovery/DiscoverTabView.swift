@@ -101,7 +101,11 @@ struct SourceBrowsePage: View {
     @State private var filters: [String: String] = [:]
 
     private var browseKey: String {
-        source.alias + "|" + (selectedCategory?.id ?? "") + "|" + filters.keys.sorted().map { $0 + "=" + (filters[$0] ?? "") }.joined(separator: "&")
+        let category = selectedCategory?.id ?? ""
+        let selections = filters.keys.sorted().map { key in
+            key + "=" + (filters[key] ?? "")
+        }.joined(separator: "&")
+        return [source.alias, category, selections].joined(separator: "|")
     }
 
     var body: some View {
