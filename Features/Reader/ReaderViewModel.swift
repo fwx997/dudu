@@ -90,6 +90,11 @@ class ReaderViewModel: ObservableObject {
             lineSpacing = CGFloat(storedLineSpacing)
         }
 
+        let storedParagraphSpacing = defaults.double(forKey: "reader.paragraphSpacing")
+        if storedParagraphSpacing > 0 {
+            paragraphSpacing = CGFloat(storedParagraphSpacing)
+        }
+
         let storedMargin = defaults.double(forKey: "reader.pageMargin")
         if storedMargin > 0 {
             let margin = CGFloat(storedMargin)

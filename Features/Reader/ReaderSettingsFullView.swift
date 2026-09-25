@@ -9,32 +9,32 @@ import SwiftUI
 
 struct ReaderSettingsFullView: View {
 
-    @AppStorage("tr_showTime") private var showTime = true
-    @AppStorage("tr_showBatView") private var showBattery = true
+    @AppStorage("tr_showTime") private var showTime = false
+    @AppStorage("tr_showBatView") private var showBattery = false
     @AppStorage("tr_showCpTitle") private var showCpTitle = true
     @AppStorage("tr_showProgress") private var showProgress = true
     @Environment(\.dismiss) var dismiss
 
-    @AppStorage("reader.fontSize") private var storedFontSize: Double = 18
-    @AppStorage("reader.lineSpacing") private var storedLineSpacing: Double = 8
-    @AppStorage("reader.paragraphSpacing") private var storedParagraphSpacing: Double = 12
-    @AppStorage("reader.pageMargin") private var storedPageMargin: Double = 16
+    @AppStorage("reader.fontSize") private var storedFontSize: Double = 20
+    @AppStorage("reader.lineSpacing") private var storedLineSpacing: Double = 10
+    @AppStorage("reader.paragraphSpacing") private var storedParagraphSpacing: Double = 14
+    @AppStorage("reader.pageMargin") private var storedPageMargin: Double = 20
     @AppStorage("reader.brightness") private var storedBrightness: Double = 1.0
     @AppStorage("reader.theme") private var storedTheme: String = ReaderThemeType.light.rawValue
     @AppStorage("pageAnimation") private var storedPageAnimation: String = PageAnimation.cover.rawValue
-    @AppStorage("reader.fontFamily") private var storedFontFamily: String = "System"
+    @AppStorage("reader.fontName") private var storedFontFamily: String = ""
     @AppStorage("reader.showStatusBar") private var storedShowStatusBar: Bool = false
     @AppStorage("reader.clickToFlip") private var storedClickToFlip: Bool = true
     
     // 阅读配置
-    @State private var fontSize: Double = 18
-    @State private var lineSpacing: Double = 8
-    @State private var paragraphSpacing: Double = 12
-    @State private var pageMargin: Double = 16
+    @State private var fontSize: Double = 20
+    @State private var lineSpacing: Double = 10
+    @State private var paragraphSpacing: Double = 14
+    @State private var pageMargin: Double = 20
     @State private var brightness: Double = 1.0
     @State private var theme: ReaderThemeType = .light
     @State private var pageAnimation: PageAnimation = .cover
-    @State private var fontFamily: String = "System"
+    @State private var fontFamily: String = ""
     @State private var showStatusBar = false
     @State private var clickToFlip = true
     
@@ -82,10 +82,10 @@ struct ReaderSettingsFullView: View {
                     Stepper("段距：\(Int(paragraphSpacing))", value: $paragraphSpacing, in: 0...30, step: 2)
                     
                     Picker("字体", selection: $fontFamily) {
-                        Text("系统").tag("System")
-                        Text("宋体").tag("Songti")
-                        Text("黑体").tag("Heiti")
-                        Text("楷体").tag("Kaiti")
+                        Text("系统").tag("")
+                        Text("宋体").tag("Songti SC")
+                        Text("黑体").tag("Heiti SC")
+                        Text("楷体").tag("Kaiti SC")
                     }
                     .pickerStyle(.menu)
                 }
@@ -101,7 +101,7 @@ struct ReaderSettingsFullView: View {
                 }
                 
                 Section(header: Text("显示")) {
-                    Stepper("页边距：\(Int(pageMargin))", value: $pageMargin, in: 0...40, step: 4)
+                    Stepper("页边距：\(Int(pageMargin))", value: $pageMargin, in: 0...60, step: 4)
                     
                     Slider(value: $brightness, in: 0.5...1.5, step: 0.1) {
                         Text("亮度")
@@ -153,14 +153,14 @@ struct ReaderSettingsFullView: View {
     }
     
     private func resetToDefault() {
-        fontSize = 18
-        lineSpacing = 8
-        paragraphSpacing = 12
-        pageMargin = 16
+        fontSize = 20
+        lineSpacing = 10
+        paragraphSpacing = 14
+        pageMargin = 20
         brightness = 1.0
         theme = .light
         pageAnimation = .cover
-        fontFamily = "System"
+        fontFamily = ""
     }
     
     private func saveSettings() {
@@ -198,7 +198,7 @@ struct ReaderPreviewView: View {
     
     var backgroundColor: Color {
         switch theme {
-        case .light: return .white
+        case .light: return Color(red: 0.976, green: 0.937, blue: 0.867)
         case .dark: return .black
         case .sepia: return Color(red: 0.96, green: 0.91, blue: 0.83)
         case .eyeProtection: return Color(red: 0.75, green: 0.84, blue: 0.71)
@@ -208,7 +208,7 @@ struct ReaderPreviewView: View {
     
     var textColor: Color {
         switch theme {
-        case .light: return .black
+        case .light: return Color(red: 0.18, green: 0.15, blue: 0.12)
         case .dark: return .white
         case .sepia: return Color(red: 0.33, green: 0.28, blue: 0.22)
         case .eyeProtection: return .black

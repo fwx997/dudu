@@ -138,8 +138,8 @@ struct PagedReaderView: View {
     
     // MARK: - 页码指示器
     
-    @AppStorage("tr_showTime") private var showTime = true
-    @AppStorage("tr_showBatView") private var showBattery = true
+    @AppStorage("tr_showTime") private var showTime = false
+    @AppStorage("tr_showBatView") private var showBattery = false
     @AppStorage("tr_showCpTitle") private var showCpTitle = true
     @AppStorage("tr_showProgress") private var showProgress = true
 
