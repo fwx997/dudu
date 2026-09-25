@@ -176,6 +176,10 @@ struct SettingsView: View {
 
                 // 阅读设置
                 Section(header: Label("阅读", systemImage: "book")) {
+                    NavigationLink("书架界面设置") {
+                        BookshelfSettingsView()
+                    }
+
                     NavigationLink("阅读设置") {
                         ReaderSettingsFullView()
                     }
@@ -253,6 +257,88 @@ struct SettingsView: View {
             .sheet(isPresented: $showingQRScanner) {
                 QRCodeScanView()
             }
+        }
+    }
+}
+
+// MARK: - 书架设置（对齐 plist_settingBookShelf.plist）
+struct BookshelfSettingsView: View {
+    @AppStorage("bs_shiDu") private var trialPrompt = false
+    @AppStorage("changLiang") private var keepScreenOn = false
+    @AppStorage("bs_sortType") private var sortType = 3
+    @AppStorage("bs_updateType") private var updateType = "1800"
+    @AppStorage("autoRead") private var autoRead = false
+    @AppStorage("tr_useLongPress") private var longPressSelection = true
+    @ObservedObject private var settings = AppSettings.shared
+    @State private var didClearCache = false
+
+    private let updateOptions = [
+        ("0", "不自动更新"),
+        ("-1", "启动 App 时更新"),
+        ("600", "十分钟更新一次"),
+        ("1800", "半小时更新一次"),
+        ("3600", "一个小时更新一次"),
+        ("86400", "二十四小时更新一次")
+    ]
+
+    var body: some View {
+        Form {
+            Section {
+                Toggle("试读提示", isOn: $trialPrompt)
+                Toggle("阅读时屏幕常亮", isOn: $keepScreenOn)
+            }
+
+            Section("书架界面") {
+                Picker("书架排序方式", selection: $sortType) {
+                    Text("按阅读时间排").tag(0)
+                    Text("按添加时间排").tag(1)
+                    Text("按更新排").tag(2)
+                    Text("综合排序").tag(3)
+                }
+                Picker("书架更新策略", selection: $updateType) {
+                    ForEach(updateOptions, id: \.0) { option in
+                        Text(option.1).tag(option.0)
+                    }
+                }
+                Toggle("启动后继续上次阅读", isOn: $autoRead)
+            }
+
+            Section("其他界面") {
+                NavigationLink("书本搜索界面设置") {
+                    SearchFilterSheet()
+                }
+                NavigationLink("漫画阅读界面设置") {
+                    ComicSettingsSheet()
+                }
+                NavigationLink("文本阅读界面设置") {
+                    ReaderSettingsFullView()
+                }
+                Toggle("文本阅读界面长按选择文字", isOn: $longPressSelection)
+            }
+
+            Section("缓存管理") {
+                Button("清理缓存") {
+                    ImageCacheManager.shared.clearCache()
+                    didClearCache = true
+                }
+            }
+        }
+        .navigationTitle("书架设置")
+        .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: sortType) { value in
+            let mapped: Int
+            switch value {
+            case 1: mapped = BookshelfViewModel.SortBy.manual.rawValue
+            case 2: mapped = BookshelfViewModel.SortBy.update.rawValue
+            default: mapped = BookshelfViewModel.SortBy.lastRead.rawValue
+            }
+            UserDefaults.standard.set(mapped, forKey: "shelf.sortBy")
+        }
+        .onChange(of: updateType) { value in
+            settings.checkUpdateOnOpen = value == "-1"
+        }
+        .alert("缓存已清理", isPresented: $didClearCache) {
+            Button("确定", role: .cancel) {}
         }
     }
 }
