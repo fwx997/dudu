@@ -362,15 +362,15 @@ struct SourceBookRow: View {
     @State private var imageData: Data?
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: 10) {
             BookCoverView(url: book.cover)
-                .frame(width: 60, height: 82)
+                .frame(width: 54, height: 72)
                 .background(Color.gray.opacity(0.08))
                 .cornerRadius(2)
 
             VStack(alignment: .leading, spacing: 5) {
                 Text(book.name)
-                    .font(.body)
+                    .font(.system(size: 15))
                     .foregroundColor(.primary)
                     .lineLimit(1)
 
@@ -387,11 +387,11 @@ struct SourceBookRow: View {
                         Text(status).foregroundColor(.secondary)
                     }
                 }
-                .font(.caption)
+                .font(.system(size: 12))
 
                 if let desc = book.desc, !desc.isEmpty {
                     Text(desc)
-                        .font(.caption)
+                        .font(.system(size: 12))
                         .foregroundColor(.secondary.opacity(0.8))
                         .lineLimit(2)
                 }

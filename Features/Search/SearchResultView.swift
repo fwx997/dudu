@@ -317,10 +317,10 @@ struct SearchResultItemView: View {
     let result: SearchViewModel.SearchResult
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             // 封面
             BookCoverView(url: result.coverUrl)
-                .frame(width: 60, height: 80)
+                .frame(width: 54, height: 72)
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(4)
 
