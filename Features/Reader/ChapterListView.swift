@@ -157,7 +157,7 @@ struct ChapterListView: View {
                 }
             }
             .listStyle(.plain)
-            .environment(\.defaultMinListRowHeight, 34)
+            .environment(\.defaultMinListRowHeight, XSGMetrics.chapterRowHeight)
             .onChange(of: jumpToBottomTrigger) { _ in
                 if let last = displayChapters.last {
                     proxy.scrollTo(last.element.chapterId, anchor: .bottom)

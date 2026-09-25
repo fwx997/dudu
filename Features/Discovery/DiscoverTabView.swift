@@ -35,9 +35,9 @@ struct DiscoverHomeView: View {
                     Image(systemName: "square.grid.2x2")
                         .font(.system(size: 56))
                         .foregroundColor(.secondary.opacity(0.5))
-                    Text("还没有可用站点")
+                    Text("无可用站点")
                         .font(.headline)
-                    Text("先在书架右上角「＋」导入 .xbs 书源\n再回到这里按站点逛书")
+                    Text("请前往配置")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -360,18 +360,19 @@ struct SourceBrowsePage: View {
 struct SourceBookRow: View {
     let book: XBSBook
     @State private var imageData: Data?
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             BookCoverView(url: book.cover)
-                .frame(width: 54, height: 72)
+                .frame(width: XSGMetrics.sourceCoverWidth, height: XSGMetrics.sourceCoverHeight)
                 .background(Color.gray.opacity(0.08))
                 .cornerRadius(2)
 
             VStack(alignment: .leading, spacing: 5) {
                 Text(book.name)
                     .font(.system(size: 15))
-                    .foregroundColor(.primary)
+                    .foregroundColor(colorScheme == .dark ? .primary : XSGTheme.brandRed)
                     .lineLimit(1)
 
                 HStack(spacing: 0) {

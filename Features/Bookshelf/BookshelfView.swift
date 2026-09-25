@@ -718,7 +718,7 @@ struct BookListItemView: View {
         HStack(spacing: 12) {
             BookshelfThumbView(book: book)
                 .frame(width: 52, height: 70)
-                .cornerRadius(5)
+                .cornerRadius(XSGMetrics.bookCornerRadius)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(book.name)

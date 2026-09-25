@@ -24,6 +24,14 @@ enum XSGTheme {
     }
 }
 
+enum XSGMetrics {
+    static let topBarHeight: CGFloat = 44
+    static let chapterRowHeight: CGFloat = 34
+    static let sourceCoverWidth: CGFloat = 54
+    static let sourceCoverHeight: CGFloat = 72
+    static let bookCornerRadius: CGFloat = 2
+}
+
 // MARK: - 顶部标签状态（书架/发现 共享）
 
 final class MainTabState: ObservableObject {
@@ -94,7 +102,7 @@ struct XSGBTopTabs: View {
             }
         }
         .padding(.horizontal, 8)
-        .frame(height: 44)
+        .frame(height: XSGMetrics.topBarHeight)
         .background(Color(.systemBackground))
     }
 

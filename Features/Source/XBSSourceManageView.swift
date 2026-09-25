@@ -88,7 +88,7 @@ struct XBSSourceManageView: View {
     private var emptySources: some View {
         VStack(spacing: 12) {
             Text("无可用站点").foregroundColor(.secondary)
-            Button("导入站点") { showingImportMenu = true }
+            Button("配置") { showingImportMenu = true }
         }
     }
 
