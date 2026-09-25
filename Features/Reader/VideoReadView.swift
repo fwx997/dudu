@@ -178,7 +178,7 @@ struct VideoReadView: View {
     }
 
     private func saveRecord(index: Int) {
-        book.durChapterIndex = Int64(index)
+        book.durChapterIndex = Int32(index)
         try? book.managedObjectContext?.save()
     }
 }

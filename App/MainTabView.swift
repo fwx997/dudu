@@ -359,19 +359,21 @@ struct AboutView: View {
 
     private func sendLog() {
         // 对齐原版 sendLog：生成“香色闺阁书架日志xsabc”日志文件并分享
-        let device = UIDevice.current
-        let lines = [
-            "=== 香色闺阁书架日志 xsabc ===",
-            "时间: \(Date())",
-            "版本: \(versionText)",
-            "系统: \(device.systemName) \(device.systemVersion)",
-            "设备: \(device.model)",
-            "站点数: \(XBSSourceStore.shared.sources.count)",
-            "书架数: \(ShelfStore.shared.shelves.count)"
-        ]
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("香色闺阁书架日志xsabc.txt")
-        try? lines.joined(separator: "\n").write(to: url, atomically: true, encoding: .utf8)
-        presentShareSheet(items: [url])
+        Task { @MainActor in
+            let device = UIDevice.current
+            let lines = [
+                "=== 香色闺阁书架日志 xsabc ===",
+                "时间: \(Date())",
+                "版本: \(versionText)",
+                "系统: \(device.systemName) \(device.systemVersion)",
+                "设备: \(device.model)",
+                "站点数: \(XBSSourceStore.shared.sources.count)",
+                "书架数: \(ShelfStore.shared.shelves.count)"
+            ]
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent("香色闺阁书架日志xsabc.txt")
+            try? lines.joined(separator: "\n").write(to: url, atomically: true, encoding: .utf8)
+            presentShareSheet(items: [url])
+        }
     }
 
     private func shareApp() {
