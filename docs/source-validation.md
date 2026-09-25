@@ -8,6 +8,8 @@
 - 精简文件：`D:\Downloads\sourceModelList+3.xbs`
 - 精简副本：`D:\Downloads\sourceModelList+3.compact.xbs`
 - 精简报告：`D:\Downloads\sourceModelList+3.compact.report.json`
+- 严格已验证包：`D:\Downloads\sourceModelList+3.verified.xbs`
+- Swift 运行时包：`D:\Downloads\sourceModelList+3.runtime.xbs`
 
 ## 处理结果
 
@@ -20,6 +22,13 @@
 | 删除硬失败/缺请求配置站点 | 59 |
 
 精简包已重新解密校验，顶层对象为 877 个站点，XBS 编码可读。精简包约 5.7 MB，原文件约 22.4 MB。
+
+另外生成了两个分级包：
+
+- `verified`：225 个本次请求实际返回成功的站点，约 2.0 MB；
+- `runtime`：296 个实际成功站点，加上 71 个需要 `@js:`、由 Swift JavaScriptCore 支持的站点，约 2.5 MB。
+
+当前覆盖原文件名的 `sourceModelList+3.xbs` 是 877 个站点的保守精简包；需要更少、更确定的书源时可直接使用 `verified` 包。
 
 ## 并发验证结果
 
